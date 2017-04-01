@@ -6,10 +6,12 @@ var mongoose = require('mongoose'); //MongoDB
 var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var bodyParser = require('body-parser'); //To parse the request
+var path = require('path');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : true}));
+app.use(express.static(__dirname + '/public'));
 app.use('/api',appRoutes);
 
 //Connect to Database and Check for any error conditions
@@ -23,7 +25,9 @@ mongoose.connect('mongodb://localhost:27017/meanstackproject',function(err){
 });
 
 //Routes
-
+app.get('*',function(req,res){
+    res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
+})
 //Listening for server on port
 app.listen(port,function(){
     console.log('Server running on port: '+ port);
