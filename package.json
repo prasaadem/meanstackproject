@@ -1,0 +1,26 @@
+{
+  "name": "meanstackproject",
+  "version": "1.0.0",
+  "description": "Mean Stack Application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prasaadem/meanstackproject.git"
+  },
+  "keywords": [
+    "Mean",
+    "Stack"
+  ],
+  "author": "Aditya Emani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prasaadem/meanstackproject/issues"
+  },
+  "homepage": "https://github.com/prasaadem/meanstackproject#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
