@@ -7,13 +7,22 @@ module.exports = function(router){
         user.password = req.body.password;
         user.email = req.body.email;
         if(req.body.username == null || req.body.username == "" || req.body.password == null || req.body.password == "" || req.body.email == null || req.body.email == ""){
-            res.send('Enter all required information');
+            res.json({
+                success: false,
+                message: 'Enter all required information'
+            });
         }else{
             user.save(function(err){
                 if (err){
-                    res.send('Username or email already exits!');    
+                    res.json({
+                        success: false,
+                        message: 'Username or email already exits!'
+                    });   
                 }else{
-                    res.send('User Created!');        
+                    res.json({
+                        success: true,
+                        message: 'User Created!'
+                    });        
                 }
             });
         }
