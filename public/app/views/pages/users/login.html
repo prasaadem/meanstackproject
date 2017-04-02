@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="row">
+        <form ng-submit="main.doLogin(loginData);">
+            <div class="col-lg-6">
+                <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="username" placeholder="please enter username" required ng-model = "main.loginData.username">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" name="password" placeholder="please enter password" required ng-model = "main.loginData.password">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<div class="jumbotron text-center" ng-show="main.loading">
+    <span class="glyphicon glyphicon-repeat spinner"></span>
+    <p>Loading....</p>
+</div>
+
+
+
+<br>
+<div class="row show-hide-message" ng-show="main.succMsg">
+    <div class="alert alert-success">
+        {{ main.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="main.errorMsg">
+    <div class="alert alert-danger">
+        {{ main.errorMsg }}
+    </div>
+</div>
