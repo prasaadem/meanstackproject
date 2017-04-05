@@ -39,6 +39,24 @@ var app = angular.module('appRoutes',['ngRoute'])
         permission: ['admin','moderator']
     })
 
+    // Route: Edit a User
+    .when('/edit/:id', {
+        templateUrl: 'app/views/pages/management/edit.html',
+        controller: 'editCtrl',
+        controllerAs: 'edit',
+        authenticated: true,
+        permission: ['admin', 'moderator']
+    })
+
+    // Route: Search Database Users
+    .when('/search', {
+        templateUrl: 'app/views/pages/management/search.html',
+        controller: 'managementCtrl',
+        controllerAs: 'management',
+        authenticated: true,
+        permission: ['admin', 'moderator']
+    })
+
     .otherwise({redirectTo:'/'});
 
     $locationProvider.html5Mode({
@@ -49,26 +67,37 @@ var app = angular.module('appRoutes',['ngRoute'])
 });
 
 
-app.run(['$rootScope','Auth','$location','User',function($rootScope,Auth,$location, User){
-    $rootScope.$on('$routeChangeStart',function(event,next,current){
-        if (next.$$route.authenticated == true) {
-            if(!Auth.isLoggedIn()){
-                event.preventDefault();
-                $location.path('/');
-            }else if (next.$$route.permission) {
-                User.getPermission().then(function(data){
-                    if (next.$$route.permission[0] !== data.data.permission) {
-                        if (next.$$route.permission[1] !== data.data.permission) {
-                            event.preventDefault();
-                            $location.path('/');
-                        }   
-                    }
-                });
-            }
-        }else if (next.$$route.authenticated === false) {
-            if(Auth.isLoggedIn()){
-                event.preventDefault();
-                $location.path('/profile');
+app.run(['$rootScope', 'Auth', '$location', 'User', function($rootScope, Auth, $location, User) {
+
+    // Check each time route changes    
+    $rootScope.$on('$routeChangeStart', function(event, next, current) {
+
+        // Only perform if user visited a route listed above
+        if (next.$$route !== undefined) {
+            // Check if authentication is required on route
+            if (next.$$route.authenticated === true) {
+                // Check if authentication is required, then if permission is required
+                if (!Auth.isLoggedIn()) {
+                    event.preventDefault(); // If not logged in, prevent accessing route
+                    $location.path('/'); // Redirect to home instead
+                } else if (next.$$route.permission) {
+                    // Function: Get current user's permission to see if authorized on route
+                    User.getPermission().then(function(data) {
+                        // Check if user's permission matches at least one in the array
+                        if (next.$$route.permission[0] !== data.data.permission) {
+                            if (next.$$route.permission[1] !== data.data.permission) {
+                                event.preventDefault(); // If at least one role does not match, prevent accessing route
+                                $location.path('/'); // Redirect to home instead
+                            }
+                        }
+                    });
+                }
+            } else if (next.$$route.authenticated === false) {
+                // If authentication is not required, make sure is not logged in
+                if (Auth.isLoggedIn()) {
+                    event.preventDefault(); // If user is logged in, prevent accessing route
+                    $location.path('/profile'); // Redirect to profile instead
+                }
             }
         }
     });

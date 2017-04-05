@@ -26,5 +26,20 @@ angular.module('userServices',[])
         return $http.get('/api/management/');
     };
 
+    // Get user to then edit
+    userFactory.getUser = function(id) {
+        return $http.get('/api/edit/' + id);
+    };
+
+    // Delete a user
+    userFactory.deleteUser = function(username) {
+        return $http.delete('/api/management/' + username);
+    };
+
+    // Edit a user
+    userFactory.editUser = function(id) {
+        return $http.put('/api/edit', id);
+    };
+
     return userFactory;
 });

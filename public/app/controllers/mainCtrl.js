@@ -106,7 +106,6 @@ angular.module('mainController',['authServices','userServices'])
                         app.authorized = true;
                         app.loadMe = true;
                     }else{
-                        app.authorized = false;
                         app.loadMe = true;
                     }
                 });
