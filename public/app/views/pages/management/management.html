@@ -1,0 +1,47 @@
+<div class="page-header">
+    <h1>User Management</h1>    
+</div>
+<br>
+<div class="jumbotron text-center" ng-show="management.loading">
+    <span class="glyphicon glyphicon-repeat spinner"></span>
+    <p>Loading....</p>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <strong>User Management</strong>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+        </tr>
+        <tr ng-repeat="person in management.users | limitTo: management.limit">
+            <td>{{ person.name }}</td>
+            <td>{{ person.username }}</td>
+            <td>{{ person.email }}</td>
+            <td>
+                <a href="#">
+                    <button type="button" ng-show="management.editAccess" class="btn btn-primary">Edit</button>
+                </a>
+                <a href="#">
+                    <button type="button" ng-show="management.deleteAccess" class="btn btn-danger">Delete</button>
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<br>
+<div class="row show-hide-message" ng-show="management.succMsg">
+    <div class="alert alert-success">
+        {{ management.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="management.errorMsg">
+    <div class="alert alert-danger">
+        {{ management.errorMsg }}
+    </div>
+</div>

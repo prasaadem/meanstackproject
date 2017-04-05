@@ -70,6 +70,30 @@ module.exports = function(router){
         }
     });
 
+    router.post('/checkusername',function(req,res){
+        User.findOne({username: req.body.username}).select('username').exec(function(err,user){
+            if (err) throw err;
+
+            if (user) {
+                res.json({success:false, message: 'That username is already taken'});
+            }else{
+                res.json({success:false, message: 'Username is available'});
+            }
+        });
+    });
+
+    router.post('/checkemail',function(req,res){
+        User.findOne({email: req.body.email}).select('email').exec(function(err,user){
+            if (err) throw err;
+
+            if (user) {
+                res.json({success:false, message: 'That e-mail is already taken'});
+            }else{
+                res.json({success:false, message: 'e-mail is available'});
+            }
+        });
+    });
+
     //http://localhost:PORT/api/authenticate
     //User login route
     router.post('/authenticate',function(req,res){
@@ -91,7 +115,7 @@ module.exports = function(router){
                         username: user.username,
                         email: user.email
                     }, secret, {
-                        expiresIn: '24h'
+                        expiresIn: '1h'
                     });
                     res.json({
                         success: true,
@@ -128,6 +152,61 @@ module.exports = function(router){
     router.post('/me',function(req,res){
         res.send(req.decoded);
     });
+
+    router.get('/renewToken/:username', function(req,res){
+        User.findOne({username: req.params.username}).select().exec(function(err,user){
+            if (err) throw err;
+            if (!user) {
+                res.json({success:false, message: 'No user found'});
+            }else{
+                var newToken = jwt.sign({
+                        username: user.username,
+                        email: user.email
+                    }, secret, {
+                        expiresIn: '24h'
+                    });
+                    res.json({
+                        success: true,
+                        token: newToken
+                    }); 
+            }
+        });
+    });
+
+    router.get('/permission',function(req,res){
+        User.findOne({username: req.decoded.username}, function(err,user){
+            if (err) throw err;
+            if (!user) {
+                res.json({success:false, message: 'No user found'});
+            }else{
+                res.json({success:true, permission: user.permission});
+            }
+        });
+    });
+
+    router.get('/management',function(req,res){
+        User.find({}, function(err,users){
+            if (err) throw err;
+            User.findOne({ username: req.decoded.username }, function(err,mainUser){
+                if (err) throw err;
+                if (!mainUser) {
+                    res.json({success:false, message: 'No user found'});
+                }else{
+                    if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                        if (!users) {
+                            res.json({success:false, message: 'No users found'});
+                        }else{
+                            res.json({success:true, users:users, permission:mainUser.permission});
+                        }
+                    }else{
+                        res.json({success:false, message: 'Insufficient Permissions'});
+                    }
+                }
+            });
+        });
+    });
+
+
 
     return router;
 }
