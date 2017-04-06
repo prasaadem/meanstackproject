@@ -54,8 +54,6 @@ var emailValidator = [
   })
 ];
 
-
-
 var UserSchema = new Schema({
   name: {type: String, required:true, validate: nameValidator},
   username: {type: String, lowercase:true, required:true, unique: true,validate: usernameValidator},

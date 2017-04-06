@@ -15,7 +15,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/api',appRoutes);
 
 //Connect to Database and Check for any error conditions
-mongoose.connect('mongodb://aditya:Cnsape@2923@ds019633.mlab.com:19633/pld',function(err){
+mongoose.connect('mongodb://localhost:27017/meanstackproject',function(err){
     if (err){
         console.log('Not connected to the database: ' + err);
     }
