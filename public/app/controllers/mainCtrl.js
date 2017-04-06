@@ -104,10 +104,12 @@ angular.module('mainController',['authServices','userServices'])
                 User.getPermission().then(function(data){
                     if (data.data.permission === 'admin' || data.data.permission === 'moderator') {
                         app.authorized = true;
+                        app.permission = data.data.permission;
                         app.loadMe = true;
                     }else{
                         app.loadMe = true;
                     }
+                    app.permission = data.data.permission;
                 });
             });
         }else{

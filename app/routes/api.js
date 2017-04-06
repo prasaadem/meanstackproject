@@ -211,23 +211,6 @@ module.exports = function(router){
         var deletedUser = req.params.username; // Assign the username from request parameters to a variable
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
-                // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                var email = {
-                    from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                    to: 'gugui3z24@gmail.com',
-                    subject: 'Error Logged',
-                    text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                    html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                };
-                // Function to send e-mail to myself
-                client.sendMail(email, function(err, info) {
-                    if (err) {
-                        console.log(err); // If error with sending e-mail, log to console/terminal
-                    } else {
-                        console.log(info); // Log success message to console if sent
-                        console.log(user.email); // Display e-mail that it was sent to
-                    }
-                });
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
             } else {
                 // Check if current user was found in database
@@ -241,23 +224,7 @@ module.exports = function(router){
                         // Fine the user that needs to be deleted
                         User.findOneAndRemove({ username: deletedUser }, function(err, user) {
                             if (err) {
-                                // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                var email = {
-                                    from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                    to: 'gugui3z24@gmail.com',
-                                    subject: 'Error Logged',
-                                    text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                    html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                };
-                                // Function to send e-mail to myself
-                                client.sendMail(email, function(err, info) {
-                                    if (err) {
-                                        console.log(err); // If error with sending e-mail, log to console/terminal
-                                    } else {
-                                        console.log(info); // Log success message to console if sent
-                                        console.log(user.email); // Display e-mail that it was sent to
-                                    }
-                                });
+                                
                                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                             } else {
                                 res.json({ success: true }); // Return success status
@@ -274,23 +241,6 @@ module.exports = function(router){
         var editUser = req.params.id; // Assign the _id from parameters to variable
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
-                // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                var email = {
-                    from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                    to: 'gugui3z24@gmail.com',
-                    subject: 'Error Logged',
-                    text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                    html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                };
-                // Function to send e-mail to myself
-                client.sendMail(email, function(err, info) {
-                    if (err) {
-                        console.log(err); // If error with sending e-mail, log to console/terminal
-                    } else {
-                        console.log(info); // Log success message to console if sent
-                        console.log(user.email); // Display e-mail that it was sent to
-                    }
-                });
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
             } else {
                 // Check if logged in user was found in database
@@ -302,23 +252,6 @@ module.exports = function(router){
                         // Find the user to be editted
                         User.findOne({ _id: editUser }, function(err, user) {
                             if (err) {
-                                // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                var email = {
-                                    from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                    to: 'gugui3z24@gmail.com',
-                                    subject: 'Error Logged',
-                                    text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                    html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                };
-                                // Function to send e-mail to myself
-                                client.sendMail(email, function(err, info) {
-                                    if (err) {
-                                        console.log(err); // If error with sending e-mail, log to console/terminal
-                                    } else {
-                                        console.log(info); // Log success message to console if sent
-                                        console.log(user.email); // Display e-mail that it was sent to
-                                    }
-                                });
                                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                             } else {
                                 // Check if user to edit is in database
@@ -347,23 +280,6 @@ module.exports = function(router){
         // Look for logged in user in database to check if have appropriate access
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
-                // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                var email = {
-                    from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                    to: 'gugui3z24@gmail.com',
-                    subject: 'Error Logged',
-                    text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                    html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                };
-                // Function to send e-mail to myself
-                client.sendMail(email, function(err, info) {
-                    if (err) {
-                        console.log(err); // If error with sending e-mail, log to console/terminal
-                    } else {
-                        console.log(info); // Log success message to console if sent
-                        console.log(user.email); // Display e-mail that it was sent to
-                    }
-                });
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
             } else {
                 // Check if logged in user is found in database
@@ -377,23 +293,6 @@ module.exports = function(router){
                             // Look for user in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                    var email = {
-                                        from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                        to: 'gugui3z24@gmail.com',
-                                        subject: 'Error Logged',
-                                        text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                        html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                    };
-                                    // Function to send e-mail to myself
-                                    client.sendMail(email, function(err, info) {
-                                        if (err) {
-                                            console.log(err); // If error with sending e-mail, log to console/terminal
-                                        } else {
-                                            console.log(info); // Log success message to console if sent
-                                            console.log(user.email); // Display e-mail that it was sent to
-                                        }
-                                    });
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if user is in database
@@ -424,23 +323,7 @@ module.exports = function(router){
                             // Look for user in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                    var email = {
-                                        from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                        to: 'gugui3z24@gmail.com',
-                                        subject: 'Error Logged',
-                                        text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                        html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                    };
-                                    // Function to send e-mail to myself
-                                    client.sendMail(email, function(err, info) {
-                                        if (err) {
-                                            console.log(err); // If error with sending e-mail, log to console/terminal
-                                        } else {
-                                            console.log(info); // Log success message to console if sent
-                                            console.log(user.email); // Display e-mail that it was sent to
-                                        }
-                                    });
+                                
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if user is in database
@@ -471,23 +354,7 @@ module.exports = function(router){
                             // Look for user that needs to be editted
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                    var email = {
-                                        from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                        to: 'gugui3z24@gmail.com',
-                                        subject: 'Error Logged',
-                                        text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                        html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                    };
-                                    // Function to send e-mail to myself
-                                    client.sendMail(email, function(err, info) {
-                                        if (err) {
-                                            console.log(err); // If error with sending e-mail, log to console/terminal
-                                        } else {
-                                            console.log(info); // Log success message to console if sent
-                                            console.log(user.email); // Display e-mail that it was sent to
-                                        }
-                                    });
+                                    
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if logged in user is in database
@@ -518,23 +385,7 @@ module.exports = function(router){
                             // Look for user to edit in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    // Create an e-mail object that contains the error. Set to automatically send it to myself for troubleshooting.
-                                    var email = {
-                                        from: 'MEAN Stack Staff, cruiserweights@zoho.com',
-                                        to: 'gugui3z24@gmail.com',
-                                        subject: 'Error Logged',
-                                        text: 'The following error has been reported in the MEAN Stack Application: ' + err,
-                                        html: 'The following error has been reported in the MEAN Stack Application:<br><br>' + err
-                                    };
-                                    // Function to send e-mail to myself
-                                    client.sendMail(email, function(err, info) {
-                                        if (err) {
-                                            console.log(err); // If error with sending e-mail, log to console/terminal
-                                        } else {
-                                            console.log(info); // Log success message to console if sent
-                                            console.log(user.email); // Display e-mail that it was sent to
-                                        }
-                                    });
+                                    
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if user is found in database
