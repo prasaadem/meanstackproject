@@ -102,12 +102,20 @@ angular.module('mainController',['authServices','userServices'])
                 app.username = data.data.username;
                 app.userEmail = data.data.email;
                 User.getPermission().then(function(data){
-                    if (data.data.permission === 'admin' || data.data.permission === 'moderator') {
-                        app.authorized = true;
-                        app.permission = data.data.permission;
+                    if (data.data.permission === 'admin') {
+                        app.admin = true;
+                        app.faculty = false;
+                        app.student = false;
                         app.loadMe = true;
-                    }else{
+                    }else if(data.data.permission === 'faculty'){
+                        app.admin = false;
+                        app.faculty = true;
+                        app.student = false;
                         app.loadMe = true;
+                    }else if (data.data.permission === 'student') {
+                        app.admin = false;
+                        app.faculty = false;
+                        app.student = true;
                     }
                     app.permission = data.data.permission;
                 });

@@ -36,7 +36,15 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'managementCtrl',
         controllerAs: 'management',
         authenticated: true,
-        permission: ['admin','moderator']
+        permission: ['admin']
+    })
+
+    .when('/facultyManagement',{
+        templateUrl: 'app/views/pages/management/facultyManagement.html',
+        controller: 'managementCtrl',
+        controllerAs: 'management',
+        authenticated: true,
+        permission: ['admin']
     })
 
     // Route: Edit a User
@@ -45,7 +53,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'editCtrl',
         controllerAs: 'edit',
         authenticated: true,
-        permission: ['admin', 'moderator']
+        permission: ['admin']
     })
 
     // Route: Search Database Users
@@ -54,7 +62,39 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'managementCtrl',
         controllerAs: 'management',
         authenticated: true,
-        permission: ['admin', 'moderator']
+        permission: ['admin', 'faculty']
+    })
+
+    .when('/addSemester',{
+        templateUrl: 'app/views/pages/management/addSemester.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['admin']
+    })
+
+    .when('/showSemester',{
+        templateUrl: 'app/views/pages/management/showSemester.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['admin']
+    })
+
+    .when('/addCourse',{
+        templateUrl: 'app/views/pages/management/addCourse.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['admin']
+    })
+
+    .when('/showCourse',{
+        templateUrl: 'app/views/pages/management/showCourse.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['admin','faculty']
     })
 
     .otherwise({redirectTo:'/'});

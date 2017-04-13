@@ -1,0 +1,50 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div class="container">
+        <h2 class="section-heading">Semester Management</h2>
+        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to view semesters.</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<br>
+
+<!-- Loading Icon (Bootstrap) -->
+<div class="jumbotron text-center" ng-show="management.loading">
+    <span class="glyphicon glyphicon-repeat spinner"></span>
+    <p>Loading....</p>
+</div>
+<!-- Loading Icon (Bootstrap) -->
+
+
+<!-- User Management Table -->
+<div class="panel panel-primary">
+    <!-- Heading -->
+    <div class="panel-heading">
+        <strong>Semester Management</strong>
+    </div>
+    <!-- Start: Table -->
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        <tr ng-repeat="sem in semester.sems">
+            <td>{{ sem.title }}</td>
+            <td>{{ sem.startDate }}</td>
+            <td>{{ sem.endDate }}</td>
+        </tr>
+        <!-- End: Table -->
+    </table>
+</div>
+<!-- User Management Table -->
+
+<br>
+<br>
+
+<!-- Custom Error Message -->
+<div class="row show-hide-message" ng-show="sem.showMoreError">
+    <div class="alert alert-danger">{{ sem.showMoreError }}</div>
+</div>
+<!-- Custom Error Message -->

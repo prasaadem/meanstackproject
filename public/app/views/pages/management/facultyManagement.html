@@ -1,7 +1,7 @@
 <!-- Heading -->
 <div class="row text-center">
     <div class="container">
-        <h2 class="section-heading">Student Management</h2>
+        <h2 class="section-heading">Faculty Management</h2>
         <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to edit and delete users.</h3>
     </div>
 </div>
@@ -21,7 +21,7 @@
 <div class="panel panel-primary">
     <!-- Heading -->
     <div class="panel-heading">
-        <strong>Student Management</strong>
+        <strong>Faculty Management</strong>
     </div>
     <!-- Start: Table -->
     <table class="table">
@@ -31,7 +31,7 @@
             <th>Email</th>
             <th>Permission</th>
         </tr>
-        <tr ng-repeat="person in management.students | filter: searchFilter | limitTo: management.limit">
+        <tr ng-repeat="person in management.faculties | filter: searchFilter | limitTo: management.limit">
             <td>{{ person.name }}</td>
             <td>{{ person.username }}</td>
             <td>{{ person.email }}</td>

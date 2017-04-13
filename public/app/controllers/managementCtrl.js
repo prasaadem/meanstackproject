@@ -12,6 +12,9 @@ angular.module('managementController', [])
     app.limit = 5; // Set a default limit to ng-repeat
     app.searchLimit = 0; // Set the default search page results limit to zero
 
+    app.students = [];
+    app.faculties = [];
+
     // Function: get all the users from database
     function getUsers() {
         // Runs function to get all the users from database
@@ -19,16 +22,24 @@ angular.module('managementController', [])
             // Check if able to get data from database
             if (data.data.success) {
                 // Check which permissions the logged in user has
-                if (data.data.permission === 'admin' || data.data.permission === 'moderator') {
-                    app.users = data.data.users; // Assign users from database to variable
+                if (data.data.permission === 'admin') {
+                    data.data.users.forEach(function(user) {
+                        console.log(user.permission);
+                        if (user.permission === "student") {
+                            app.students.push(user);
+                        }else if(user.permission === "faculty"){
+                            app.faculties.push(user);   
+                        }
+                    });
+                    // app.users = data.data.users; // Assign users from database to variable
                     app.loading = false; // Stop loading icon
                     app.accessDenied = false; // Show table
-                    // Check if logged in user is an admin or moderator
+                    // Check if logged in user is an admin or faculty
                     if (data.data.permission === 'admin') {
                         app.editAccess = true; // Show edit button
                         app.deleteAccess = true; // Show delete button
-                    } else if (data.data.permission === 'moderator') {
-                        app.editAccess = true; // Show edit button
+                    } else if (data.data.permission === 'faculty') {
+                        app.editAccess = false; // Show edit button
                     }
                 } else {
                     app.errorMsg = 'Insufficient Permissions'; // Reject edit and delete options
@@ -196,14 +207,14 @@ angular.module('managementController', [])
         app.phase3 = false; // Set e-mail tab to inactive
         app.phase4 = true; // Set permission tab to active
         app.disableUser = false; // Disable buttons while processing
-        app.disableModerator = false; // Disable buttons while processing
+        app.disablefaculty = false; // Disable buttons while processing
         app.disableAdmin = false; // Disable buttons while processing
         app.errorMsg = false; // Clear any error messages
         // Check which permission was set and disable that button
         if ($scope.newPermission === 'user') {
             app.disableUser = true; // Disable 'user' button
-        } else if ($scope.newPermission === 'moderator') {
-            app.disableModerator = true; // Disable 'moderator' button
+        } else if ($scope.newPermission === 'faculty') {
+            app.disablefaculty = true; // Disable 'faculty' button
         } else if ($scope.newPermission === 'admin') {
             app.disableAdmin = true; // Disable 'admin' button
         }
@@ -316,7 +327,7 @@ angular.module('managementController', [])
     app.updatePermissions = function(newPermission) {
         app.errorMsg = false; // Clear any error messages
         app.disableUser = true; // Disable button while processing
-        app.disableModerator = true; // Disable button while processing
+        app.disablefaculty = true; // Disable button while processing
         app.disableAdmin = true; // Disable button while processing
         var userObject = {}; // Create the user object to pass to function
         userObject._id = app.currentUser; // Get the user _id in order to edit
@@ -334,15 +345,15 @@ angular.module('managementController', [])
                     // Check which permission was assigned to the user
                     if (newPermission === 'user') {
                         app.disableUser = true; // Lock the 'user' button
-                        app.disableModerator = false; // Unlock the 'moderator' button
+                        app.disablefaculty = false; // Unlock the 'faculty' button
                         app.disableAdmin = false; // Unlock the 'admin' button
-                    } else if (newPermission === 'moderator') {
-                        app.disableModerator = true; // Lock the 'moderator' button
+                    } else if (newPermission === 'faculty') {
+                        app.disablefaculty = true; // Lock the 'faculty' button
                         app.disableUser = false; // Unlock the 'user' button
                         app.disableAdmin = false; // Unlock the 'admin' button
                     } else if (newPermission === 'admin') {
                         app.disableAdmin = true; // Lock the 'admin' buton
-                        app.disableModerator = false; // Unlock the 'moderator' button
+                        app.disablefaculty = false; // Unlock the 'faculty' button
                         app.disableUser = false; // unlock the 'user' button
                     }
                 }, 2000);

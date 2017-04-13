@@ -1,4 +1,6 @@
 var User = require('../models/user'); //User Model
+var Course = require('../models/course'); //Course Model
+var Semester = require('../models/semester'); //Semester Model
 var jwt = require('jsonwebtoken');
 var secret = 'pld';
 
@@ -6,6 +8,28 @@ module.exports = function(router){
 
     //http://localhost:PORT/api/users
     //User Registration Route
+
+    router.post('/addCourse',function(req,res){
+        var course = new Course();
+        course.title = req.body.title;
+        course.name = req.body.name;
+        course.semester = req.body.semester;
+        course.save(function(err){
+            if (err) {
+                res.json({
+                    success: false,
+                    message: err
+                });
+            }else{
+                res.json({
+                    success: false,
+                    message: 'Saved'
+                });
+            }
+            
+        });
+    });
+
     router.post('/users',function(req,res){
         var user = new User();
         user.username = req.body.username;
@@ -64,6 +88,135 @@ module.exports = function(router){
                     res.json({
                         success: true,
                         message: 'User Created!'
+                    });        
+                }
+            });
+        }
+    });
+
+    router.post('/sem',function(req,res){
+        var sem = new Semester();
+        sem.title = req.body.semTitle;
+        sem.startDate = req.body.startDate;
+        sem.endDate = req.body.endDate;
+
+        if(req.body.semTitle == null || req.body.semTitle == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+            res.json({
+                success: false,
+                message: 'Enter all required information'
+            });
+        }else{
+            sem.save(function(err){
+                if (err){
+                    if (err.errors != null) {
+                        if (err.errors.semTitle) {
+                            res.json({
+                                success: false,
+                                message: err.errors.semTitle.message
+                            }); 
+                        }else if (err.errors.startDate) {
+                            res.json({
+                                success: false,
+                                message: err.errors.startDate.message
+                            }); 
+                        }else if (err.errors.endDate) {
+                            res.json({
+                                success: false,
+                                message: err.errors.endDate.message
+                            });  
+                        }else{
+                            res.json({
+                                success: false,
+                                message: err
+                            }); 
+                    }
+                    }else if(err){
+                        if (err.code == 11000) {
+                            res.json({
+                            success: false,
+                            message: 'Semester is already there!'
+                        });
+                        }else{
+                            res.json({
+                            success: false,
+                            message: err
+                        });
+                        } 
+                    }
+                }else{
+                    res.json({
+                        success: true,
+                        message: 'Semester Created!'
+                    });        
+                }
+            });
+        }
+    });
+
+    router.post('/course',function(req,res){
+        console.log('came here too');
+        var course = new Course();
+        course.title = req.body.title;
+        course.name = req.body.name;
+        course.semester = req.body.semester;
+
+        Semester.findOne({title: course.semester}).select('startDate endDate').exec(function(err,sem){
+            if (err) throw err;
+            if (!sem) {
+                res.json({success:false, message: "No semester Information Found"});
+            }else{
+                course.startDate = sem.startDate;
+                course.endDate = sem.endDate;
+            }
+        });
+
+        if(req.body.title == null || req.body.title == "" || req.body.name == null || req.body.name == "" || req.body.semester == null || req.body.semester == ""){
+            res.json({
+                success: false,
+                message: 'Enter all required information'
+            });
+        }else{
+            course.save(function(err){
+                if (err){
+                    if (err.errors != null) {
+                        if (err.errors.semTitle) {
+                            res.json({
+                                success: false,
+                                message: err.errors.title.message
+                            }); 
+                        }else if (err.errors.startDate) {
+                            res.json({
+                                success: false,
+                                message: err.errors.name.message
+                            }); 
+                        }else if (err.errors.endDate) {
+                            res.json({
+                                success: false,
+                                message: err.errors.semester.message
+                            });  
+                        }else{
+                            res.json({
+                                success: false,
+                                message: err
+                            }); 
+                    }
+                    }else if(err){
+                        if (err.code == 11000) {
+                            res.json({
+                            success: false,
+                            message: 'Course is already there!'
+                        });
+                        }else{
+                            res.json({
+                            success: false,
+                            message: err
+                        });
+                        } 
+                    }
+                }else{
+                    res.json({
+                        success: true,
+                        message: 'Course Created!'
                     });        
                 }
             });
@@ -482,6 +635,25 @@ module.exports = function(router){
         });
     });
 
+    router.get('/getSems',function(req,res){
+        Semester.find({}, function(err,sems){
+            if (err){
+                res.json({success:false, message: err});
+            }else{
+                res.json({success:true, sems:sems});
+            }
+        });
+    });
+
+    router.get('/getCourses',function(req,res){
+        Course.find({}, function(err,courses){
+            if (err){
+                res.json({success:false, message: err});
+            }else{
+                res.json({success:true, courses:courses});
+            }
+        });
+    });
 
     return router;
 }

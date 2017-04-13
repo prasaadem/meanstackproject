@@ -1,0 +1,54 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div class="container">
+        <h2 class="section-heading">Course Management</h2>
+        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to view courses.</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<br>
+
+<!-- Loading Icon (Bootstrap) -->
+<div class="jumbotron text-center" ng-show="management.loading">
+    <span class="glyphicon glyphicon-repeat spinner"></span>
+    <p>Loading....</p>
+</div>
+<!-- Loading Icon (Bootstrap) -->
+
+
+<!-- User Management Table -->
+<div class="panel panel-primary">
+    <!-- Heading -->
+    <div class="panel-heading">
+        <strong>Course Management</strong>
+    </div>
+    <!-- Start: Table -->
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Name</th>
+            <th>Semester</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        <tr ng-repeat="course in semester.courses">
+            <td>{{ course.title }}</td>
+            <td>{{ course.name }}</td>
+            <td>{{ course.semester }}</td>
+            <td>{{ course.startDate }}</td>
+            <td>{{ course.endDate }}</td>
+        </tr>
+        <!-- End: Table -->
+    </table>
+</div>
+<!-- User Management Table -->
+
+<br>
+<br>
+
+<!-- Custom Error Message -->
+<div class="row show-hide-message" ng-show="sem.showMoreError">
+    <div class="alert alert-danger">{{ sem.showMoreError }}</div>
+</div>
+<!-- Custom Error Message -->
