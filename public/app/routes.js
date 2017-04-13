@@ -97,6 +97,22 @@ var app = angular.module('appRoutes',['ngRoute'])
         permission: ['admin','faculty']
     })
 
+    .when('/takeCourse',{
+        templateUrl: 'app/views/pages/management/takeCourse.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['faculty']
+    })
+
+    .when('/myCourses',{
+        templateUrl: 'app/views/pages/management/myCourses.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['faculty']
+    })
+
     .otherwise({redirectTo:'/'});
 
     $locationProvider.html5Mode({

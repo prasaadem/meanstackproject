@@ -1,0 +1,22 @@
+<div class="page-header">
+    <h1>{{main.username}}'s Profile</h1>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Course Name</th>
+      <th>Course Title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="course in main.courses">
+      <td>{{main.username}}</td>
+      <td>{{main.userEmail}}</td>
+      <td>{{ course.name }}</td>
+      <td>{{ course.title }}</td>
+    </tr>
+  </tbody>
+</table>

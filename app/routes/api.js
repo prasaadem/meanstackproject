@@ -12,12 +12,14 @@ module.exports = function(router){
     //http://localhost:PORT/api/users
     //User Registration Route
 
-    router.post('/addCourse',function(req,res){
-        var course = new Course();
-        course.title = req.body.title;
-        course.name = req.body.name;
-        course.semester = req.body.semester;
-        course.save(function(err){
+    router.post('/addUser',function(req,res){
+        var user = new User();
+        user.username = req.body.username;
+        user.password = req.body.password;
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.courses = req.body.courses;
+        user.save(function(err){
             if (err) {
                 res.json({
                     success: false,
@@ -39,6 +41,7 @@ module.exports = function(router){
         user.password = req.body.password;
         user.name = req.body.name;
         user.email = req.body.email;
+        user.courses = req.body.courses;
         if(req.body.name == null || req.body.name == "" || req.body.username == null || req.body.username == "" || req.body.password == null || req.body.password == "" || req.body.email == null || req.body.email == ""){
             res.json({
                 success: false,
@@ -168,12 +171,11 @@ module.exports = function(router){
     });
 
     router.post('/course',function(req,res){
-        console.log('came here too');
         var course = new Course();
         course.title = req.body.title;
         course.name = req.body.name;
         course.semester = req.body.semester;
-        var directoryPath = path.join(__dirname + '/../uploads/'+ course.semester +'/' +course.title);
+        var directoryPath = path.join(__dirname + '/../uploads/'+ course.semester.title +'/' +course.title);
 
         if (fs.existsSync(directoryPath)) {
             res.json({
@@ -181,15 +183,6 @@ module.exports = function(router){
                 message: 'Course Folder already exists'
             });
         }else{
-            Semester.findOne({title: course.semester}).select('startDate endDate').exec(function(err,sem){
-            if (err) throw err;
-            if (!sem) {
-                res.json({success:false, message: "No semester Information Found"});
-            }else{
-                course.startDate = sem.startDate;
-                course.endDate = sem.endDate;
-            }
-            });
 
         if(req.body.title == null || req.body.title == "" || req.body.name == null || req.body.name == "" || req.body.semester == null || req.body.semester == ""){
             res.json({
@@ -199,41 +192,10 @@ module.exports = function(router){
         }else{
             course.save(function(err){
                 if (err){
-                    if (err.errors != null) {
-                        if (err.errors.semTitle) {
-                            res.json({
-                                success: false,
-                                message: err.errors.title.message
-                            }); 
-                        }else if (err.errors.startDate) {
-                            res.json({
-                                success: false,
-                                message: err.errors.name.message
-                            }); 
-                        }else if (err.errors.endDate) {
-                            res.json({
-                                success: false,
-                                message: err.errors.semester.message
-                            });  
-                        }else{
-                            res.json({
-                                success: false,
-                                message: err
-                            }); 
-                    }
-                    }else if(err){
-                        if (err.code == 11000) {
-                            res.json({
-                            success: false,
-                            message: 'Course is already there!'
-                        });
-                        }else{
-                            res.json({
-                            success: false,
-                            message: err
-                        });
-                        } 
-                    }
+                    res.json({
+                        success: false,
+                        message: err
+                    });
                 }else{
                     fs.mkdir(directoryPath, function(err){
                         if (err) throw err;
@@ -275,7 +237,7 @@ module.exports = function(router){
     //http://localhost:PORT/api/authenticate
     //User login route
     router.post('/authenticate',function(req,res){
-        User.findOne({username: req.body.username}).select('email username password').exec(function(err,user){
+        User.findOne({username: req.body.username}).select('email username password courses').exec(function(err,user){
             if (err) throw err;
 
             if (!user) {
@@ -291,7 +253,8 @@ module.exports = function(router){
                 }else{
                     var token = jwt.sign({
                         username: user.username,
-                        email: user.email
+                        email: user.email,
+                        courses: user.courses
                     }, secret, {
                         expiresIn: '1h'
                     });
@@ -339,7 +302,8 @@ module.exports = function(router){
             }else{
                 var newToken = jwt.sign({
                         username: user.username,
-                        email: user.email
+                        email: user.email,
+                        courses:user.courses
                     }, secret, {
                         expiresIn: '24h'
                     });
@@ -370,7 +334,7 @@ module.exports = function(router){
                 if (!mainUser) {
                     res.json({success:false, message: 'No user found'});
                 }else{
-                    if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                    if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                         if (!users) {
                             res.json({success:false, message: 'No users found'});
                         }else{
@@ -426,7 +390,7 @@ module.exports = function(router){
                     res.json({ success: false, message: 'No user found' }); // Return error
                 } else {
                     // Check if logged in user has editing privileges
-                    if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                    if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                         // Find the user to be editted
                         User.findOne({ _id: editUser }, function(err, user) {
                             if (err) {
@@ -448,6 +412,31 @@ module.exports = function(router){
         });
     });
 
+    
+    router.put('/takeCourse', function(req, res) {
+        if (req.body.course) var newCourse = req.body.course;
+        console.log(newCourse);
+        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                if (!mainUser) {
+                    res.json({ success: false, message: "no user found" });
+                }else{
+                    mainUser.courses.push(newCourse);
+                    mainUser.save(function(err) {
+                        if (err) {
+                            console.log(err); // Log any errors to the console
+                        } else {
+                            res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                        }
+                     });
+                }
+            }
+        });
+    });
+
+
     // Route to update/edit a user
     router.put('/edit', function(req, res) {
         var editUser = req.body._id; // Assign _id from user to be editted to a variable
@@ -467,7 +456,7 @@ module.exports = function(router){
                     // Check if a change to name was requested
                     if (newName) {
                         // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                             // Look for user in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
@@ -497,7 +486,7 @@ module.exports = function(router){
                     // Check if a change to username was requested
                     if (newUsername) {
                         // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                             // Look for user in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
@@ -528,7 +517,7 @@ module.exports = function(router){
                     // Check if change to e-mail was requested
                     if (newEmail) {
                         // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                             // Look for user that needs to be editted
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
@@ -559,7 +548,7 @@ module.exports = function(router){
                     // Check if a change to permission was requested
                     if (newPermission) {
                         // Check if user making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'moderator') {
+                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
                             // Look for user to edit in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
@@ -600,8 +589,8 @@ module.exports = function(router){
                                                 });
                                             }
                                         }
-                                        // Check if attempting to set the 'moderator' permission
-                                        if (newPermission === 'moderator') {
+                                        // Check if attempting to set the 'faculty' permission
+                                        if (newPermission === 'faculty') {
                                             // Check if the current permission is 'admin'
                                             if (user.permission === 'admin') {
                                                 // Check if user making changes has access

@@ -16,9 +16,12 @@
                     </div>
                     <label>Semester</label>
                     <div class="input-group">
-                        <select class="form-control" ng-model="semester.courseData.semester">
-                            <option ng-repeat="sem in semester.sems" value="{{ sem.title }}">{{ sem.title }}</option>
-                        </select>
+                    <select class="form-control" ng-model="semester.courseData.semester" ng-options="sem.title for sem in semester.sems">
+                        <option value=""></option>
+                    </select>
+                        <!-- <select class="form-control" ng-model="semester.courseData.semester">
+                            <option ng-repeat="sem in semester.sems" value="{{ sem }}">{{ sem.title }}</option>
+                        </select> -->
                         <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
                     </div>
                 </div>

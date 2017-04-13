@@ -35,9 +35,9 @@
         <tr ng-repeat="course in semester.courses">
             <td>{{ course.title }}</td>
             <td>{{ course.name }}</td>
-            <td>{{ course.semester }}</td>
-            <td>{{ course.startDate }}</td>
-            <td>{{ course.endDate }}</td>
+            <td>{{ course.semester.title }}</td>
+            <td>{{ course.semester.startDate }}</td>
+            <td>{{ course.semester.endDate }}</td>
         </tr>
         <!-- End: Table -->
     </table>

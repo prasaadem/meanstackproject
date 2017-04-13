@@ -28,11 +28,28 @@ angular.module('semesterController', ['semServices'])
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-        console.log(courseData);
 
             Course.createCourse(app.courseData).then(function(data){
-            console.log(data.data.success);
-            console.log(data.data.message);
+            if (data.data.success){
+                app.loading = false;
+                app.succMsg = data.data.message;
+                $timeout(function(){
+                    $location.path('/');
+                },2000);
+            }else{
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+            });
+    };
+
+    this.takeCourse = function(data){
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+        console.log(data);
+            Course.takeCourse(app.data).then(function(data){
+
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;

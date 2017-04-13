@@ -101,6 +101,8 @@ angular.module('mainController',['authServices','userServices'])
             Auth.getUser().then(function(data){
                 app.username = data.data.username;
                 app.userEmail = data.data.email;
+                app.courses = data.data.courses;
+                // console.log(app.courses);
                 User.getPermission().then(function(data){
                     if (data.data.permission === 'admin') {
                         app.admin = true;
