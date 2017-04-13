@@ -1,8 +1,11 @@
+var express = require('express');
 var User = require('../models/user'); //User Model
 var Course = require('../models/course'); //Course Model
 var Semester = require('../models/semester'); //Semester Model
 var jwt = require('jsonwebtoken');
+var path = require('path');
 var secret = 'pld';
+var fs = require('fs');
 
 module.exports = function(router){
 
@@ -99,57 +102,68 @@ module.exports = function(router){
         sem.title = req.body.semTitle;
         sem.startDate = req.body.startDate;
         sem.endDate = req.body.endDate;
+        var directoryPath = path.join(__dirname + '/../uploads/' +sem.title);
 
-        if(req.body.semTitle == null || req.body.semTitle == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+        if (fs.existsSync(directoryPath)) {
             res.json({
                 success: false,
-                message: 'Enter all required information'
+                message: 'Semester Folder already exists'
             });
         }else{
-            sem.save(function(err){
-                if (err){
-                    if (err.errors != null) {
-                        if (err.errors.semTitle) {
-                            res.json({
+            if(req.body.semTitle == null || req.body.semTitle == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+                res.json({
+                    success: false,
+                    message: 'Enter all required information'
+                });
+            }else{
+                sem.save(function(err){
+                    if (err){
+                        if (err.errors != null) {
+                            if (err.errors.semTitle) {
+                                res.json({
+                                    success: false,
+                                    message: err.errors.semTitle.message
+                                }); 
+                            }else if (err.errors.startDate) {
+                                res.json({
+                                    success: false,
+                                    message: err.errors.startDate.message
+                                }); 
+                            }else if (err.errors.endDate) {
+                                res.json({
+                                    success: false,
+                                    message: err.errors.endDate.message
+                                });  
+                            }else{
+                                res.json({
+                                    success: false,
+                                    message: err
+                                }); 
+                        }
+                        }else if(err){
+                            if (err.code == 11000) {
+                                res.json({
                                 success: false,
-                                message: err.errors.semTitle.message
-                            }); 
-                        }else if (err.errors.startDate) {
-                            res.json({
-                                success: false,
-                                message: err.errors.startDate.message
-                            }); 
-                        }else if (err.errors.endDate) {
-                            res.json({
-                                success: false,
-                                message: err.errors.endDate.message
-                            });  
-                        }else{
-                            res.json({
+                                message: 'Semester is already there!'
+                            });
+                            }else{
+                                res.json({
                                 success: false,
                                 message: err
-                            }); 
-                    }
-                    }else if(err){
-                        if (err.code == 11000) {
-                            res.json({
-                            success: false,
-                            message: 'Semester is already there!'
+                            });
+                            } 
+                        }
+                    }else{
+                        fs.mkdir(directoryPath, function(err){
+                            if (err) throw err;
                         });
-                        }else{
-                            res.json({
-                            success: false,
-                            message: err
-                        });
-                        } 
+                        res.json({
+                            success: true,
+                            message: 'Semester Created!'
+                        });        
                     }
-                }else{
-                    res.json({
-                        success: true,
-                        message: 'Semester Created!'
-                    });        
-                }
-            });
+                });
+        }
         }
     });
 
@@ -159,8 +173,15 @@ module.exports = function(router){
         course.title = req.body.title;
         course.name = req.body.name;
         course.semester = req.body.semester;
+        var directoryPath = path.join(__dirname + '/../uploads/'+ course.semester +'/' +course.title);
 
-        Semester.findOne({title: course.semester}).select('startDate endDate').exec(function(err,sem){
+        if (fs.existsSync(directoryPath)) {
+            res.json({
+                success: false,
+                message: 'Course Folder already exists'
+            });
+        }else{
+            Semester.findOne({title: course.semester}).select('startDate endDate').exec(function(err,sem){
             if (err) throw err;
             if (!sem) {
                 res.json({success:false, message: "No semester Information Found"});
@@ -168,7 +189,7 @@ module.exports = function(router){
                 course.startDate = sem.startDate;
                 course.endDate = sem.endDate;
             }
-        });
+            });
 
         if(req.body.title == null || req.body.title == "" || req.body.name == null || req.body.name == "" || req.body.semester == null || req.body.semester == ""){
             res.json({
@@ -214,12 +235,16 @@ module.exports = function(router){
                         } 
                     }
                 }else{
+                    fs.mkdir(directoryPath, function(err){
+                        if (err) throw err;
+                    });
                     res.json({
                         success: true,
                         message: 'Course Created!'
                     });        
                 }
             });
+        }
         }
     });
 
