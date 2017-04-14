@@ -420,7 +420,6 @@ module.exports = function(router){
     router.put('/takeCourse', function(req, res) {
         if (req.body.course) var newCourse = new Course();
         newCourse = req.body.course;
-
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
@@ -428,24 +427,46 @@ module.exports = function(router){
                 if (!mainUser) {
                     res.json({ success: false, message: "no user found" });
                 }else{
-                    var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title + '/' + mainUser.username);
-                    if (fs.existsSync(directoryPath)) {
-                        res.json({
-                            success: false,
-                            message: 'You have already taken this course.'
-                        });
-                    }else{
-                        fs.mkdir(directoryPath, function(err){
-                            if (err) throw err;
-                        });
-                        mainUser.courses.push(newCourse);
-                        mainUser.save(function(err) {
-                        if (err) {
-                            console.log(err); // Log any errors to the console
-                        } else {
-                            res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                    if (mainUser.permission === 'faculty') {
+                        var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title + '/' + mainUser.username);
+                        if (fs.existsSync(directoryPath)) {
+                            res.json({
+                                success: false,
+                                message: 'You have already taken this course.'
+                            });
+                        }else{
+                            fs.mkdir(directoryPath, function(err){
+                                if (err) throw err;
+                            });
+                            mainUser.courses.push(newCourse);
+                            mainUser.save(function(err) {
+                            if (err) {
+                                console.log(err); // Log any errors to the console
+                            } else {
+                                res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                            }
+                         });
                         }
-                     });
+                    }else if(mainUser.permission === 'student')
+                    {
+                        var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title);
+                        console.log(directoryPath);
+                        fs.readdir(directoryPath,function(err,files){
+                            if (err) throw err;
+                            var pending = files.length;
+                            if (pending !== 0) {
+                                mainUser.courses.push(newCourse);
+                                mainUser.save(function(err) {
+                                    if (err) {
+                                        console.log(err); // Log any errors to the console
+                                    } else {
+                                        res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                                    }
+                                });
+                            }else{
+                                res.json({ success: false, message: 'Course unavailable!' });
+                            }
+                        });
                     }
                 }
             }
@@ -749,6 +770,36 @@ module.exports = function(router){
             }else{
                 console.log(assignments);
                 res.json({success:true, assignments: assignments});
+            }
+        });
+    });
+
+    // Route to uploadAssignment
+    router.post('/uploadAssignment/:sem', function(req, res) {
+        var deletedUser = req.params.username; // Assign the username from request parameters to a variable
+        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                // Check if current user was found in database
+                if (!mainUser) {
+                    res.json({ success: false, message: 'No user found' }); // Return error
+                } else {
+                    // Check if curent user has admin access
+                    if (mainUser.permission !== 'admin') {
+                        res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
+                    } else {
+                        // Fine the user that needs to be deleted
+                        User.findOneAndRemove({ username: deletedUser }, function(err, user) {
+                            if (err) {
+                                
+                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+                            } else {
+                                res.json({ success: true }); // Return success status
+                            }
+                        });
+                    }
+                }
             }
         });
     });

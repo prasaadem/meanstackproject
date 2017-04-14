@@ -36,6 +36,12 @@
             <td>{{ sem.name }}</td>
             <td>{{ sem.startDate }}</td>
             <td>{{ sem.endDate }}</td>
+            <td ng-show="main.isLoggedIn && main.student">
+                <input class="btn btn-default btn-file" type = "file" file-model = "myFile"/>
+            </td>
+            <td ng-show="main.isLoggedIn && main.student">
+                <button class="btn btn-default btn-file" ng-click = "uploadFile()">Upload</button>
+            </td>
         </tr>
         <!-- End: Table -->
     </table>

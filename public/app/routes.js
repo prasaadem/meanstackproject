@@ -110,7 +110,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,
-        permission: ['faculty']
+        permission: ['faculty', 'student']
     })
 
     .when('/viewCourse/:id', {
@@ -118,7 +118,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,
-        permission: ['faculty']
+        permission: ['faculty', 'student']
     })
 
     .when('/newAssignment',{
@@ -134,7 +134,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,
-        permission: ['faculty']
+        permission: ['faculty','student']
     })
 
     .otherwise({redirectTo:'/'});

@@ -96,7 +96,7 @@
                 <li><a href="/showCourse">Available Courses</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Assignments</li>
-                <li><a href="/newAssignment">Add Assignment</a></li>
+                <li><a href="/newAssignment" ng-show="main.isLoggedIn && main.faculty">Add Assignment</a></li>
                 <li><a href="/viewAssignments">View Assignments</a></li>
               </ul>
             </li>

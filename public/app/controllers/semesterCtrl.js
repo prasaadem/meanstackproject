@@ -69,7 +69,6 @@ angular.module('semesterController', ['semServices','userServices'])
         app.loading = true;
         console.log(data);
             Course.takeCourse(app.data).then(function(data){
-
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
@@ -81,6 +80,19 @@ angular.module('semesterController', ['semServices','userServices'])
                 app.errorMsg = data.data.message;
             }
             });
+    };
+
+    this.uploadAssignment = function(sem) {
+        // Run function to delete a user
+        console.log('called');
+        Assignment.uploadAssignment(sem).then(function(data) {
+            // Check if able to delete user
+            if (data.data.success) {
+                
+            } else {
+                app.showMoreError = data.data.message; // Set error message
+            }
+        });
     };
 
     var app = this;
@@ -199,6 +211,44 @@ angular.module('semesterController', ['semServices','userServices'])
         });
     }
 
+    function getStudentAssignments() {
+        // Runs function to get all the users from database
+        Assignment.getAssignments().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                
+                data.data.assignments.forEach(function(entry) {
+                    app.user.courses.forEach(function(course) {
+                        if (entry.course._id === course._id) {
+                            app.assignments.push(entry);
+                        }
+                    });
+                });
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    function getStudentAssignmentsById() {
+        // Runs function to get all the users from database
+        Assignment.getAssignments().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                
+                data.data.assignments.forEach(function(entry) {
+                        if (entry.course._id === $routeParams.id) {
+                            app.courseAssignments.push(entry);
+                        }
+                });
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
     User.getmyCourses().then(function(data) {
         if (data.data.success) {
                 // Check which permissions the logged in user has
@@ -215,4 +265,6 @@ angular.module('semesterController', ['semServices','userServices'])
     getmyCourses();
     getAssignments();
     getAssignmentFromId();
+    getStudentAssignments();
+    getStudentAssignmentsById();
 });

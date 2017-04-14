@@ -22,6 +22,11 @@ angular.module('semServices',[])
         return $http.get('/api/getAssignments/');
     }
 
+    // Delete a user
+    assignmentFactory.uploadAssignment = function(sem) {
+        return $http.delete('/api/uploadAssignment/' + sem);
+    };
+
    return assignmentFactory;
 })
 
@@ -37,7 +42,6 @@ angular.module('semServices',[])
     };
 
     courseFactory.takeCourse = function(data){
-        console.log('came here');
         return $http.put('/api/takeCourse',data);
     };
 
