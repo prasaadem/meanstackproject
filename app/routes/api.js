@@ -11,7 +11,8 @@ var multer = require('multer');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './app/uploads/')
+    console.log(req.decoded.user);
+    cb(null, './app/uploads/');
   },
   filename: function (req, file, cb) {
     if(!file.originalname.match(/\.(pdf|doc|docx)$/)){
@@ -34,29 +35,31 @@ module.exports = function(router){
     //http://localhost:PORT/api/users
     //User Registration Route
 
-    router.post('/addAss',function(req,res){
-        var assignment = new Assignment();
-        assignment.name = req.body.name;
-        assignment.course = req.body.course;
-        assignment.user = req.body.user;
-        assignment.startDate = req.body.startDate;
-        assignment.endDate = req.body.endDate;
+    // router.post('/addAss',function(req,res){
+    //     var assignment = new Assignment();
+    //     assignment.name = req.body.name;
+    //     assignment.course = req.body.course;
+    //     assignment.user = req.body.user;
+    //     assignment.startDate = req.body.startDate;
+    //     assignment.endDate = req.body.endDate;
 
-        assignment.save(function(err){
-            if (err) {
-                res.json({
-                    success: false,
-                    message: err
-                });
-            }else{
-                res.json({
-                    success: true,
-                    message: 'Saved'
-                });
-            }
+    //     console.log(course);
+    //     assignment.save(function(err){
+    //         if (err) {
+    //             res.json({
+    //                 success: false,
+    //                 message: err
+    //             });
+    //         }else{
+    //             res.json({
+    //                 success: true,
+    //                 message: 'Saved',
+    //                 assignment: assignment
+    //             });
+    //         }
             
-        });
-    });
+    //     });
+    // });
 
     router.post('/users',function(req,res){
         var user = new User();
@@ -198,6 +201,8 @@ module.exports = function(router){
         course.title = req.body.title;
         course.name = req.body.name;
         course.semester = req.body.semester;
+        course.assignments = new Array();
+        course.students = new Array();
         var directoryPath = path.join(__dirname + '/../uploads/'+ course.semester.title +'/' +course.title);
 
         if (fs.existsSync(directoryPath)) {
@@ -476,13 +481,15 @@ module.exports = function(router){
                             if (err) throw err;
                             var pending = files.length;
                             if (pending !== 0) {
-                                mainUser.courses.push(newCourse);
-                                mainUser.save(function(err) {
+                                Course.findOne({ name: newCourse.name }, function(err, course) {
+                                    course.students.push(mainUser);
+                                    course.save(function(err) {
                                     if (err) {
                                         console.log(err); // Log any errors to the console
                                     } else {
-                                        res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                                        res.json({ success: true, message: 'Registered for course!' }); // Return success message
                                     }
+                                });
                                 });
                             }else{
                                 res.json({ success: false, message: 'Course unavailable!' });
@@ -742,13 +749,18 @@ module.exports = function(router){
         console.log(req);
         var assignment = new Assignment();
         assignment.name = req.body.name;
-        assignment.course = req.body.course;
         assignment.user = req.decoded.user;
         assignment.startDate = req.body.startDate;
         assignment.endDate = req.body.endDate;
+
+        var assignments = new Array();
+        assignments = req.body.course.assignments;
+
+        var course = req.body.course;
+
         var user = req.decoded.username;
         
-        var directoryPath = path.join(__dirname + '/../uploads/'+ assignment.course.semester.title +'/' + assignment.course.title + '/' + user + '/' + assignment.name);
+        var directoryPath = path.join(__dirname + '/../uploads/'+ req.body.course.semester.title +'/' + req.body.course.title + '/' + user + '/' + assignment.name);
 
         if (fs.existsSync(directoryPath)) {
             res.json({
@@ -757,7 +769,7 @@ module.exports = function(router){
             });
         }else{
 
-        if(req.body.course == null || req.body.course == "" || req.body.name == null || req.body.name == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+        if(req.body.name == null || req.body.name == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
             res.json({
                 success: false,
                 message: 'Enter all required information'
@@ -773,10 +785,37 @@ module.exports = function(router){
                     fs.mkdir(directoryPath, function(err){
                         if (err) throw err;
                     });
-                    res.json({
-                        success: true,
-                        message: 'Assignment Created!'
-                    });        
+                    Course.findOne({ name: course.name }, function(err, course) {
+                        if (err) {
+                            res.json({
+                                success: false,
+                                message: err
+                            });
+                        }else{
+                            if (!course) {
+                                res.json({
+                                success: false,
+                                message: 'No course found'
+                            });
+                            }else{
+                                course.assignments.push(assignment);
+                                course.save(function(err){
+                                    if (err) {
+                                        res.json({
+                                            success: false,
+                                            message: err
+                                        });
+                                    }else{
+                                        res.json({
+                                                    success: true,
+                                                    message: 'Assignment Created!',
+                                                    assignment: assignment
+                                                }); 
+                                    }
+                                });
+                            }
+                        }
+                    });            
                 }
             });
         }
@@ -813,6 +852,12 @@ module.exports = function(router){
         }
     });
     });
+
+    // router.put('/setAssignmentForCourse', function(req, res) {
+    //     if (req.body.assignment) var newAssignment = new Assignment();
+    //     newAssignment = req.body.assignment;
+    //     console.log(newAssignment);
+    // });
 
     return router;
 }

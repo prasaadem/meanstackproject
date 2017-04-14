@@ -32,9 +32,6 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
             }else{
                 app.loading = false;
                 app.errorMsg = data.data.message;
@@ -86,7 +83,6 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-        console.log(data);
             Course.takeCourse(app.data).then(function(data){
             if (data.data.success){
                 app.loading = false;
@@ -113,7 +109,11 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 
     app.sems = [];
     app.courses = [];
+    app.studentCourses = [];
     app.assignments = [];
+    app.studentAssignments = [];
+    app.studentCourseAssignments = [];
+    app.facultyCourseAssignments = [];
     app.courseAssignments = [];
     
     // Function: get all the users from database
@@ -133,7 +133,7 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 
     function getCourses() {
         // Runs function to get all the users from database
-        Semester.getCourses().then(function(data) {
+        Course.getCourses().then(function(data) {
             // Check if able to get data from database
             if (data.data.success) {
                 // Check which permissions the logged in user has
@@ -145,47 +145,20 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         });
     }
 
-    function getmyCourses() {
-        // Runs function to get all the users from database
-        User.getmyCourses().then(function(data) {
-            if (data.data.success) {
-                // Check which permissions the logged in user has
-                app.user = data.data.user;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-
-    function getCourseFromId() {
-        // Runs function to get all the users from database
-        User.getmyCourses().then(function(data) {
-            if (data.data.success) {
-                // Check which permissions the logged in user has
-                app.user = data.data.user;
-                app.user.courses.forEach(function(entry) {
-                    if (entry._id === $routeParams.id) {
-                        app.currentCourse = entry;
-                    }
-                });
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+    User.getFacultyCourses().then(function(data) {
+        if (data.data.success) {
+            app.user = data.data.user;
+        } else {
+            app.errorMsg = data.data.message; // Set error message
+            app.loading = false; // Stop loading icon
+        }
+    });
 
     function getAssignments() {
         // Runs function to get all the users from database
         Assignment.getAssignments().then(function(data) {
             if (data.data.success) {
-                // Check which permissions the logged in user has
-                
                 data.data.assignments.forEach(function(entry) {
-                    if (entry.user._id === app.user._id) {
-                        app.assignments.push(entry);
-                    }
                 });
             } else {
                 app.errorMsg = data.data.message; // Set error message
@@ -194,40 +167,99 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         });
     }
 
-    function getAssignmentFromId() {
-        app.a = [];
-        Assignment.getAssignments().then(function(data) {
+    function getFacultyAssignmentFromId() {
+        User.getFacultyCourses().then(function(data) {
             if (data.data.success) {
-                // Check which permissions the logged in user has
-                
-                data.data.assignments.forEach(function(entry) {
-                    if (entry.user._id === app.user._id) {
-                        app.a.push(entry);
-                    }
-                });
-                app.a.forEach(function(entry) {
-                    if (entry.course._id === $routeParams.id) {
-                        app.courseAssignments.push(entry);
-                    }
-                });
+                app.user = data.data.user;
             } else {
                 app.errorMsg = data.data.message; // Set error message
                 app.loading = false; // Stop loading icon
             }
         });
-    }
+    
+    Course.getCourses().then(function(data) {
+        if (data.data.success) {
+            data.data.courses.forEach(function(course){
+                app.user.courses.forEach(function(c){
+                    if (course._id === c._id) {
+                        course.assignments.forEach(function(assignment){
+                            if (course._id === $routeParams.id) {
+                                app.facultyCourseAssignments.push(assignment);
+                            }
+                        });
+                    }   
+                });
+            });
+        }else {
+            app.errorMsg = data.data.message; // Set error message
+            app.loading = false; // Stop loading icon
+        }
+    });
+}
 
-    function getStudentAssignments() {
-        // Runs function to get all the users from database
-        Assignment.getAssignments().then(function(data) {
+    function getCourseFromId() {
+        Course.getCourses().then(function(data) {
+            // Check if able to get data from database
             if (data.data.success) {
-                // Check which permissions the logged in user has
-                
-                data.data.assignments.forEach(function(entry) {
-                    app.user.courses.forEach(function(course) {
-                        if (entry.course._id === course._id) {
-                            app.assignments.push(entry);
+                data.data.courses.forEach(function(course){
+                    console.log(course._id);
+                    console.log($routeParams.id);
+                        if (course._id === $routeParams.id) {
+                            app.currentCourse = course;
                         }
+                }); 
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    function getStudentCourses() {
+        Course.getCourses().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+                data.data.courses.forEach(function(course){
+                    course.students.forEach(function(student){
+                        if (student.username === app.user.username) {
+                            app.studentCourses.push(course);
+                        }
+                    });
+                });
+                
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+    
+    function getStudentAssignments() {
+        Course.getCourses().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+                data.data.courses.forEach(function(course){
+                    course.assignments.forEach(function(assignment){
+                            app.studentAssignments.push(assignment);
+                    });
+                });
+                
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    function getStudentAssignmentsById() {
+        Course.getCourses().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+                data.data.courses.forEach(function(course){
+                    course.assignments.forEach(function(assignment){
+                        if (course._id === $routeParams.id) {
+                            app.studentCourseAssignments.push(assignment);
+                        }   
                     });
                 });
             } else {
@@ -237,40 +269,15 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         });
     }
 
-    function getStudentAssignmentsById() {
-        // Runs function to get all the users from database
-        Assignment.getAssignments().then(function(data) {
-            if (data.data.success) {
-                // Check which permissions the logged in user has
-                
-                data.data.assignments.forEach(function(entry) {
-                        if (entry.course._id === $routeParams.id) {
-                            app.courseAssignments.push(entry);
-                        }
-                });
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-
-    User.getmyCourses().then(function(data) {
-        if (data.data.success) {
-                // Check which permissions the logged in user has
-            app.user = data.data.user;
-        } else {
-            app.errorMsg = data.data.message; // Set error message
-            app.loading = false; // Stop loading icon
-        }
-    });
-
-    getCourseFromId();
     getSemesters();
     getCourses();
-    getmyCourses();
+
     getAssignments();
-    getAssignmentFromId();
+    getFacultyAssignmentFromId();
+
+    getCourseFromId();
+
+    getStudentCourses();
     getStudentAssignments();
     getStudentAssignmentsById();
 });

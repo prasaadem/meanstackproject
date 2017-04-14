@@ -41,7 +41,7 @@ angular.module('userServices',[])
         return $http.put('/api/edit', id);
     };
 
-    userFactory.getmyCourses = function(){
+    userFactory.getFacultyCourses = function(){
         return $http.get('/api/getmyCourses/');
     }
 

@@ -26,16 +26,14 @@
     <!-- Start: Table -->
     <table class="table">
         <tr>
-            <th>Course</th>
             <th>Name</th>
             <th>Start Date</th>
             <th>End Date</th>
         </tr>
-        <tr ng-repeat="sem in semester.assignments">
-            <td>{{ sem.course.title }}</td>
-            <td>{{ sem.name }}</td>
-            <td>{{ sem.startDate }}</td>
-            <td>{{ sem.endDate }}</td>
+        <tr ng-repeat="assignment in semester.studentAssignments">
+            <td>{{ assignment.name }}</td>
+            <td>{{ assignment.startDate }}</td>
+            <td>{{ assignment.endDate }}</td>
             <td>
                 <form ng-submit="Submit();">
                 <label class="btn btn-success">

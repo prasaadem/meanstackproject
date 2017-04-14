@@ -37,13 +37,19 @@ angular.module('semServices',[])
         return $http.post('/api/course',courseData);
     };
 
-    semFactory.getCourses = function(){
+    courseFactory.getCourses = function(){
         return $http.get('/api/getCourses/');
     };
 
     courseFactory.takeCourse = function(data){
         return $http.put('/api/takeCourse',data);
     };
+
+    courseFactory.setAssignmentForCourse = function(data){
+        return $http.put('/api/setAssignmentForCourse',data);
+    };
+
+
 
    return courseFactory;
 });

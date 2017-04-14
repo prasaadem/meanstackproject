@@ -12,7 +12,18 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="course in semester.user.courses">
+    <tr ng-repeat="course in semester.studentCourses" ng-show="main.student">
+      <td>{{semester.user.username}}</td>
+      <td>{{semester.user.email}}</td>
+      <td>{{ course.name }}</td>
+      <td>{{ course.title }}</td>
+      <td>
+      <a href="/viewCourse/{{ course._id }}">
+          <button type="button" class="btn btn-primary">View</button>
+      </a>
+      </td>
+    </tr>
+    <tr ng-repeat="course in semester.user.courses" ng-show="main.faculty">
       <td>{{semester.user.username}}</td>
       <td>{{semester.user.email}}</td>
       <td>{{ course.name }}</td>
