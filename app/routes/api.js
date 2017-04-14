@@ -4,9 +4,30 @@ var Course = require('../models/course'); //Course Model
 var Assignment = require('../models/assignment'); //Course Model
 var Semester = require('../models/semester'); //Semester Model
 var jwt = require('jsonwebtoken');
-var path = require('path');
+var path = require('path');     //used for file path
 var secret = 'pld';
 var fs = require('fs');
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './app/uploads/')
+  },
+  filename: function (req, file, cb) {
+    if(!file.originalname.match(/\.(pdf|doc|docx)$/)){
+        var err = new Error();
+        err.code = 'filetype';
+        return cb(err);
+    }else{
+        cb(null, Date.now() + '_' + file.originalname );
+    }
+  }
+});
+
+var upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 10000000 } 
+}).single('myfile');
 
 module.exports = function(router){
 
@@ -768,40 +789,29 @@ module.exports = function(router){
             if (!assignments) {
                 res.json({success:false, message: 'No assignments to display'});
             }else{
-                console.log(assignments);
                 res.json({success:true, assignments: assignments});
             }
         });
     });
 
-    // Route to uploadAssignment
-    router.post('/uploadAssignment/:sem', function(req, res) {
-        var deletedUser = req.params.username; // Assign the username from request parameters to a variable
-        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if current user was found in database
-                if (!mainUser) {
-                    res.json({ success: false, message: 'No user found' }); // Return error
-                } else {
-                    // Check if curent user has admin access
-                    if (mainUser.permission !== 'admin') {
-                        res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                    } else {
-                        // Fine the user that needs to be deleted
-                        User.findOneAndRemove({ username: deletedUser }, function(err, user) {
-                            if (err) {
-                                
-                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                            } else {
-                                res.json({ success: true }); // Return success status
-                            }
-                        });
-                    }
-                }
+    router.post('/upload', function (req, res) {
+        upload(req, res, function (err) {
+        if (err) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+                res.json({success:false, message: 'File size is too large. Max limit is 10MB'});
+          }else if(err.code === 'filetype'){
+                res.json({success:false, message: 'Invalid file type'});
+          }else{
+                res.json({success:false, message: err});
+          }
+        }else{
+            if (!req.file) {
+                    res.json({success:false, message: 'No file was selected'});
+            }else{
+                    res.json({success:true, message: 'File was uploaded!'});
             }
-        });
+        }
+    });
     });
 
     return router;

@@ -23,8 +23,8 @@ angular.module('semServices',[])
     }
 
     // Delete a user
-    assignmentFactory.uploadAssignment = function(sem) {
-        return $http.delete('/api/uploadAssignment/' + sem);
+    assignmentFactory.upload = function() {
+        return $http.post('/api/upload/');
     };
 
    return assignmentFactory;

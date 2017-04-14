@@ -1,7 +1,26 @@
-angular.module('semesterController', ['semServices','userServices'])
+angular.module('semesterController', ['semServices','userServices','fileModelDirective','uploadFileService'])
 
 // Controller: User to control the management page and managing of user accounts
-.controller('semesterCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams,Assignment) {
+.controller('semesterCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams,Assignment,uploadFile) {
+
+    $scope.file = {};
+    $scope.Submit = function(){
+        $scope.uploading = true;
+        uploadFile.upload($scope.file).then(function(data){
+            if (data.data.success) {
+                $scope.uploading = false;
+                $scope.alert = 'alert alert-success';
+                $scope.message = data.data.message;
+                $scope.file = {};
+            }else{
+                $scope.uploading = false;
+                $scope.alert = 'alert alert-danger';
+                $scope.message = data.data.message;
+                $scope.file = {};
+            }
+            console.log(data.data.message);
+        });
+    };
 
     this.newAssignment = function(data){
         var app = this;
@@ -80,19 +99,6 @@ angular.module('semesterController', ['semServices','userServices'])
                 app.errorMsg = data.data.message;
             }
             });
-    };
-
-    this.uploadAssignment = function(sem) {
-        // Run function to delete a user
-        console.log('called');
-        Assignment.uploadAssignment(sem).then(function(data) {
-            // Check if able to delete user
-            if (data.data.success) {
-                
-            } else {
-                app.showMoreError = data.data.message; // Set error message
-            }
-        });
     };
 
     var app = this;

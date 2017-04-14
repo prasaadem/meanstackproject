@@ -36,17 +36,25 @@
             <td>{{ sem.name }}</td>
             <td>{{ sem.startDate }}</td>
             <td>{{ sem.endDate }}</td>
-            <td ng-show="main.isLoggedIn && main.student">
-                <input class="btn btn-default btn-file" type = "file" file-model = "myFile"/>
-            </td>
-            <td ng-show="main.isLoggedIn && main.student">
-                <button class="btn btn-default btn-file" ng-click = "uploadFile()">Upload</button>
+            <td>
+                <form ng-submit="Submit();">
+                <label class="btn btn-success">
+                    Browse
+                    <input type='file' file-model="file.upload" name='myfile' ng-disabled="uploading" style="display:none;">
+                </label>
+                    <button class="btn btn-primary">Upload</button>
+                </form>
             </td>
         </tr>
         <!-- End: Table -->
     </table>
 </div>
 <!-- User Management Table -->
+<!-- Custom Message -->
+<div ng-show="message">
+    <div ng-class="alert">{{ message }}</div>
+</div>
+<!-- Custom Message -->
 
 <br>
 <br>
