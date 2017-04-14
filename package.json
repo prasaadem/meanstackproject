@@ -25,6 +25,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "graceful-fs": "^4.1.11",
     "jsonwebtoken": "^7.3.0",
     "mongoose": "^4.9.2",
     "mongoose-title-case": "0.0.4",

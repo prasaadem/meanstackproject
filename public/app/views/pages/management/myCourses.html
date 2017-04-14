@@ -12,11 +12,16 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="course in main.courses">
-      <td>{{main.username}}</td>
-      <td>{{main.userEmail}}</td>
+    <tr ng-repeat="course in semester.user.courses">
+      <td>{{semester.user.username}}</td>
+      <td>{{semester.user.email}}</td>
       <td>{{ course.name }}</td>
       <td>{{ course.title }}</td>
+      <td>
+      <a href="/viewCourse/{{ course._id }}">
+          <button type="button" class="btn btn-primary">View</button>
+      </a>
+      </td>
     </tr>
   </tbody>
 </table>

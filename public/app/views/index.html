@@ -81,8 +81,23 @@
                 <li><a href="/showCourse">Available Courses</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Assignments</li>
-                <li><a href="#">Add Assignment</a></li>
-                <li><a href="#">View Assignments</a></li>
+                <li><a href="/newAssignment">Add Assignment</a></li>
+                <li><a href="/viewAssignments">View Assignments</a></li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Management <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Courses</li>
+                <li><a href="/takeCourse">Take Course</a></li>
+                <li><a href="/myCourses">My Courses</a></li>
+                <li><a href="/showCourse">Available Courses</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Assignments</li>
+                <li><a href="/newAssignment">Add Assignment</a></li>
+                <li><a href="/viewAssignments">View Assignments</a></li>
               </ul>
             </li>
 

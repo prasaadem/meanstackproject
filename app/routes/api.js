@@ -1,6 +1,7 @@
 var express = require('express');
 var User = require('../models/user'); //User Model
 var Course = require('../models/course'); //Course Model
+var Assignment = require('../models/assignment'); //Course Model
 var Semester = require('../models/semester'); //Semester Model
 var jwt = require('jsonwebtoken');
 var path = require('path');
@@ -12,14 +13,15 @@ module.exports = function(router){
     //http://localhost:PORT/api/users
     //User Registration Route
 
-    router.post('/addUser',function(req,res){
-        var user = new User();
-        user.username = req.body.username;
-        user.password = req.body.password;
-        user.name = req.body.name;
-        user.email = req.body.email;
-        user.courses = req.body.courses;
-        user.save(function(err){
+    router.post('/addAss',function(req,res){
+        var assignment = new Assignment();
+        assignment.name = req.body.name;
+        assignment.course = req.body.course;
+        assignment.user = req.body.user;
+        assignment.startDate = req.body.startDate;
+        assignment.endDate = req.body.endDate;
+
+        assignment.save(function(err){
             if (err) {
                 res.json({
                     success: false,
@@ -27,7 +29,7 @@ module.exports = function(router){
                 });
             }else{
                 res.json({
-                    success: false,
+                    success: true,
                     message: 'Saved'
                 });
             }
@@ -244,26 +246,27 @@ module.exports = function(router){
                 res.json({success:false, message: 'Could not authenticate user'});
             }else{
                 if (req.body.password) {
-                    var validPassword = user.comparePassword(req.body.password);
+                    //var validPassword = user.comparePassword(req.body.password);
                 }else{
                     res.json({success:false, message: 'No password provided'});
                 }
-                if (!validPassword) {
-                    res.json({success:false, message: 'Could not authenticate password'});
-                }else{
+                //if (!validPassword) {
+                  //  res.json({success:false, message: 'Could not authenticate password'});
+                //}else{
                     var token = jwt.sign({
+                        user: user,
                         username: user.username,
                         email: user.email,
                         courses: user.courses
                     }, secret, {
-                        expiresIn: '1h'
+                        expiresIn: '24h'
                     });
                     res.json({
                         success: true,
                         message: 'User Validated!',
                         token: token
                     }); 
-                }
+                //}
             }
         });
     });
@@ -301,6 +304,7 @@ module.exports = function(router){
                 res.json({success:false, message: 'No user found'});
             }else{
                 var newToken = jwt.sign({
+                        user: user,
                         username: user.username,
                         email: user.email,
                         courses:user.courses
@@ -414,8 +418,9 @@ module.exports = function(router){
 
     
     router.put('/takeCourse', function(req, res) {
-        if (req.body.course) var newCourse = req.body.course;
-        console.log(newCourse);
+        if (req.body.course) var newCourse = new Course();
+        newCourse = req.body.course;
+
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
@@ -423,14 +428,25 @@ module.exports = function(router){
                 if (!mainUser) {
                     res.json({ success: false, message: "no user found" });
                 }else{
-                    mainUser.courses.push(newCourse);
-                    mainUser.save(function(err) {
+                    var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title + '/' + mainUser.username);
+                    if (fs.existsSync(directoryPath)) {
+                        res.json({
+                            success: false,
+                            message: 'You have already taken this course.'
+                        });
+                    }else{
+                        fs.mkdir(directoryPath, function(err){
+                            if (err) throw err;
+                        });
+                        mainUser.courses.push(newCourse);
+                        mainUser.save(function(err) {
                         if (err) {
                             console.log(err); // Log any errors to the console
                         } else {
                             res.json({ success: true, message: 'Course has been updated!' }); // Return success message
                         }
                      });
+                    }
                 }
             }
         });
@@ -665,6 +681,74 @@ module.exports = function(router){
                 res.json({success:false, message: err});
             }else{
                 res.json({success:true, courses:courses});
+            }
+        });
+    });
+
+    router.get('/getmyCourses',function(req,res){
+        User.findOne({username: req.decoded.username}).exec(function(err,user){
+            if (err) throw err;
+            if (!user) {
+                res.json({success:false, message: 'No courses to display'});
+            }else{
+                res.json({success:true, user: user});
+            }
+        });
+    });
+
+    router.post('/createAssignment',function(req,res){
+        console.log(req);
+        var assignment = new Assignment();
+        assignment.name = req.body.name;
+        assignment.course = req.body.course;
+        assignment.user = req.decoded.user;
+        assignment.startDate = req.body.startDate;
+        assignment.endDate = req.body.endDate;
+        var user = req.decoded.username;
+        
+        var directoryPath = path.join(__dirname + '/../uploads/'+ assignment.course.semester.title +'/' + assignment.course.title + '/' + user + '/' + assignment.name);
+
+        if (fs.existsSync(directoryPath)) {
+            res.json({
+                success: false,
+                message: 'Assignment Folder already exists'
+            });
+        }else{
+
+        if(req.body.course == null || req.body.course == "" || req.body.name == null || req.body.name == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+            res.json({
+                success: false,
+                message: 'Enter all required information'
+            });
+        }else{
+            assignment.save(function(err){
+                if (err){
+                    res.json({
+                        success: false,
+                        message: err
+                    });
+                }else{
+                    fs.mkdir(directoryPath, function(err){
+                        if (err) throw err;
+                    });
+                    res.json({
+                        success: true,
+                        message: 'Assignment Created!'
+                    });        
+                }
+            });
+        }
+        }
+    });
+
+    router.get('/getAssignments',function(req,res){
+        Assignment.find({}).exec(function(err,assignments){
+            if (err) throw err;
+            if (!assignments) {
+                res.json({success:false, message: 'No assignments to display'});
+            }else{
+                console.log(assignments);
+                res.json({success:true, assignments: assignments});
             }
         });
     });

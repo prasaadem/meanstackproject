@@ -1,7 +1,27 @@
-angular.module('semesterController', ['semServices'])
+angular.module('semesterController', ['semServices','userServices'])
 
 // Controller: User to control the management page and managing of user accounts
-.controller('semesterCtrl', function($http,$location,$timeout,Semester,Course) {
+.controller('semesterCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams,Assignment) {
+
+    this.newAssignment = function(data){
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+            Assignment.createAssignment(app.data).then(function(data){
+            console.log(data.data.success);
+            console.log(data.data.message);
+            if (data.data.success){
+                app.loading = false;
+                app.succMsg = data.data.message;
+                $timeout(function(){
+                    $location.path('/');
+                },2000);
+            }else{
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+            });
+    };
 
     this.addSemester = function(semData){
         var app = this;
@@ -75,6 +95,8 @@ angular.module('semesterController', ['semServices'])
 
     app.sems = [];
     app.courses = [];
+    app.assignments = [];
+    app.courseAssignments = [];
     
     // Function: get all the users from database
     function getSemesters() {
@@ -91,8 +113,6 @@ angular.module('semesterController', ['semServices'])
         });
     }
 
-    getSemesters();
-
     function getCourses() {
         // Runs function to get all the users from database
         Semester.getCourses().then(function(data) {
@@ -107,6 +127,92 @@ angular.module('semesterController', ['semServices'])
         });
     }
 
-    getCourses();
+    function getmyCourses() {
+        // Runs function to get all the users from database
+        User.getmyCourses().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                app.user = data.data.user;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
 
+    function getCourseFromId() {
+        // Runs function to get all the users from database
+        User.getmyCourses().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                app.user = data.data.user;
+                app.user.courses.forEach(function(entry) {
+                    if (entry._id === $routeParams.id) {
+                        app.currentCourse = entry;
+                    }
+                });
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    function getAssignments() {
+        // Runs function to get all the users from database
+        Assignment.getAssignments().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                
+                data.data.assignments.forEach(function(entry) {
+                    if (entry.user._id === app.user._id) {
+                        app.assignments.push(entry);
+                    }
+                });
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    function getAssignmentFromId() {
+        app.a = [];
+        Assignment.getAssignments().then(function(data) {
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                
+                data.data.assignments.forEach(function(entry) {
+                    if (entry.user._id === app.user._id) {
+                        app.a.push(entry);
+                    }
+                });
+                app.a.forEach(function(entry) {
+                    if (entry.course._id === $routeParams.id) {
+                        app.courseAssignments.push(entry);
+                    }
+                });
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    User.getmyCourses().then(function(data) {
+        if (data.data.success) {
+                // Check which permissions the logged in user has
+            app.user = data.data.user;
+        } else {
+            app.errorMsg = data.data.message; // Set error message
+            app.loading = false; // Stop loading icon
+        }
+    });
+
+    getCourseFromId();
+    getSemesters();
+    getCourses();
+    getmyCourses();
+    getAssignments();
+    getAssignmentFromId();
 });

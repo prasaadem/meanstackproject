@@ -40,6 +40,8 @@ angular.module('managementController', [])
                         app.deleteAccess = true; // Show delete button
                     } else if (data.data.permission === 'faculty') {
                         app.editAccess = false; // Show edit button
+                    }else if (data.data.permission === 'student') {
+                        app.editAccess = false; // Show edit button
                     }
                 } else {
                     app.errorMsg = 'Insufficient Permissions'; // Reject edit and delete options

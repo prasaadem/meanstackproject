@@ -1,0 +1,58 @@
+<div class="bootstrap-iso">
+ <div class="container-fluid">
+  <div class="row">
+   <div class="col-md-6 col-sm-6 col-xs-12">
+    <form ng-submit="semester.newAssignment(data);">
+     <div class="form-group ">
+      <label class="control-label " for="name">
+       Name
+      </label>
+      <input class="form-control" id="name" name="name" ng-model="semester.data.name" type="text"/>
+     </div>
+     <div class="form-group ">
+      <label class="control-label " for="select1">
+       Course
+      </label>
+      <select class="form-control" ng-model="semester.data.course" ng-options="course.title for course in semester.user.courses">
+                            <option value=""></option>
+        </select>
+     </div>
+     <div class="form-group ">
+      <label>Start Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" ng-model="semester.data.startDate" name="endDate" placeholder="MM/DD/YYYY" required ng-model = "semester.semData.endDate">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+     </div>
+     <div class="form-group ">
+      <label>End Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" ng-model="semester.data.endDate" name="endDate" placeholder="MM/DD/YYYY" required ng-model = "semester.semData.endDate">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+     </div>
+     <div class="form-group">
+      <div>
+       <button class="btn btn-primary" type="submit">Create Assignment</button>
+       <a href="/viewAssignments">
+          <button type="button" class="btn btn-primary">View Assignment</button>
+      </a>
+      </div>
+     </div>
+    </form>
+   </div>
+  </div>
+ </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="semester.succMsg">
+    <div class="alert alert-success">
+        {{ semester.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="semester.errorMsg">
+    <div class="alert alert-danger">
+        {{ semester.errorMsg }}
+    </div>
+</div>

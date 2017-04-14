@@ -53,7 +53,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'editCtrl',
         controllerAs: 'edit',
         authenticated: true,
-        permission: ['admin']
+        permission: ['admin', 'faculty']
     })
 
     // Route: Search Database Users
@@ -94,7 +94,7 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,
-        permission: ['admin','faculty']
+        // permission: ['admin','faculty', 'student']
     })
 
     .when('/takeCourse',{
@@ -102,11 +102,35 @@ var app = angular.module('appRoutes',['ngRoute'])
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,
-        permission: ['faculty']
+        permission: ['faculty', 'student']
     })
 
     .when('/myCourses',{
         templateUrl: 'app/views/pages/management/myCourses.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['faculty']
+    })
+
+    .when('/viewCourse/:id', {
+        templateUrl: 'app/views/pages/management/viewCourse.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['faculty']
+    })
+
+    .when('/newAssignment',{
+        templateUrl: 'app/views/pages/management/newAssignment.html',
+        controller: 'semesterCtrl',
+        controllerAs: 'semester',
+        authenticated: true,
+        permission: ['faculty']
+    })
+
+    .when('/viewAssignments',{
+        templateUrl: 'app/views/pages/management/viewAssignments.html',
         controller: 'semesterCtrl',
         controllerAs: 'semester',
         authenticated: true,

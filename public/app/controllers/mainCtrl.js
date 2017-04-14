@@ -99,6 +99,7 @@ angular.module('mainController',['authServices','userServices'])
             app.loadMe = true;
             app.isLoggedIn = true;
             Auth.getUser().then(function(data){
+                app.user = data.data.user;
                 app.username = data.data.username;
                 app.userEmail = data.data.email;
                 app.courses = data.data.courses;
@@ -118,6 +119,7 @@ angular.module('mainController',['authServices','userServices'])
                         app.admin = false;
                         app.faculty = false;
                         app.student = true;
+                        app.loadMe = true;
                     }
                     app.permission = data.data.permission;
                 });

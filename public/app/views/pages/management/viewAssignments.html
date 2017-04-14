@@ -1,8 +1,8 @@
 <!-- Heading -->
 <div class="row text-center">
     <div class="container">
-        <h2 class="section-heading">Course Management</h2>
-        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to view courses.</h3>
+        <h2 class="section-heading">Assignment Management</h2>
+        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to view assignments.</h3>
     </div>
 </div>
 <!-- Heading -->
@@ -21,23 +21,21 @@
 <div class="panel panel-primary">
     <!-- Heading -->
     <div class="panel-heading">
-        <strong>Course Management</strong>
+        <strong>Assignment Management</strong>
     </div>
     <!-- Start: Table -->
     <table class="table">
         <tr>
-            <th>Title</th>
+            <th>Course</th>
             <th>Name</th>
-            <th>Semester</th>
             <th>Start Date</th>
             <th>End Date</th>
         </tr>
-        <tr ng-repeat="course in semester.courses">
-            <td>{{ course.title }}</td>
-            <td>{{ course.name }}</td>
-            <td>{{ course.semester.title }}</td>
-            <td>{{ course.semester.startDate }}</td>
-            <td>{{ course.semester.endDate }}</td>
+        <tr ng-repeat="sem in semester.assignments">
+            <td>{{ sem.course.title }}</td>
+            <td>{{ sem.name }}</td>
+            <td>{{ sem.startDate }}</td>
+            <td>{{ sem.endDate }}</td>
         </tr>
         <!-- End: Table -->
     </table>
@@ -45,11 +43,7 @@
 <!-- User Management Table -->
 
 <br>
-<!-- User Management Table -->
-
 <br>
-
-
 
 <!-- Custom Error Message -->
 <div class="row show-hide-message" ng-show="sem.showMoreError">
