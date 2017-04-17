@@ -3,7 +3,7 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 // Controller: User to control the management page and managing of user accounts
 .controller('semesterCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams,Assignment,uploadFile) {
 
-var app = this;
+    var app = this;
 
     app.loading = true; // Start loading icon on page load
     app.accessDenied = true; // Hide table while loading
@@ -37,6 +37,25 @@ var app = this;
         });
     };
 
+    //Create new Assignment
+    this.createAssignment = function(assignmentData){
+        console.log('came here');
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+        Assignment.createAssignment(app.assignmentData).then(function(data){
+            console.log(data.data.success);
+            console.log(data.data.message);
+            if (data.data.success){
+                app.loading = false;
+                app.succMsg = data.data.message;
+            }else{
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+        });
+    };
+
     
     //Semester
     this.addSemester = function(semData){
@@ -44,7 +63,7 @@ var app = this;
         app.errorMsg = false;
         app.loading = true;
 
-            Semester.createSem(app.semData).then(function(data){
+        Semester.createSem(app.semData).then(function(data){
             console.log(data.data.success);
             console.log(data.data.message);
             if (data.data.success){
@@ -57,7 +76,7 @@ var app = this;
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
-            });
+        });
     };
 
     function getSemesters() {
@@ -80,7 +99,7 @@ var app = this;
         app.errorMsg = false;
         app.loading = true;
 
-            Course.createCourse(app.courseData).then(function(data){
+        Course.createCourse(app.courseData).then(function(data){
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
@@ -91,14 +110,14 @@ var app = this;
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
-            });
+        });
     };
 
     this.getCoursesForSem = function(data){
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-            Course.getCoursesForSem(app.data).then(function(data){
+        Course.getCoursesForSem(app.data).then(function(data){
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
@@ -108,11 +127,63 @@ var app = this;
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
-            });
+        });
     };
 
-    
+    //Faculty taking a course
+    this.takeCourse = function(courseData){
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+        console.log(app.courseData);
+        Course.takeCourse(app.courseData).then(function(data){
+            if (data.data.success){
+                app.loading = false;
+                app.succMsg = data.data.message;
+                $timeout(function(){
+                    $location.path('/');
+                },2000);
+            }else{
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+        });
+    };
 
+    //getfaculty courses
+    function getFacultyCourses(){
+        Course.getFacultyCourses().then(function(data) {
+            if (data.data.success) {
+                app.facultyCourses = data.data.courses;
+                app.facultySems = data.data.semesters;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    getFacultyCourses();
+
+
+     //get CourseFromId
+     function getCourseFromId() {
+        Course.getFacultyCourses().then(function(data) {
+            if (data.data.success) {
+                for (var i = data.data.courses.length - 1; i >= 0; i--) {
+                    if (data.data.courses[i]._id === $routeParams.id) {
+                        app.currentCourse = data.data.courses[i];
+                        app.currentSemester = data.data.semesters[i]; 
+                    }                
+                }
+            }else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    getCourseFromId();
 
 //     function getCourses() {
 //         // Runs function to get all the users from database
@@ -128,16 +199,6 @@ var app = this;
 //         });
 //     }
 
-//     function getFacultyCourses(){
-//         Course.getFacultyCourses().then(function(data) {
-//             if (data.data.success) {
-//                 app.facultyCourses = data.data.courses;
-//             } else {
-//                 app.errorMsg = data.data.message; // Set error message
-//                 app.loading = false; // Stop loading icon
-//             }
-//         });
-//     }
 
 //     // function getAssignments() {
 //     //     // Runs function to get all the users from database
@@ -161,7 +222,7 @@ var app = this;
 //     //             app.loading = false; // Stop loading icon
 //     //         }
 //     //     });
-    
+
 // //     Course.getCourses().then(function(data) {
 // //         if (data.data.success) {
 // //             data.data.courses.forEach(function(course){
@@ -181,24 +242,6 @@ var app = this;
 // //         }
 // //     });
 // // }
-
-//     function getCourseFromId() {
-
-//         Course.getCourses().then(function(data) {
-//             // Check if able to get data from database
-//             if (data.data.success) {
-//                 data.data.courses.forEach(function(course){
-//                         if (course._id === $routeParams.id) {
-//                             app.currentCourse = course;
-//                             app.currentSemester = sem;
-//                         }
-//                 }); 
-
-//             } else {
-//                 app.errorMsg = data.data.message; // Set error message
-//                 app.loading = false; // Stop loading icon
-//             }
-//         });
 
 
 //         Course.getCourse().then(function(data) {
@@ -221,14 +264,14 @@ var app = this;
 //     //                     }
 //     //                 });
 //     //             });
-                
+
 //     //         } else {
 //     //             app.errorMsg = data.data.message; // Set error message
 //     //             app.loading = false; // Stop loading icon
 //     //         }
 //     //     });
 //     // }
-    
+
 //     // function getStudentAssignments() {
 //     //     Course.getCourses().then(function(data) {
 //     //         // Check if able to get data from database
@@ -238,7 +281,7 @@ var app = this;
 //     //                         app.studentAssignments.push(assignment);
 //     //                 });
 //     //             });
-                
+
 //     //         } else {
 //     //             app.errorMsg = data.data.message; // Set error message
 //     //             app.loading = false; // Stop loading icon
@@ -265,24 +308,7 @@ var app = this;
 //     // }
 
 
-// this.newAssignment = function(data){
-//         var app = this;
-//         app.errorMsg = false;
-//         app.loading = true;
-//             Assignment.createAssignment(app.data).then(function(data){
-//             console.log(data.data.success);
-//             console.log(data.data.message);
-//             if (data.data.success){
-//                 app.loading = false;
-//                 app.succMsg = data.data.message;
-//             }else{
-//                 app.loading = false;
-//                 app.errorMsg = data.data.message;
-//             }
-//             });
-//     };
 
-//     getFacultyCourses();
 //     //getCourses();
 
 //     // getAssignments();
@@ -293,25 +319,4 @@ var app = this;
 //     // getStudentCourses();
 //     // getStudentAssignments();
 //     // getStudentAssignmentsById();
-
-
-
-// this.takeCourse = function(courseData){
-//         var app = this;
-//         app.errorMsg = false;
-//         app.loading = true;
-//         console.log(app.courseData);
-//             Course.takeCourse(app.courseData).then(function(data){
-//             if (data.data.success){
-//                 app.loading = false;
-//                 app.succMsg = data.data.message;
-//                 $timeout(function(){
-//                     $location.path('/');
-//                 },2000);
-//             }else{
-//                 app.loading = false;
-//                 app.errorMsg = data.data.message;
-//             }
-//             });
-//     };
 });

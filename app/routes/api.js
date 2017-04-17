@@ -9,13 +9,14 @@ var path = require('path');     //used for file path
 var secret = 'pld';
 var fs = require('fs');
 var multer = require('multer');
+var finalSemesters = new Array();
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log(req.decoded.user);
     cb(null, './app/uploads/');
-  },
-  filename: function (req, file, cb) {
+},
+filename: function (req, file, cb) {
     if(!file.originalname.match(/\.(pdf|doc|docx)$/)){
         var err = new Error();
         err.code = 'filetype';
@@ -23,7 +24,7 @@ var storage = multer.diskStorage({
     }else{
         cb(null, Date.now() + '_' + file.originalname );
     }
-  }
+}
 });
 
 var upload = multer({ 
@@ -74,18 +75,18 @@ module.exports = function(router){
                                 success: false,
                                 message: err
                             }); 
-                    }
+                        }
                     }else if(err){
                         if (err.code == 11000) {
                             res.json({
-                            success: false,
-                            message: 'username or email is already taken!'
-                        });
+                                success: false,
+                                message: 'username or email is already taken!'
+                            });
                         }else{
                             res.json({
-                            success: false,
-                            message: err
-                        });
+                                success: false,
+                                message: err
+                            });
                         } 
                     }
                 }else{
@@ -140,18 +141,18 @@ module.exports = function(router){
                                     success: false,
                                     message: err
                                 }); 
-                        }
+                            }
                         }else if(err){
                             if (err.code == 11000) {
                                 res.json({
-                                success: false,
-                                message: 'Semester is already there!'
-                            });
+                                    success: false,
+                                    message: 'Semester is already there!'
+                                });
                             }else{
                                 res.json({
-                                success: false,
-                                message: err
-                            });
+                                    success: false,
+                                    message: err
+                                });
                             } 
                         }
                     }else{
@@ -164,7 +165,7 @@ module.exports = function(router){
                         });        
                     }
                 });
-        }
+            }
         }
     });
 
@@ -288,9 +289,9 @@ module.exports = function(router){
             });
         }else{
             res.json({
-                        success: false,
-                        message: 'No token provided'
-                    }); 
+                success: false,
+                message: 'No token provided'
+            }); 
         }
     });
 
@@ -305,17 +306,17 @@ module.exports = function(router){
                 res.json({success:false, message: 'No user found'});
             }else{
                 var newToken = jwt.sign({
-                        user: user,
-                        username: user.username,
-                        email: user.email,
-                        courses:user.courses
-                    }, secret, {
-                        expiresIn: '24h'
-                    });
-                    res.json({
-                        success: true,
-                        token: newToken
-                    }); 
+                    user: user,
+                    username: user.username,
+                    email: user.email,
+                    courses:user.courses
+                }, secret, {
+                    expiresIn: '24h'
+                });
+                res.json({
+                    success: true,
+                    token: newToken
+                }); 
             }
         });
     });
@@ -371,7 +372,7 @@ module.exports = function(router){
                         // Fine the user that needs to be deleted
                         User.findOneAndRemove({ username: deletedUser }, function(err, user) {
                             if (err) {
-                                
+
                                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                             } else {
                                 res.json({ success: true }); // Return success status
@@ -486,7 +487,7 @@ module.exports = function(router){
                 }
             }
         });
-    });
+});
 
 
     // Route to update/edit a user
@@ -542,7 +543,7 @@ module.exports = function(router){
                             // Look for user in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                
+
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if user is in database
@@ -573,7 +574,7 @@ module.exports = function(router){
                             // Look for user that needs to be editted
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    
+
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if logged in user is in database
@@ -604,7 +605,7 @@ module.exports = function(router){
                             // Look for user to edit in database
                             User.findOne({ _id: editUser }, function(err, user) {
                                 if (err) {
-                                    
+
                                     res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                                 } else {
                                     // Check if user is found in database
@@ -692,58 +693,58 @@ module.exports = function(router){
                                     }
                                 }
                             });
-                        } else {
+} else {
                             res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
                         }
                     }
                 }
             }
         });
-    });
+});
 
-    router.get('/getSems',function(req,res){
-        Semester.find({}, function(err,sems){
-            if (err){
-                res.json({success:false, message: err});
+router.get('/getSems',function(req,res){
+    Semester.find({}, function(err,sems){
+        if (err){
+            res.json({success:false, message: err});
+        }else{
+            res.json({success:true, sems:sems});
+        }
+    });
+});
+
+router.get('/getCourseFromId/:id',function(req,res){
+    console.log(req.params.id);
+
+    Course.findOne({_id:req.params.id}, function(err,course){
+        console.log(course);
+        if (err){
+            res.json({success:false, message: err});
+        }else{
+            if (!course) {
+                res.json({success:false, message: 'No course found'});
             }else{
-                res.json({success:true, sems:sems});
             }
-        });
+        }
     });
+});
 
-    router.get('/getCourseFromId/:id',function(req,res){
-        console.log(req.params.id);
-
-        Course.findOne({_id:req.params.id}, function(err,course){
-            console.log(course);
-            if (err){
-                res.json({success:false, message: err});
-            }else{
-                if (!course) {
-                    res.json({success:false, message: 'No course found'});
-                }else{
-                }
-            }
-        });
+router.post('/getAllCourses',function(req,res){
+    Course.find({semester:req.body.semester._id}, function(err,courses){
+        if (err){
+            res.json({success:false, message: err});
+        }else{
+            res.json({success:true, courses:courses, semester:req.body.semester});
+        }
     });
+});
 
-    router.post('/getAllCourses',function(req,res){
-        Course.find({semester:req.body.semester._id}, function(err,courses){
-            if (err){
-                res.json({success:false, message: err});
-            }else{
-                res.json({success:true, courses:courses, semester:req.body.semester});
-            }
-        });
-    });
-
-    router.get('/getFacultyCourses',function(req,res){
-        console.log(req.decoded);
-        Course.find({faculty: req.decoded.user._id}).exec(function(err,courses){
-            if (err) throw err;
-            if (!courses) {
-                res.json({success:false, message: 'No courses to display'});
-            }else{
+router.get('/getFacultyCourses',function(req,res){
+    Course.find({faculty: req.decoded.user._id}).exec(function(err,courses){
+        if (err) throw err;
+        if (!courses) {
+            res.json({success:false, message: 'No courses to display'});
+        }else{
+            courses.forEach(function(course){
                 Semester.findOne({_id:course.semester},function(err,sem){
                     if (err){
                         res.json({success:false, message: err});
@@ -751,121 +752,87 @@ module.exports = function(router){
                         if (!sem) {
                             res.json({success:false, message: 'No Semester found'});
                         }else{
-                            res.json({success:true, courses:course, semester:sem});
+                            finalSemesters.push(sem);
                         }
                     }
                 });
-            }
-        });
+            });
+            res.json({success:true, courses:courses, semesters:finalSemesters});
+        }
     });
+});
 
-    router.post('/createAssignment',function(req,res){
-        console.log(req);
-        var assignment = new Assignment();
-        assignment.name = req.body.name;
-        assignment.user = req.decoded.user;
-        assignment.startDate = req.body.startDate;
-        assignment.endDate = req.body.endDate;
+router.post('/createAssignment',function(req,res){
 
-        var assignments = new Array();
-        assignments = req.body.course.assignments;
+  //   name: {type: String, required:true},
+  // startDate: {type: Date, default: Date.now},
+  // dueDate: {type: Date, default: Date.now},
+  // faculty:{type: String, required:true},
+  // course:{type:String, required:true},
+  // submissions:{type:Array}
 
-        var course = req.body.course;
+  console.log(req);
+  var assignment = new Assignment();
+  assignment.name = req.body.name;
+  assignment.course = req.body.course._id;
+  assignment.faculty = req.body.course.faculty;
+  assignment.startDate = req.body.startDate;
+  assignment.dueDate = req.body.dueDate;
+  assignment.submissions = new Array();
 
-        var user = req.decoded.username;
-        
-        var directoryPath = path.join(__dirname + '/../uploads/'+ req.body.course.semester.title +'/' + req.body.course.title + '/' + user + '/' + assignment.name);
-
-        if (fs.existsSync(directoryPath)) {
+if(req.body.course == null || req.body.course == "" || req.body.name == null || req.body.name == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
+    res.json({
+        success: false,
+        message: 'Enter all required information'
+    });
+}else{
+    assignment.save(function(err){
+        if (err){
             res.json({
                 success: false,
-                message: 'Assignment Folder already exists'
+                message: err
             });
         }else{
-
-        if(req.body.name == null || req.body.name == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == ""){
-            res.json({
-                success: false,
-                message: 'Enter all required information'
-            });
-        }else{
-            assignment.save(function(err){
-                if (err){
-                    res.json({
-                        success: false,
-                        message: err
-                    });
-                }else{
-                    fs.mkdir(directoryPath, function(err){
-                        if (err) throw err;
-                    });
-                    Course.findOne({ name: course.name }, function(err, course) {
-                        if (err) {
-                            res.json({
-                                success: false,
-                                message: err
-                            });
-                        }else{
-                            if (!course) {
                                 res.json({
-                                success: false,
-                                message: 'No course found'
-                            });
-                            }else{
-                                course.assignments.push(assignment);
-                                course.save(function(err){
-                                    if (err) {
-                                        res.json({
-                                            success: false,
-                                            message: err
-                                        });
-                                    }else{
-                                        res.json({
-                                                    success: true,
-                                                    message: 'Assignment Created!',
-                                                    assignment: assignment
-                                                }); 
-                                    }
-                                });
-                            }
-                        }
-                    });            
-                }
-            });
-        }
+                                    success: true,
+                                    message: 'Assignment Created!',
+                                    assignment: assignment
+                                }); 
         }
     });
+}
+});
 
-    router.get('/getAssignments',function(req,res){
-        Assignment.find({}).exec(function(err,assignments){
-            if (err) throw err;
-            if (!assignments) {
-                res.json({success:false, message: 'No assignments to display'});
-            }else{
-                res.json({success:true, assignments: assignments});
-            }
-        });
+router.get('/getAssignments',function(req,res){
+    Assignment.find({}).exec(function(err,assignments){
+        if (err) throw err;
+        if (!assignments) {
+            res.json({success:false, message: 'No assignments to display'});
+        }else{
+            res.json({success:true, assignments: assignments});
+        }
     });
+});
 
-    router.post('/upload', function (req, res) {
-        upload(req, res, function (err) {
+router.post('/upload', function (req, res) {
+    upload(req, res, function (err) {
         if (err) {
           if (err.code === 'LIMIT_FILE_SIZE') {
-                res.json({success:false, message: 'File size is too large. Max limit is 10MB'});
-          }else if(err.code === 'filetype'){
-                res.json({success:false, message: 'Invalid file type'});
-          }else{
-                res.json({success:false, message: err});
-          }
+            res.json({success:false, message: 'File size is too large. Max limit is 10MB'});
+        }else if(err.code === 'filetype'){
+            res.json({success:false, message: 'Invalid file type'});
         }else{
-            if (!req.file) {
-                    res.json({success:false, message: 'No file was selected'});
-            }else{
-                    res.json({success:true, message: 'File was uploaded!'});
-            }
+            res.json({success:false, message: err});
         }
-    });
-    });
+    }else{
+        if (!req.file) {
+            res.json({success:false, message: 'No file was selected'});
+        }else{
+            res.json({success:true, message: 'File was uploaded!'});
+        }
+    }
+});
+});
 
     // router.put('/setAssignmentForCourse', function(req, res) {
     //     if (req.body.assignment) var newAssignment = new Assignment();

@@ -12,23 +12,23 @@ angular.module('semServices',[])
    return semFactory;
 })
 
-// .factory('Assignment',function($http){
-//     assignmentFactory= {};
-//     assignmentFactory.createAssignment = function(data){
-//         return $http.post('/api/createAssignment',data);
-//     };
+.factory('Assignment',function($http){
+    assignmentFactory= {};
+    assignmentFactory.createAssignment = function(assignmentData){
+        return $http.post('/api/createAssignment',assignmentData);
+    };
 
-//     assignmentFactory.getAssignments = function(){
-//         return $http.get('/api/getAssignments/');
-//     }
+    // assignmentFactory.getAssignments = function(){
+    //     return $http.get('/api/getAssignments/');
+    // }
 
-//     // Delete a user
-//     assignmentFactory.upload = function() {
-//         return $http.post('/api/upload/');
-//     };
+    // // Delete a user
+    // assignmentFactory.upload = function() {
+    //     return $http.post('/api/upload/');
+    // };
 
-//    return assignmentFactory;
-// })
+   return assignmentFactory;
+})
 
 
 .factory('Course',function($http){
@@ -40,14 +40,15 @@ angular.module('semServices',[])
     courseFactory.getCoursesForSem = function(data){
         return $http.post('/api/getAllCourses/',data);
     };
-    
-    // courseFactory.takeCourse = function(courseData){
-    //     return $http.post('/api/takeCourse',courseData);
-    // };
 
-    // courseFactory.getFacultyCourses = function(){
-    //     return $http.get('/api/getFacultyCourses/');
-    // }
+    courseFactory.getFacultyCourses = function(){
+        return $http.get('/api/getFacultyCourses/');
+    }
+
+
+    courseFactory.takeCourse = function(courseData){
+        return $http.post('/api/takeCourse',courseData);
+    };
 
     // courseFactory.setAssignmentForCourse = function(data){
     //     return $http.put('/api/setAssignmentForCourse',data);
