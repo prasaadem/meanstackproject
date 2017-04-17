@@ -3,6 +3,7 @@ var User = require('../models/user'); //User Model
 var Course = require('../models/course'); //Course Model
 var Assignment = require('../models/assignment'); //Course Model
 var Semester = require('../models/semester'); //Semester Model
+var Submission = require('../models/submission');
 var jwt = require('jsonwebtoken');
 var path = require('path');     //used for file path
 var secret = 'pld';
@@ -31,35 +32,6 @@ var upload = multer({
 }).single('myfile');
 
 module.exports = function(router){
-
-    //http://localhost:PORT/api/users
-    //User Registration Route
-
-    // router.post('/addAss',function(req,res){
-    //     var assignment = new Assignment();
-    //     assignment.name = req.body.name;
-    //     assignment.course = req.body.course;
-    //     assignment.user = req.body.user;
-    //     assignment.startDate = req.body.startDate;
-    //     assignment.endDate = req.body.endDate;
-
-    //     console.log(course);
-    //     assignment.save(function(err){
-    //         if (err) {
-    //             res.json({
-    //                 success: false,
-    //                 message: err
-    //             });
-    //         }else{
-    //             res.json({
-    //                 success: true,
-    //                 message: 'Saved',
-    //                 assignment: assignment
-    //             });
-    //         }
-            
-    //     });
-    // });
 
     router.post('/users',function(req,res){
         var user = new User();

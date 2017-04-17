@@ -5,9 +5,11 @@ var titlize = require('mongoose-title-case');
 var CourseSchema = new Schema({
   name: {type: String, required:true, uppercase: true},
   title: {type: String, uppercase:false, required:true},
-  semester: {type: Object, required:true},
+  semester: {type: String, required:true},
+  available:{type:Boolean},
   assignments:{type: Array},
-  students:{type: Array}
+  students:{type: Array},
+  faculty:{type: String}
 });
 
 CourseSchema.plugin(titlize, {

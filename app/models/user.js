@@ -4,6 +4,26 @@ var bcrypt = require('bcrypt-nodejs');
 var titlize = require('mongoose-title-case');
 var validate = require('mongoose-validator');
 
+var UserSchema = new Schema({
+  username: {type: String, lowercase:true, required:true, unique: true},
+  email: {type: String, lowercase:true, required:true, unique: true},
+  uin: {type: String, required:false, unique: true},
+  permission: {type: String, required:true, default: 'student'},
+  accountExpires:{type:Date},
+  name: {type: String, required:true},
+  directoryName:{type: String, require:true},
+  major:{type:String, require:true, default:'Computer Science'},
+  classification:{type:String, require:true, default:'G7'},
+  password: {type: String, required:true},
+  courses: {type: Array}
+});
+
+UserSchema.plugin(titlize, {
+  paths: [ 'name']
+});
+
+module.exports = mongoose.model('User',UserSchema);
+
 // var nameValidator = [
 //   validate({
 //     validator: 'matches',
@@ -54,15 +74,6 @@ var validate = require('mongoose-validator');
 //   })
 // ];
 
-var UserSchema = new Schema({
-  name: {type: String, required:true},
-  username: {type: String, lowercase:true, required:true, unique: true},
-  password: {type: String, required:true},
-  email: {type: String, lowercase:true, required:true, unique: true},
-  permission: {type: String, required:true, default: 'student'},
-  courses: {type: Array}
-});
-
 // UserSchema.pre('save',function(next){
 //   var user = this;
 //   bcrypt.hash(user.password,null,null,function(err,hash){
@@ -72,12 +83,6 @@ var UserSchema = new Schema({
 //   })
 // });
 
-UserSchema.plugin(titlize, {
-  paths: [ 'name']
-});
-
 // UserSchema.methods.comparePassword = function(password){
 //     return bcrypt.compareSync(password,this.password);
 // };
-
-module.exports = mongoose.model('User',UserSchema);
