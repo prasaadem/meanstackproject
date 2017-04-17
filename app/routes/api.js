@@ -172,42 +172,45 @@ module.exports = function(router){
         var course = new Course();
         course.title = req.body.title;
         course.name = req.body.name;
-        course.semester = req.body.semester;
+        course.semester = req.body.semester._id;
+        course.available = false;
         course.assignments = new Array();
         course.students = new Array();
-        var directoryPath = path.join(__dirname + '/../uploads/'+ course.semester.title +'/' +course.title);
+        course.faculty = '';
 
-        if (fs.existsSync(directoryPath)) {
-            res.json({
-                success: false,
-                message: 'Course Folder already exists'
-            });
-        }else{
-
-        if(req.body.title == null || req.body.title == "" || req.body.name == null || req.body.name == "" || req.body.semester == null || req.body.semester == ""){
-            res.json({
-                success: false,
-                message: 'Enter all required information'
-            });
-        }else{
-            course.save(function(err){
-                if (err){
+        Semester.findOne({_id: req.body.semester._id}).select('title').exec(function(err,semester){
+            var directoryPath = path.join(__dirname + '/../uploads/'+ semester.title +'/' + course.title);
+            if (fs.existsSync(directoryPath)) {
+                res.json({
+                    success: false,
+                    message: 'Course Folder already exists'
+                });
+            }else{
+                if(req.body.title == null || req.body.title == "" || req.body.name == null || req.body.name == "" || req.body.semester == null || req.body.semester == ""){
                     res.json({
                         success: false,
-                        message: err
+                        message: 'Enter all required information'
                     });
                 }else{
-                    fs.mkdir(directoryPath, function(err){
-                        if (err) throw err;
+                    course.save(function(err){
+                        if (err){
+                            res.json({
+                                success: false,
+                                message: err
+                            });
+                        }else{
+                            fs.mkdir(directoryPath, function(err){
+                                if (err) throw err;
+                            });
+                            res.json({
+                                success: true,
+                                message: 'Course Created!'
+                            });        
+                        }
                     });
-                    res.json({
-                        success: true,
-                        message: 'Course Created!'
-                    });        
                 }
-            });
-        }
-        }
+            }
+        });
     });
 
     router.post('/checkusername',function(req,res){
@@ -415,9 +418,8 @@ module.exports = function(router){
     });
 
     
-    router.put('/takeCourse', function(req, res) {
-        if (req.body.course) var newCourse = new Course();
-        newCourse = req.body.course;
+    router.post('/takeCourse', function(req, res) {
+
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
             if (err) {
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
@@ -426,47 +428,60 @@ module.exports = function(router){
                     res.json({ success: false, message: "no user found" });
                 }else{
                     if (mainUser.permission === 'faculty') {
-                        var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title + '/' + mainUser.username);
-                        if (fs.existsSync(directoryPath)) {
-                            res.json({
-                                success: false,
-                                message: 'You have already taken this course.'
-                            });
-                        }else{
-                            fs.mkdir(directoryPath, function(err){
-                                if (err) throw err;
-                            });
-                            mainUser.courses.push(newCourse);
-                            mainUser.save(function(err) {
+                        Course.findOne({_id:req.body.course._id},function(err,course){
+                            console.log(course);
                             if (err) {
-                                console.log(err); // Log any errors to the console
+                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                             } else {
-                                res.json({ success: true, message: 'Course has been updated!' }); // Return success message
-                            }
-                         });
-                        }
-                    }else if(mainUser.permission === 'student')
-                    {
-                        var directoryPath = path.join(__dirname + '/../uploads/'+ newCourse.semester.title +'/' +newCourse.title);
-                        console.log(directoryPath);
-                        fs.readdir(directoryPath,function(err,files){
-                            if (err) throw err;
-                            var pending = files.length;
-                            if (pending !== 0) {
-                                Course.findOne({ name: newCourse.name }, function(err, course) {
-                                    course.students.push(mainUser);
-                                    course.save(function(err) {
-                                    if (err) {
-                                        console.log(err); // Log any errors to the console
-                                    } else {
-                                        res.json({ success: true, message: 'Registered for course!' }); // Return success message
+                                if (!course) {
+                                    res.json({ success: false, message: 'Course not found' });
+                                }else{
+                                    if (course.faculty === '') {
+                                        course.faculty = mainUser._id;
+                                        course.available = true;
+                                        course.save(function(err) {
+                                            if (err) {
+                                                console.log(err); // Log any errors to the console
+                                            } else {
+                                                mainUser.courses.push(course._id);
+                                                mainUser.save(function(err) {
+                                                    if (err) {
+                                                        console.log(err); // Log any errors to the console
+                                                    } else {
+                                                        res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }else{
+                                        res.json({ success: false, message: 'Course is already taken' });
                                     }
-                                });
-                                });
-                            }else{
-                                res.json({ success: false, message: 'Course unavailable!' });
+                                }
                             }
                         });
+                    }else if (mainUser.permission === 'student') {
+                        Course.findOne({_id:req.body.course._id}),function(err,course){
+                            if (err) {
+                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+                            } else {
+                                if (!course) {
+                                    res.json({ success: false, message: 'Course not found' });
+                                }else{
+                                    if (course.available === false) {
+                                        res.json({ success: false, message: 'Course is not available' });
+                                    }else{
+                                        mainUser.courses.push(course._id);
+                                        mainUser.save(function(err) {
+                                            if (err) {
+                                                console.log(err); // Log any errors to the console
+                                            } else {
+                                                res.json({ success: true, message: 'Course has been updated!' }); // Return success message
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -696,23 +711,50 @@ module.exports = function(router){
         });
     });
 
-    router.get('/getCourses',function(req,res){
-        Course.find({}, function(err,courses){
+    router.get('/getCourseFromId/:id',function(req,res){
+        console.log(req.params.id);
+
+        Course.findOne({_id:req.params.id}, function(err,course){
+            console.log(course);
             if (err){
                 res.json({success:false, message: err});
             }else{
-                res.json({success:true, courses:courses});
+                if (!course) {
+                    res.json({success:false, message: 'No course found'});
+                }else{
+                }
             }
         });
     });
 
-    router.get('/getmyCourses',function(req,res){
-        User.findOne({username: req.decoded.username}).exec(function(err,user){
+    router.post('/getAllCourses',function(req,res){
+        Course.find({semester:req.body.semester._id}, function(err,courses){
+            if (err){
+                res.json({success:false, message: err});
+            }else{
+                res.json({success:true, courses:courses, semester:req.body.semester});
+            }
+        });
+    });
+
+    router.get('/getFacultyCourses',function(req,res){
+        console.log(req.decoded);
+        Course.find({faculty: req.decoded.user._id}).exec(function(err,courses){
             if (err) throw err;
-            if (!user) {
+            if (!courses) {
                 res.json({success:false, message: 'No courses to display'});
             }else{
-                res.json({success:true, user: user});
+                Semester.findOne({_id:course.semester},function(err,sem){
+                    if (err){
+                        res.json({success:false, message: err});
+                    }else{
+                        if (!sem) {
+                            res.json({success:false, message: 'No Semester found'});
+                        }else{
+                            res.json({success:true, courses:course, semester:sem});
+                        }
+                    }
+                });
             }
         });
     });

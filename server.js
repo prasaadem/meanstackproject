@@ -7,6 +7,7 @@ var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var bodyParser = require('body-parser'); //To parse the request
 var path = require('path');
+var chalk = require('chalk');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -31,6 +32,8 @@ app.get('*',function(req,res){
 })
 //Listening for server on port
 app.listen(port,function(){
-    console.log('Server running on port: '+ port);
+    console.log('%s App is running at http://localhost:'+ port + ' in development mode', chalk.green('✓')); 
+    console.log('  Press CTRL-C to stop');
+    //console.log('Server running on port: '+ port);
 });
 

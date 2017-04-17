@@ -3,6 +3,21 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 // Controller: User to control the management page and managing of user accounts
 .controller('semesterCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams,Assignment,uploadFile) {
 
+var app = this;
+
+    app.loading = true; // Start loading icon on page load
+    app.accessDenied = true; // Hide table while loading
+    app.errorMsg = false; // Clear any error messages
+    app.editAccess = false; // Clear access on load
+    app.deleteAccess = false; // CLear access on load
+    app.limit = 5; // Set a default limit to ng-repeat
+    app.searchLimit = 0; // Set the default search page results limit to zero
+
+    app.sems = [];
+    app.courses = [];
+
+
+
     $scope.file = {};
     $scope.Submit = function(){
         $scope.uploading = true;
@@ -22,23 +37,8 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         });
     };
 
-    this.newAssignment = function(data){
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-            Assignment.createAssignment(app.data).then(function(data){
-            console.log(data.data.success);
-            console.log(data.data.message);
-            if (data.data.success){
-                app.loading = false;
-                app.succMsg = data.data.message;
-            }else{
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-            });
-    };
-
+    
+    //Semester
     this.addSemester = function(semData){
         var app = this;
         app.errorMsg = false;
@@ -60,6 +60,21 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
             });
     };
 
+    function getSemesters() {
+        Semester.getSemesters().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+                app.sems = data.data.sems;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    getSemesters();
+
+    //Courses
     this.addCourse = function(courseData){
         var app = this;
         app.errorMsg = false;
@@ -79,17 +94,16 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
             });
     };
 
-    this.takeCourse = function(data){
+    this.getCoursesForSem = function(data){
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-            Course.takeCourse(app.data).then(function(data){
+            Course.getCoursesForSem(app.data).then(function(data){
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
+                app.courses = data.data.courses;
+                app.semester = data.data.semester;
             }else{
                 app.loading = false;
                 app.errorMsg = data.data.message;
@@ -97,187 +111,207 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
             });
     };
 
-    var app = this;
-
-    app.loading = true; // Start loading icon on page load
-    app.accessDenied = true; // Hide table while loading
-    app.errorMsg = false; // Clear any error messages
-    app.editAccess = false; // Clear access on load
-    app.deleteAccess = false; // CLear access on load
-    app.limit = 5; // Set a default limit to ng-repeat
-    app.searchLimit = 0; // Set the default search page results limit to zero
-
-    app.sems = [];
-    app.courses = [];
-    app.studentCourses = [];
-    app.assignments = [];
-    app.studentAssignments = [];
-    app.studentCourseAssignments = [];
-    app.facultyCourseAssignments = [];
-    app.courseAssignments = [];
     
-    // Function: get all the users from database
-    function getSemesters() {
-        // Runs function to get all the users from database
-        Semester.getSemesters().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                // Check which permissions the logged in user has
-                app.sems = data.data.sems;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
 
-    function getCourses() {
-        // Runs function to get all the users from database
-        Course.getCourses().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                // Check which permissions the logged in user has
-                app.courses = data.data.courses;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
 
-    User.getFacultyCourses().then(function(data) {
-        if (data.data.success) {
-            app.user = data.data.user;
-        } else {
-            app.errorMsg = data.data.message; // Set error message
-            app.loading = false; // Stop loading icon
-        }
-    });
+//     function getCourses() {
+//         // Runs function to get all the users from database
+//         Course.getCourses().then(function(data) {
+//             // Check if able to get data from database
+//             if (data.data.success) {
+//                 // Check which permissions the logged in user has
+//                 app.courses = data.data.courses;
+//             } else {
+//                 app.errorMsg = data.data.message; // Set error message
+//                 app.loading = false; // Stop loading icon
+//             }
+//         });
+//     }
 
-    function getAssignments() {
-        // Runs function to get all the users from database
-        Assignment.getAssignments().then(function(data) {
-            if (data.data.success) {
-                data.data.assignments.forEach(function(entry) {
-                });
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+//     function getFacultyCourses(){
+//         Course.getFacultyCourses().then(function(data) {
+//             if (data.data.success) {
+//                 app.facultyCourses = data.data.courses;
+//             } else {
+//                 app.errorMsg = data.data.message; // Set error message
+//                 app.loading = false; // Stop loading icon
+//             }
+//         });
+//     }
 
-    function getFacultyAssignmentFromId() {
-        User.getFacultyCourses().then(function(data) {
-            if (data.data.success) {
-                app.user = data.data.user;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
+//     // function getAssignments() {
+//     //     // Runs function to get all the users from database
+//     //     Assignment.getAssignments().then(function(data) {
+//     //         if (data.data.success) {
+//     //             data.data.assignments.forEach(function(entry) {
+//     //             });
+//     //         } else {
+//     //             app.errorMsg = data.data.message; // Set error message
+//     //             app.loading = false; // Stop loading icon
+//     //         }
+//     //     });
+//     // }
+
+//     // function getFacultyAssignmentFromId() {
+//     //     User.getFacultyCourses().then(function(data) {
+//     //         if (data.data.success) {
+//     //             app.user = data.data.user;
+//     //         } else {
+//     //             app.errorMsg = data.data.message; // Set error message
+//     //             app.loading = false; // Stop loading icon
+//     //         }
+//     //     });
     
-    Course.getCourses().then(function(data) {
-        if (data.data.success) {
-            data.data.courses.forEach(function(course){
-                app.user.courses.forEach(function(c){
-                    if (course._id === c._id) {
-                        course.assignments.forEach(function(assignment){
-                            if (course._id === $routeParams.id) {
-                                app.facultyCourseAssignments.push(assignment);
-                            }
-                        });
-                    }   
-                });
-            });
-        }else {
-            app.errorMsg = data.data.message; // Set error message
-            app.loading = false; // Stop loading icon
-        }
-    });
-}
+// //     Course.getCourses().then(function(data) {
+// //         if (data.data.success) {
+// //             data.data.courses.forEach(function(course){
+// //                 app.user.courses.forEach(function(c){
+// //                     if (course._id === c._id) {
+// //                         course.assignments.forEach(function(assignment){
+// //                             if (course._id === $routeParams.id) {
+// //                                 app.facultyCourseAssignments.push(assignment);
+// //                             }
+// //                         });
+// //                     }   
+// //                 });
+// //             });
+// //         }else {
+// //             app.errorMsg = data.data.message; // Set error message
+// //             app.loading = false; // Stop loading icon
+// //         }
+// //     });
+// // }
 
-    function getCourseFromId() {
-        Course.getCourses().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                data.data.courses.forEach(function(course){
-                    console.log(course._id);
-                    console.log($routeParams.id);
-                        if (course._id === $routeParams.id) {
-                            app.currentCourse = course;
-                        }
-                }); 
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+//     function getCourseFromId() {
 
-    function getStudentCourses() {
-        Course.getCourses().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                data.data.courses.forEach(function(course){
-                    course.students.forEach(function(student){
-                        if (student.username === app.user.username) {
-                            app.studentCourses.push(course);
-                        }
-                    });
-                });
+//         Course.getCourses().then(function(data) {
+//             // Check if able to get data from database
+//             if (data.data.success) {
+//                 data.data.courses.forEach(function(course){
+//                         if (course._id === $routeParams.id) {
+//                             app.currentCourse = course;
+//                             app.currentSemester = sem;
+//                         }
+//                 }); 
+
+//             } else {
+//                 app.errorMsg = data.data.message; // Set error message
+//                 app.loading = false; // Stop loading icon
+//             }
+//         });
+
+
+//         Course.getCourse().then(function(data) {
+//             if (data.data.success) {
+//                             } else {
+//                 app.errorMsg = data.data.message; // Set error message
+//                 app.loading = false; // Stop loading icon
+//             }
+//         });
+//     }
+
+//     // function getStudentCourses() {
+//     //     Course.getCourses().then(function(data) {
+//     //         // Check if able to get data from database
+//     //         if (data.data.success) {
+//     //             data.data.courses.forEach(function(course){
+//     //                 course.students.forEach(function(student){
+//     //                     if (student.username === app.user.username) {
+//     //                         app.studentCourses.push(course);
+//     //                     }
+//     //                 });
+//     //             });
                 
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+//     //         } else {
+//     //             app.errorMsg = data.data.message; // Set error message
+//     //             app.loading = false; // Stop loading icon
+//     //         }
+//     //     });
+//     // }
     
-    function getStudentAssignments() {
-        Course.getCourses().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                data.data.courses.forEach(function(course){
-                    course.assignments.forEach(function(assignment){
-                            app.studentAssignments.push(assignment);
-                    });
-                });
+//     // function getStudentAssignments() {
+//     //     Course.getCourses().then(function(data) {
+//     //         // Check if able to get data from database
+//     //         if (data.data.success) {
+//     //             data.data.courses.forEach(function(course){
+//     //                 course.assignments.forEach(function(assignment){
+//     //                         app.studentAssignments.push(assignment);
+//     //                 });
+//     //             });
                 
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+//     //         } else {
+//     //             app.errorMsg = data.data.message; // Set error message
+//     //             app.loading = false; // Stop loading icon
+//     //         }
+//     //     });
+//     // }
 
-    function getStudentAssignmentsById() {
-        Course.getCourses().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                data.data.courses.forEach(function(course){
-                    course.assignments.forEach(function(assignment){
-                        if (course._id === $routeParams.id) {
-                            app.studentCourseAssignments.push(assignment);
-                        }   
-                    });
-                });
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
+//     // function getStudentAssignmentsById() {
+//     //     Course.getCourses().then(function(data) {
+//     //         // Check if able to get data from database
+//     //         if (data.data.success) {
+//     //             data.data.courses.forEach(function(course){
+//     //                 course.assignments.forEach(function(assignment){
+//     //                     if (course._id === $routeParams.id) {
+//     //                         app.studentCourseAssignments.push(assignment);
+//     //                     }   
+//     //                 });
+//     //             });
+//     //         } else {
+//     //             app.errorMsg = data.data.message; // Set error message
+//     //             app.loading = false; // Stop loading icon
+//     //         }
+//     //     });
+//     // }
 
-    getSemesters();
-    getCourses();
 
-    getAssignments();
-    getFacultyAssignmentFromId();
+// this.newAssignment = function(data){
+//         var app = this;
+//         app.errorMsg = false;
+//         app.loading = true;
+//             Assignment.createAssignment(app.data).then(function(data){
+//             console.log(data.data.success);
+//             console.log(data.data.message);
+//             if (data.data.success){
+//                 app.loading = false;
+//                 app.succMsg = data.data.message;
+//             }else{
+//                 app.loading = false;
+//                 app.errorMsg = data.data.message;
+//             }
+//             });
+//     };
 
-    getCourseFromId();
+//     getFacultyCourses();
+//     //getCourses();
 
-    getStudentCourses();
-    getStudentAssignments();
-    getStudentAssignmentsById();
+//     // getAssignments();
+//     // getFacultyAssignmentFromId();
+
+//      getCourseFromId();
+
+//     // getStudentCourses();
+//     // getStudentAssignments();
+//     // getStudentAssignmentsById();
+
+
+
+// this.takeCourse = function(courseData){
+//         var app = this;
+//         app.errorMsg = false;
+//         app.loading = true;
+//         console.log(app.courseData);
+//             Course.takeCourse(app.courseData).then(function(data){
+//             if (data.data.success){
+//                 app.loading = false;
+//                 app.succMsg = data.data.message;
+//                 $timeout(function(){
+//                     $location.path('/');
+//                 },2000);
+//             }else{
+//                 app.loading = false;
+//                 app.errorMsg = data.data.message;
+//             }
+//             });
+//     };
 });

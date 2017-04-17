@@ -12,23 +12,23 @@ angular.module('semServices',[])
    return semFactory;
 })
 
-.factory('Assignment',function($http){
-    assignmentFactory= {};
-    assignmentFactory.createAssignment = function(data){
-        return $http.post('/api/createAssignment',data);
-    };
+// .factory('Assignment',function($http){
+//     assignmentFactory= {};
+//     assignmentFactory.createAssignment = function(data){
+//         return $http.post('/api/createAssignment',data);
+//     };
 
-    assignmentFactory.getAssignments = function(){
-        return $http.get('/api/getAssignments/');
-    }
+//     assignmentFactory.getAssignments = function(){
+//         return $http.get('/api/getAssignments/');
+//     }
 
-    // Delete a user
-    assignmentFactory.upload = function() {
-        return $http.post('/api/upload/');
-    };
+//     // Delete a user
+//     assignmentFactory.upload = function() {
+//         return $http.post('/api/upload/');
+//     };
 
-   return assignmentFactory;
-})
+//    return assignmentFactory;
+// })
 
 
 .factory('Course',function($http){
@@ -37,17 +37,21 @@ angular.module('semServices',[])
         return $http.post('/api/course',courseData);
     };
 
-    courseFactory.getCourses = function(){
-        return $http.get('/api/getCourses/');
+    courseFactory.getCoursesForSem = function(data){
+        return $http.post('/api/getAllCourses/',data);
     };
+    
+    // courseFactory.takeCourse = function(courseData){
+    //     return $http.post('/api/takeCourse',courseData);
+    // };
 
-    courseFactory.takeCourse = function(data){
-        return $http.put('/api/takeCourse',data);
-    };
+    // courseFactory.getFacultyCourses = function(){
+    //     return $http.get('/api/getFacultyCourses/');
+    // }
 
-    courseFactory.setAssignmentForCourse = function(data){
-        return $http.put('/api/setAssignmentForCourse',data);
-    };
+    // courseFactory.setAssignmentForCourse = function(data){
+    //     return $http.put('/api/setAssignmentForCourse',data);
+    // };
 
 
 

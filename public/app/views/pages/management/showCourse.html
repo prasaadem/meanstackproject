@@ -6,16 +6,31 @@
     </div>
 </div>
 <!-- Heading -->
-
-<br>
+<hr/>
 
 <!-- Loading Icon (Bootstrap) -->
 <div class="jumbotron text-center" ng-show="management.loading">
     <span class="glyphicon glyphicon-repeat spinner"></span>
     <p>Loading....</p>
 </div>
-<!-- Loading Icon (Bootstrap) -->
 
+<div class="row">
+<form>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Semester</label>
+                    <div class="input-group">
+                        <select ng-change="semester.getCoursesForSem(data);" class="form-control" ng-model="semester.data.semester" ng-options="sem.title for sem in semester.sems">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+</form>
+</div>
+
+<br/>
 
 <!-- User Management Table -->
 <div class="panel panel-primary">
@@ -35,9 +50,9 @@
         <tr ng-repeat="course in semester.courses">
             <td>{{ course.title }}</td>
             <td>{{ course.name }}</td>
-            <td>{{ course.semester.title }}</td>
-            <td>{{ course.semester.startDate }}</td>
-            <td>{{ course.semester.endDate }}</td>
+            <td>{{ semester.semester.title }}</td>
+            <td>{{ semester.semester.startDate }}</td>
+            <td>{{ semester.semester.endDate }}</td>
         </tr>
         <!-- End: Table -->
     </table>

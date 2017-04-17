@@ -6,7 +6,7 @@ var CourseSchema = new Schema({
   name: {type: String, required:true, uppercase: true},
   title: {type: String, uppercase:false, required:true},
   semester: {type: String, required:true},
-  available:{type:Boolean},
+  available:{type:Boolean, default:false},
   assignments:{type: Array},
   students:{type: Array},
   faculty:{type: String}

@@ -23,9 +23,9 @@
       </a>
       </td>
     </tr>
-    <tr ng-repeat="course in semester.user.courses" ng-show="main.faculty">
-      <td>{{semester.user.username}}</td>
-      <td>{{semester.user.email}}</td>
+    <tr ng-repeat="course in semester.facultyCourses" ng-show="main.faculty">
+      <td>{{main.user.username}}</td>
+      <td>{{main.user.email}}</td>
       <td>{{ course.name }}</td>
       <td>{{ course.title }}</td>
       <td>
