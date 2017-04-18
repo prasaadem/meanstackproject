@@ -1,0 +1,102 @@
+<table class="table table-bordered table-responsive">
+    <tbody>
+        <tr>
+            <td>
+                <label>Course Title: </label> 
+            </td>
+            <td>
+                <label>{{ semester.currentSemester.course.title }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Course Name: </label>
+            </td>
+            <td>
+                <label>{{ semester.currentSemester.course.name }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Semester: </label>
+            </td>
+            <td>
+                <label>{{ semester.currentSemester.title }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Start Date: </label>
+            </td>
+            <td>
+                <label>{{ semester.currentSemester.startDate }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>End Date: </label>
+            </td>
+            <td>
+                <label>{{ semester.currentSemester.endDate }}</label>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+<div class="panel panel-primary">
+    <!-- Heading -->
+    <div class="panel-heading">
+        <strong>Assignment Management</strong>
+    </div>
+    <!-- Start: Table -->
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+        </tr>
+        <tr ng-repeat="assignment in semester.studentCourseAssignments" ng-show="main.student">
+            <td>{{ assignment.name }}</td>
+            <td>{{ assignment.startDate }}</td>
+            <td>{{ assignment.dueDate }}</td>
+            <td>
+                <form ng-submit="Submit();" ng-show="main.student">
+                <label class="btn btn-success">
+                    Browse
+                    <input type='file' file-model="file.upload" name='myfile' ng-disabled="uploading" style="display:none;">
+                </label>
+                    <button class="btn btn-primary">Upload</button>
+                </form>
+            </td>
+        </tr>
+
+        <tr ng-repeat="assignment in semester.facultyAssignmentsForCourseId" ng-show="main.faculty">
+            <td>{{ assignment.name }}</td>
+            <td>{{ assignment.startDate }}</td>
+            <td>{{ assignment.dueDate }}</td>
+            <td>
+                <form ng-submit="Submit();" ng-show="main.student">
+                <label class="btn btn-success">
+                    Browse
+                    <input type='file' file-model="file.upload" name='myfile' ng-disabled="uploading" style="display:none;">
+                </label>
+                    <button class="btn btn-primary">Upload</button>
+                </form>
+            </td>
+        </tr>
+        <!-- End: Table -->
+    </table>
+</div>
+<br>
+<a href="/newAssignment">
+    <button type="button" class="btn btn-primary" ng-show="main.isLoggedIn && main.faculty">Create Assignment</button>
+</a>
+
+<!-- Custom Message -->
+<div ng-show="message">
+    <div ng-class="alert">{{ message }}</div>
+</div>
+<!-- Custom Message -->
+
+<br>

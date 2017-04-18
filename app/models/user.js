@@ -4,6 +4,11 @@ var bcrypt = require('bcrypt-nodejs');
 var titlize = require('mongoose-title-case');
 var validate = require('mongoose-validator');
 
+    var Course = require('../models/course'); //Course Model
+    var Assignment = require('../models/assignment'); //Course Model
+    var Semester = require('../models/semester'); //Semester Model
+    var Submission = require('../models/submission');
+
 var UserSchema = new Schema({
   username: {type: String, lowercase:true, required:true, unique: true},
   email: {type: String, lowercase:true, required:true, unique: true},
@@ -15,7 +20,7 @@ var UserSchema = new Schema({
   major:{type:String, require:true, default:'Computer Science'},
   classification:{type:String, require:true, default:'G7'},
   password: {type: String, required:true},
-  courses: {type: Array}
+  courses: [{type: Schema.Types.ObjectId, ref: 'Course'}]
 });
 
 UserSchema.plugin(titlize, {

@@ -1,0 +1,47 @@
+<div class="row text-center">
+    <div class="container">
+        <h2 class="section-heading">Add Semester</h2>
+        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to add semesters.</h3>
+    </div>
+</div>
+<!-- Heading -->
+<hr/>
+<div class="container">
+    <div class="row">
+        <form ng-submit="admin.addSemester(semData);">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Semester</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="semester" placeholder="FALL 2017" required ng-model = "admin.semData.semTitle">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                    <label>Start Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" name="startDate" placeholder="MM/DD/YYYY" required ng-model = "admin.semData.startDate">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                    <label>End Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" name="endDate" placeholder="MM/DD/YYYY" required ng-model = "admin.semData.endDate">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Add Semester</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<div class="row show-hide-message" ng-show="admin.succMsg">
+    <div class="alert alert-success">
+        {{ admin.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="admin.errorMsg">
+    <div class="alert alert-danger">
+        {{ admin.errorMsg }}
+    </div>
+</div>

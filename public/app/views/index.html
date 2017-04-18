@@ -19,15 +19,21 @@
 
     <script src="app/app.js"></script>
     <script src="app/routes.js"></script>
+    
     <script src="app/directives/fileModel.js"></script>
+
     <script src="app/controllers/userCtrl.js"></script>
     <script src="app/controllers/mainCtrl.js"></script>
     <script src="app/controllers/managementCtrl.js"></script>
     <script src="app/controllers/semesterCtrl.js"></script>
+    <script src="app/controllers/adminCtrl.js"></script>
+    <script src="app/controllers/facultyCtrl.js"></script>
 
     <script src="app/services/userServices.js"></script>
     <script src="app/services/authServices.js"></script>
     <script src="app/services/semServices.js"></script>
+    <script src="app/services/adminServices.js"></script>
+    <script src="app/services/facultyServices.js"></script>
     <script src="app/services/uploadFileService.js"></script>
 
     <title>CSNet :: Computer Science @ TAMU</title>
@@ -53,35 +59,43 @@
             <li class="active"><a href="/">Home</a></li>
             <li><a href="/login" ng-show="!main.isLoggedIn">Login</a></li>
             <li><a href="/register" ng-show="!main.isLoggedIn">Register</a></li>
-            <li><a href="#" ng-show="main.isLoggedIn" ng-click="main.logout();">Logout</a></li>
-            <li ng-show="main.isLoggedIn"><a href="/profile">{{main.username}}</a></li>
-            
+
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Management <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li role="separator" class="divider"></li>
+                <!-- <li role="separator" class="divider"></li> -->
                 <li><a href="/management">Students</a></li>
                 <li><a href="/facultyManagement">Faculty</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Semester</li>
+                <!-- <li role="separator" class="divider"></li> -->
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Semesters <span class="caret"></span></a>
+              <ul class="dropdown-menu">
                 <li><a href="/addSemester">Add Semester</a></li>
                 <li><a href="/showSemester">Show Semesters</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Course</li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courses <span class="caret"></span></a>
+              <ul class="dropdown-menu">
                 <li><a href="/addCourse">Add Course</a></li>
                 <li><a href="/showCourse">Show Courses</a></li>
               </ul>
             </li>
 
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.faculty" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Management <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.faculty" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courses <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Courses</li>
                 <li><a href="/takeCourse">Take Course</a></li>
                 <li><a href="/myCourses">My Courses</a></li>
-                <li><a href="/showCourse">Available Courses</a></li>
-                <li role="separator" class="divider"></li>
+                <li><a href="/availableCourses">Available Courses</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.faculty" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Assignments <span class="caret"></span></a>
+              <ul class="dropdown-menu">
                 <li class="dropdown-header">Assignments</li>
                 <li><a href="/newAssignment">Add Assignment</a></li>
                 <li><a href="/viewAssignments">View Assignments</a></li>
@@ -89,20 +103,25 @@
             </li>
 
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Management <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courses <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Courses</li>
                 <li><a href="/takeCourse">Take Course</a></li>
                 <li><a href="/myCourses">My Courses</a></li>
                 <li><a href="/showCourse">Available Courses</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Assignments</li>
-                <li><a href="/newAssignment" ng-show="main.isLoggedIn && main.faculty">Add Assignment</a></li>
-                <li><a href="/viewAssignments">View Assignments</a></li>
               </ul>
             </li>
-
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Assignments <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/viewAssignments">View Assignments</a></li>
+                <li><a href="#">My Submissions</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li ng-show="main.isLoggedIn"><a href="/profile">My Profile</a></li>
+            <li><a href="#" ng-show="main.isLoggedIn" ng-click="main.logout();">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -126,10 +145,10 @@
     
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="modal-header">
+        <!-- <div class="modal-header">
           <button type="button" ng-click="main.endSession();" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">{{ main.modalHeader }}</h4>
-        </div>
+        </div> -->
         <div class="modal-body">
           <p>{{ main.modalBody }}</p>
           <div class="dizzy-gillespie" ng-hide="main.hideButton"></div>

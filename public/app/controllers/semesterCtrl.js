@@ -15,6 +15,7 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 
     app.sems = [];
     app.courses = [];
+    app.facultyAssignmentsForCourseId = [];
 
 
 
@@ -39,7 +40,6 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 
     //Create new Assignment
     this.createAssignment = function(assignmentData){
-        console.log('came here');
         var app = this;
         app.errorMsg = false;
         app.loading = true;
@@ -49,63 +49,6 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
             if (data.data.success){
                 app.loading = false;
                 app.succMsg = data.data.message;
-            }else{
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
-    };
-
-    
-    //Semester
-    this.addSemester = function(semData){
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-
-        Semester.createSem(app.semData).then(function(data){
-            console.log(data.data.success);
-            console.log(data.data.message);
-            if (data.data.success){
-                app.loading = false;
-                app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
-            }else{
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
-    };
-
-    function getSemesters() {
-        Semester.getSemesters().then(function(data) {
-            // Check if able to get data from database
-            if (data.data.success) {
-                app.sems = data.data.sems;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-
-    getSemesters();
-
-    //Courses
-    this.addCourse = function(courseData){
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-
-        Course.createCourse(app.courseData).then(function(data){
-            if (data.data.success){
-                app.loading = false;
-                app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
             }else{
                 app.loading = false;
                 app.errorMsg = data.data.message;
@@ -130,25 +73,21 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
         });
     };
 
-    //Faculty taking a course
-    this.takeCourse = function(courseData){
+    this.getAssignmentsForCourse = function(assignmentData) {
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-        console.log(app.courseData);
-        Course.takeCourse(app.courseData).then(function(data){
-            if (data.data.success){
-                app.loading = false;
-                app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
-            }else{
-                app.loading = false;
-                app.errorMsg = data.data.message;
+        Assignment.getAssignmentsForCourse(app.assignmentData).then(function(data) {
+            if (data.data.success) {
+                app.assignmentsForCourse = data.data.assignments;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
             }
         });
-    };
+    }
+
+    
 
     //getfaculty courses
     function getFacultyCourses(){
@@ -173,8 +112,7 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
                 for (var i = data.data.courses.length - 1; i >= 0; i--) {
                     if (data.data.courses[i]._id === $routeParams.id) {
                         app.currentCourse = data.data.courses[i];
-                        app.currentSemester = data.data.semesters[i]; 
-                    }                
+                        app.currentSemester = data.data.semesters[i];                     }                
                 }
             }else {
                 app.errorMsg = data.data.message; // Set error message
@@ -184,6 +122,37 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
     }
 
     getCourseFromId();
+
+    function getFacultyAssignmentsForCourseId() {
+        Course.getFacultyAssignmentsForCourseId().then(function(data) {
+            if (data.data.success) {
+                for (var i = data.data.assignments.length - 1; i >= 0; i--) {
+                    if (data.data.assignments[i].course === $routeParams.id) {
+                        app.facultyAssignmentsForCourseId.push(data.data.assignments[i]);                    }                
+                }
+            }else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    getFacultyAssignmentsForCourseId();
+
+    function getStudentCourses(){
+        Course.getStudentCourses().then(function(data) {
+            if (data.data.success) {
+                console.log(data.data);
+                app.studentCourses = data.data.courses;
+                //app.studentSems = data.data.semesters;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+
+    getStudentCourses();
 
 //     function getCourses() {
 //         // Runs function to get all the users from database
@@ -198,20 +167,6 @@ angular.module('semesterController', ['semServices','userServices','fileModelDir
 //             }
 //         });
 //     }
-
-
-//     // function getAssignments() {
-//     //     // Runs function to get all the users from database
-//     //     Assignment.getAssignments().then(function(data) {
-//     //         if (data.data.success) {
-//     //             data.data.assignments.forEach(function(entry) {
-//     //             });
-//     //         } else {
-//     //             app.errorMsg = data.data.message; // Set error message
-//     //             app.loading = false; // Stop loading icon
-//     //         }
-//     //     });
-//     // }
 
 //     // function getFacultyAssignmentFromId() {
 //     //     User.getFacultyCourses().then(function(data) {

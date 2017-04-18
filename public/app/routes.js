@@ -28,6 +28,8 @@ var app = angular.module('appRoutes',['ngRoute'])
 
     .when('/profile',{
         templateUrl: 'app/views/pages/users/profile.html',
+        controller: 'managementCtrl',
+        controllerAs: 'management',
         authenticated: true
     })
 
@@ -66,75 +68,83 @@ var app = angular.module('appRoutes',['ngRoute'])
     })
 
     .when('/addSemester',{
-        templateUrl: 'app/views/pages/management/addSemester.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/admin/semester/addSemester.html',
+        controller: 'adminCtrl',
+        controllerAs: 'admin',
         authenticated: true,
         permission: ['admin']
     })
 
     .when('/showSemester',{
-        templateUrl: 'app/views/pages/management/showSemester.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/admin/semester/showSemester.html',
+        controller: 'adminCtrl',
+        controllerAs: 'admin',
         authenticated: true,
         permission: ['admin']
     })
 
     .when('/addCourse',{
-        templateUrl: 'app/views/pages/management/addCourse.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/admin/course/addCourse.html',
+        controller: 'adminCtrl',
+        controllerAs: 'admin',
         authenticated: true,
         permission: ['admin']
     })
 
     .when('/showCourse',{
-        templateUrl: 'app/views/pages/management/showCourse.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/admin/course/showCourse.html',
+        controller: 'adminCtrl',
+        controllerAs: 'admin',
         authenticated: true,
-        // permission: ['admin','faculty', 'student']
+        permission:['admin']
     })
 
     .when('/takeCourse',{
-        templateUrl: 'app/views/pages/management/takeCourse.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/faculty/course/takeCourse.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
         authenticated: true,
-        permission: ['faculty', 'student']
+        permission: ['faculty']
     })
 
     .when('/myCourses',{
-        templateUrl: 'app/views/pages/management/myCourses.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/faculty/course/myCourses.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
         authenticated: true,
-        permission: ['faculty', 'student']
+        permission: ['faculty']
+    })
+
+    .when('/availableCourses',{
+        templateUrl: 'app/views/pages/management/faculty/course/availableCourses.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
+        authenticated: true,
+        permission:['faculty']
     })
 
     .when('/viewCourse/:id', {
-        templateUrl: 'app/views/pages/management/viewCourse.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/faculty/course/viewCourse.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
         authenticated: true,
-        permission: ['faculty', 'student']
+        permission: ['faculty']
     })
 
     .when('/newAssignment',{
-        templateUrl: 'app/views/pages/management/newAssignment.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/faculty/assignment/newAssignment.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
         authenticated: true,
         permission: ['faculty']
     })
 
     .when('/viewAssignments',{
-        templateUrl: 'app/views/pages/management/viewAssignments.html',
-        controller: 'semesterCtrl',
-        controllerAs: 'semester',
+        templateUrl: 'app/views/pages/management/faculty/assignment/viewAssignments.html',
+        controller: 'facultyCtrl',
+        controllerAs: 'faculty',
         authenticated: true,
-        permission: ['faculty','student']
+        permission: ['faculty']
     })
 
     .otherwise({redirectTo:'/'});

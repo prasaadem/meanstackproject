@@ -1,0 +1,48 @@
+<div class="container">
+<div class="row">
+<form>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Semester</label>
+                    <div class="input-group">
+                        <select ng-change="faculty.getCoursesForSem(data);" class="form-control" ng-model="faculty.data.semester" ng-options="sem.title for sem in faculty.semesters">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+</form>
+</div>
+
+<br/>
+
+    <div class="row">
+        <form ng-submit="faculty.takeCourse(courseData);">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Course</label>
+                    <div class="input-group">
+                        <select class="form-control" ng-model="faculty.courseData.course" ng-options="course.title for course in faculty.courses">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Take Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.succMsg">
+    <div class="alert alert-success">
+        {{ faculty.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.errorMsg">
+    <div class="alert alert-danger">
+        {{ faculty.errorMsg }}
+    </div>
+</div>
