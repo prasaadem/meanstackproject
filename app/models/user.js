@@ -4,6 +4,7 @@ var bcrypt = require('bcrypt-nodejs');
 var titlize = require('mongoose-title-case');
 var validate = require('mongoose-validator');
 
+var User = require('../models/user'); //User Model
     var Course = require('../models/course'); //Course Model
     var Assignment = require('../models/assignment'); //Course Model
     var Semester = require('../models/semester'); //Semester Model
