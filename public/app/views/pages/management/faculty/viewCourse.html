@@ -1,0 +1,69 @@
+<table class="table table-bordered table-responsive">
+    <tbody>
+        <tr>
+            <td>
+                <label>Course Title: </label>
+            </td>
+            <td>
+                <label>{{ faculty.currentCourse.title }}</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Course Name: </label>
+            </td>
+            <td>
+                <label>{{ faculty.currentCourse.name }}</label>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+<div class="panel panel-primary">
+    <!-- Heading -->
+    <div class="panel-heading">
+        <strong>Assignment Management</strong>
+    </div>
+    <!-- Start: Table -->
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+
+        <tr ng-repeat="assignment in faculty.facultyCourseAssignments" ng-show="main.faculty">
+            <td>{{ assignment.name }}</td>
+            <td>{{ assignment.startDate }}</td>
+            <td>{{ assignment.endDate }}</td>
+            <td>
+                <form ng-submit="Submit();" ng-show="main.student">
+                    <label class="btn btn-success">
+                    Browse
+                    <input type='file' file-model="file.upload" name='myfile' ng-disabled="uploading" style="display:none;">
+                </label>
+                    <button class="btn btn-primary">Upload</button>
+                </form>
+            </td>
+        </tr>
+        <!-- End: Table -->
+    </table>
+</div>
+<br>
+<a href="/newAssignment">
+    <button type="button" class="btn btn-primary" ng-show="main.isLoggedIn && main.faculty">Create Assignment</button>
+</a>
+
+<br>
+<div class="row show-hide-message" ng-show="faculty.succMsg">
+    <div class="alert alert-success">
+        {{ faculty.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.errorMsg">
+    <div class="alert alert-danger">
+        {{ faculty.errorMsg }}
+    </div>
+</div>

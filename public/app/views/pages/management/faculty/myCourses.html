@@ -1,0 +1,50 @@
+<div class="page-header">
+    <h1>{{main.username}}'s Profile</h1>
+</div>
+
+
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Semester</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat-start="sem in faculty.sems">
+            <td>
+                <button ng-click="selectTableRow($index, sem)">
+                        <span ng-bind="dayDataCollapse[$index] ? '-' : '+'"></span>
+                    </button>
+            </td>
+            <td>{{sem.title}}</td>
+            <td>{{sem.startDate}}</td>
+            <td>{{sem.endDate}}</td>
+        </tr>
+        <tr ng-repeat-end ng-show="dayDataCollapse[$index]">
+            <td></td>
+            <td colspan="6">
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="course in courses">
+                            <td>{{course.title}}</td>
+                            <td>{{course.name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<script data-require="angular.js@1.2.28" data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js"></script>
+<script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
+<script src="script.js"></script>

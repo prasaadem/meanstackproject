@@ -1,0 +1,76 @@
+<div class="page-header">
+    <h1>{{main.username}}'s Profile</h1>
+</div>
+
+
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat-start="course in faculty.facultyCourses">
+            <td>
+                <button ng-click="submission($index, course)">
+                        <span ng-bind="dayDataCollapse[$index] ? '-' : '+'"></span>
+                    </button>
+            </td>
+            <td>{{course.title}}</td>
+            <td>{{course.name}}</td>
+            <!--<td><a ng-click="download($index,course);">download</a></td>-->
+        </tr>
+        <tr ng-repeat-end ng-show="dayDataCollapse[$index]">
+            <td></td>
+            <td colspan="6">
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Student</th>
+                            <th>File</th>
+                            <th>Size</th>
+                            <th>Time Submitted</th>
+                            <th>Time Due</th>
+                            <th>Status</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="submission in courseSubmissions">
+                            <td>{{submission.assignment}}</td>
+                            <td>{{submission.student}}</td>
+                            <td>{{submission.size}}</td>
+                            <td>{{submission.fileName}}</td>
+                            <td>{{submission.submissionDate}}</td>
+                            <td>{{submission.dueDate}}</td>
+                            <td>{{submission.status}}</td>
+                            <td><a ng-click="facultydownload($index,submission);">download</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<script data-require="angular.js@1.2.28" data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js"></script>
+<script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
+<script src="script.js"></script>
+
+
+<br>
+<div class="row show-hide-message " ng-show="faculty.succMsg ">
+    <div class="alert alert-success ">
+        {{ faculty.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message " ng-show="faculty.errorMsg ">
+    <div class="alert alert-danger ">
+        {{ faculty.errorMsg }}
+    </div>
+</div>

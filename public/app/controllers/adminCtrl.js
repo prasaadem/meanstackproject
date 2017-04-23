@@ -1,28 +1,65 @@
 angular.module('adminController', ['adminServices'])
 
-.controller('adminCtrl', function($http,$location,$timeout,Semester,Course,User,$scope, $routeParams) {
-
+.controller('adminCtrl', function($http, $location, $timeout, Semester, Course, User, $scope, $routeParams) {
     var app = this;
-    app.semesters = [];
-    app.courses = {};
-    app.semesterHeading = [];
 
-    this.addSemester = function(semData){
+    app.loading = true;
+    app.accessDenied = true; // Hide table while loading
+    app.errorMsg = false; // Clear any error messages
+    app.editAccess = false; // Clear access on load
+    app.deleteAccess = false; // CLear access on load
+    app.searchLimit = 0; // Set the default search page results limit to zero
+
+    app.sems = [];
+    app.courses = [];
+
+
+    $scope.dayDataCollapse = [false, false, false, false, false, false];
+    $scope.previousIndex = 0;
+
+    $scope.dayDataCollapseFn = function(index, sem) {
+        for (var i = 0; storeDataModel.storedata.length - 1; i += 1) {
+            $scope.dayDataCollapse.append('false');
+        }
+    };
+
+    $scope.selectTableRow = function(index, sem) {
+        if ($scope.dayDataCollapse === 'undefined') {
+            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
+        } else {
+            $scope.dayDataCollapse[$scope.previousIndex] = false;
+            $scope.previousIndex = index;
+            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
+            Course.getAllCoursesForSem(sem).then(function(data) {
+                if (data.data.success) {
+                    app.loading = false;
+                    app.succMsg = data.data.message;
+                    $scope.courses = data.data.courses;
+                    app.semester = data.data.semester;
+                } else {
+                    app.loading = false;
+                    app.errorMsg = data.data.message;
+                }
+            });
+        }
+    };
+
+    //Semester
+    this.addSemester = function(semData) {
         var app = this;
         app.errorMsg = false;
         app.loading = true;
-        app.sems = [];
 
-        Semester.createSemester(app.semData).then(function(data){
+        Semester.createAdminSemester(app.semData).then(function(data) {
             console.log(data.data.success);
             console.log(data.data.message);
-            if (data.data.success){
+            if (data.data.success) {
                 app.loading = false;
                 app.succMsg = data.data.message;
-                $timeout(function(){
-                    $location.path('/');
-                },2000);
-            }else{
+                // $timeout(function(){
+                //     $location.path('/');
+                // },2000);
+            } else {
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
@@ -30,75 +67,52 @@ angular.module('adminController', ['adminServices'])
     };
 
     //Courses
-    this.addCourse = function(courseData){
+    this.addCourse = function(courseData) {
         var app = this;
         app.errorMsg = false;
         app.loading = true;
 
-        Course.createCourse(app.courseData).then(function(data){
-            if (data.data.success){
+        Course.createAdminCourse(app.courseData).then(function(data) {
+            if (data.data.success) {
                 app.loading = false;
                 app.succMsg = data.data.message;
-                $timeout(function(){
+                $timeout(function() {
                     $location.path('/');
-                },2000);
-            }else{
+                }, 2000);
+            } else {
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
         });
     };
 
-    function getAdminCourses(){
-        Course.getAdminCourses().then(function(data){
-            if (data.data.success){
+    this.getCoursesForSem = function(data) {
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+        Course.getAdminCoursesForSem(app.data).then(function(data) {
+            if (data.data.success) {
                 app.loading = false;
                 app.succMsg = data.data.message;
-                app.tempCourses = data.data.courses;
-                Semester.getSemesters().then(function(data) {
-                    if (data.data.success) {
-                        app.semesters = data.data.sems;
-                        app.tempCourses.forEach(function(course){
-                           // console.log(course);
-                            app.semesters.forEach(function(semester){
-                                //console.log(semester);
-                                if (semester._id === course.semester) {
-                                    if (!app.courses[semester.title]) {
-                                        app.courses[semester.title] = [];
-                                        app.semesterHeading.push(semester.title);
-                                    }
-                                    app.courses[semester.title].push(course);
-                                }
-                            });
-                        });
-                    } else {
-                        app.errorMsg = data.data.message; // Set error message
-                        app.loading = false; // Stop loading icon
-                    }
-                });
-                // console.log(app.semesterHeading);
-            }else{
+                app.courses = data.data.courses;
+                app.semester = data.data.semester;
+            } else {
                 app.loading = false;
                 app.errorMsg = data.data.message;
             }
         });
     };
-    getAdminCourses();
-    
 
     function getSemesters() {
-        Semester.getSemesters().then(function(data) {
-            // Check if able to get data from database
+        Semester.getAdminSemesters().then(function(data) {
             if (data.data.success) {
-                app.semesters = data.data.sems;
-                console.log(app.semesters);
+                app.sems = data.data.sems;
             } else {
                 app.errorMsg = data.data.message; // Set error message
                 app.loading = false; // Stop loading icon
             }
         });
     }
-
     getSemesters();
 
-});
+})

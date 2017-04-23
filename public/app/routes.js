@@ -1,160 +1,198 @@
-var app = angular.module('appRoutes',['ngRoute'])
-.config(function($routeProvider,$locationProvider){
-    $routeProvider
-    .when('/',{
-        templateUrl: 'app/views/pages/home.html'
-    })
+var app = angular.module('appRoutes', ['ngRoute'])
+    .config(function($routeProvider, $locationProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'app/views/pages/home.html'
+            })
 
-    .when('/about',{
-        templateUrl: 'app/views/pages/about.html'
-    })
+        .when('/about', {
+            templateUrl: 'app/views/pages/about.html'
+        })
 
-    .when('/register',{
-        templateUrl: 'app/views/pages/users/register.html',
-        controller: 'regCtrl',
-        controllerAs: 'register',
-        authenticated: false
-    })
+        .when('/register', {
+            templateUrl: 'app/views/pages/users/register.html',
+            controller: 'regCtrl',
+            controllerAs: 'register',
+            authenticated: false
+        })
 
-    .when('/login',{
-        templateUrl: 'app/views/pages/users/login.html',
-        authenticated: false
-    })
+        .when('/login', {
+            templateUrl: 'app/views/pages/users/login.html',
+            authenticated: false
+        })
 
-    .when('/logout',{
-        templateUrl: 'app/views/pages/users/logout.html',
-        authenticated: true
-    })
+        .when('/logout', {
+            templateUrl: 'app/views/pages/users/logout.html',
+            authenticated: true
+        })
 
-    .when('/profile',{
-        templateUrl: 'app/views/pages/users/profile.html',
-        controller: 'managementCtrl',
-        controllerAs: 'management',
-        authenticated: true
-    })
+        .when('/profile', {
+            templateUrl: 'app/views/pages/users/profile.html',
+            authenticated: true
+        })
 
-    .when('/management',{
-        templateUrl: 'app/views/pages/management/management.html',
-        controller: 'managementCtrl',
-        controllerAs: 'management',
-        authenticated: true,
-        permission: ['admin']
-    })
+        .when('/management', {
+            templateUrl: 'app/views/pages/management/management.html',
+            controller: 'managementCtrl',
+            controllerAs: 'management',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    .when('/facultyManagement',{
-        templateUrl: 'app/views/pages/management/facultyManagement.html',
-        controller: 'managementCtrl',
-        controllerAs: 'management',
-        authenticated: true,
-        permission: ['admin']
-    })
+        .when('/facultyManagement', {
+            templateUrl: 'app/views/pages/management/facultyManagement.html',
+            controller: 'managementCtrl',
+            controllerAs: 'management',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    // Route: Edit a User
-    .when('/edit/:id', {
-        templateUrl: 'app/views/pages/management/edit.html',
-        controller: 'editCtrl',
-        controllerAs: 'edit',
-        authenticated: true,
-        permission: ['admin', 'faculty']
-    })
+        // Route: Edit a User
+        .when('/edit/:id', {
+            templateUrl: 'app/views/pages/management/edit.html',
+            controller: 'editCtrl',
+            controllerAs: 'edit',
+            authenticated: true,
+            permission: ['admin', 'faculty']
+        })
 
-    // Route: Search Database Users
-    .when('/search', {
-        templateUrl: 'app/views/pages/management/search.html',
-        controller: 'managementCtrl',
-        controllerAs: 'management',
-        authenticated: true,
-        permission: ['admin', 'faculty']
-    })
+        // Route: Search Database Users
+        .when('/search', {
+            templateUrl: 'app/views/pages/management/search.html',
+            controller: 'managementCtrl',
+            controllerAs: 'management',
+            authenticated: true,
+            permission: ['admin', 'faculty']
+        })
 
-    .when('/addSemester',{
-        templateUrl: 'app/views/pages/management/admin/semester/addSemester.html',
-        controller: 'adminCtrl',
-        controllerAs: 'admin',
-        authenticated: true,
-        permission: ['admin']
-    })
+        .when('/addSemester', {
+            templateUrl: 'app/views/pages/management/admin/addSemester.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    .when('/showSemester',{
-        templateUrl: 'app/views/pages/management/admin/semester/showSemester.html',
-        controller: 'adminCtrl',
-        controllerAs: 'admin',
-        authenticated: true,
-        permission: ['admin']
-    })
+        .when('/showSemester', {
+            templateUrl: 'app/views/pages/management/admin/showSemester.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    .when('/addCourse',{
-        templateUrl: 'app/views/pages/management/admin/course/addCourse.html',
-        controller: 'adminCtrl',
-        controllerAs: 'admin',
-        authenticated: true,
-        permission: ['admin']
-    })
+        .when('/addCourse', {
+            templateUrl: 'app/views/pages/management/admin/addCourse.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    .when('/showCourse',{
-        templateUrl: 'app/views/pages/management/admin/course/showCourse.html',
-        controller: 'adminCtrl',
-        controllerAs: 'admin',
-        authenticated: true,
-        permission:['admin']
-    })
+        .when('/showCourse', {
+            templateUrl: 'app/views/pages/management/admin/showCourse.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
+            authenticated: true,
+            permission: ['admin']
+        })
 
-    .when('/takeCourse',{
-        templateUrl: 'app/views/pages/management/faculty/course/takeCourse.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission: ['faculty']
-    })
+        .when('/takeCourse', {
+            templateUrl: 'app/views/pages/management/faculty/takeCourse.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .when('/myCourses',{
-        templateUrl: 'app/views/pages/management/faculty/course/myCourses.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission: ['faculty']
-    })
+        .when('/myCourses', {
+            templateUrl: 'app/views/pages/management/faculty/myCourses.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .when('/availableCourses',{
-        templateUrl: 'app/views/pages/management/faculty/course/availableCourses.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission:['faculty']
-    })
+        .when('/viewCourse/:id', {
+            templateUrl: 'app/views/pages/management/faculty/viewCourse.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .when('/viewCourse/:id', {
-        templateUrl: 'app/views/pages/management/faculty/course/viewCourse.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission: ['faculty']
-    })
+        .when('/newAssignment', {
+            templateUrl: 'app/views/pages/management/faculty/newAssignment.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .when('/newAssignment',{
-        templateUrl: 'app/views/pages/management/faculty/assignment/newAssignment.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission: ['faculty']
-    })
+        .when('/viewAssignments', {
+            templateUrl: 'app/views/pages/management/faculty/viewAssignments.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .when('/viewAssignments',{
-        templateUrl: 'app/views/pages/management/faculty/assignment/viewAssignments.html',
-        controller: 'facultyCtrl',
-        controllerAs: 'faculty',
-        authenticated: true,
-        permission: ['faculty']
-    })
+        .when('/viewStudentSubmissions', {
+            templateUrl: 'app/views/pages/management/faculty/viewSubmissions.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
 
-    .otherwise({redirectTo:'/'});
+        .when('/takeStudentCourse', {
+            templateUrl: 'app/views/pages/management/student/takeCourse.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
 
-    $locationProvider.html5Mode({
-        enabled:true,
-        requireBase: false
+        .when('/studentCourses', {
+            templateUrl: 'app/views/pages/management/student/myCourses.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
+
+        .when('/submission', {
+            templateUrl: 'app/views/pages/management/student/submission.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
+
+        .when('/viewSubmissions', {
+            templateUrl: 'app/views/pages/management/student/viewSubmissions.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
+
+        .when('/viewStudentAssignments', {
+            templateUrl: 'app/views/pages/management/student/viewAssignments.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
+
+        .otherwise({ redirectTo: '/' });
+
+        $locationProvider.html5Mode({
+            enabled: true,
+            requireBase: false
+        });
+
     });
-    
-});
 
 
 app.run(['$rootScope', 'Auth', '$location', 'User', function($rootScope, Auth, $location, User) {

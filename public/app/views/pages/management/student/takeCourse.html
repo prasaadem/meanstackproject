@@ -1,0 +1,48 @@
+<div class="container">
+    <div class="row">
+        <form>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Semester</label>
+                    <div class="input-group">
+                        <select ng-change="student.getCoursesForSem(data);" class="form-control" ng-model="student.data.semester" ng-options="sem.title for sem in student.sems">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <br/>
+
+    <div class="row">
+        <form ng-submit="student.takeStudentCourse(courseData);">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Course</label>
+                    <div class="input-group">
+                        <select class="form-control" ng-model="student.courseData.course" ng-options="course.title for course in student.courses">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Take Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="student.succMsg">
+    <div class="alert alert-success">
+        {{ student.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="student.errorMsg">
+    <div class="alert alert-danger">
+        {{ student.errorMsg }}
+    </div>
+</div>

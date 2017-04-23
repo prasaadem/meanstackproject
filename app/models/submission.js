@@ -1,17 +1,19 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var User = require('../models/user'); //User Model
-    var Course = require('../models/course'); //Course Model
-    var Assignment = require('../models/assignment'); //Course Model
-    var Semester = require('../models/semester'); //Semester Model
-    
-
 var SubmissionSchema = new Schema({
-    student:{type: Schema.Types.ObjectId, required:true, ref: 'User'},
-    submissionDate: {type: Date, default: Date.now, required:true},
-    version:{type:Number, required:true},
-    path:{type:String}
+    student: { type: String, required: true },
+    assignment: { type: String, required: true },
+    dueDate: { type: Date, default: Date.now, required: true },
+    submissionDate: { type: Date, default: Date.now, required: true },
+    version: { type: Number, required: true },
+    path: { type: String, required: true },
+    status: { type: String, required: true },
+    fileName: { type: String, required: true },
+    course: { type: String, required: true },
+    courseName: { type: String, required: true },
+    semesterName: { type: String, required: true },
+    size: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Submission',SubmissionSchema);
+module.exports = mongoose.model('Submission', SubmissionSchema);

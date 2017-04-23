@@ -1,12 +1,11 @@
-angular.module('uploadFileService',[])
+angular.module('uploadFileService', [])
 
-.service('uploadFile',function($http){
-    this.upload = function(file){
-        var fd = new FormData();
-        fd.append('myfile', file.upload);
+.service('uploadFile', function($http) {
+    this.upload = function(formData) {
+        var fd = formData;
         return $http.post('/api/upload', fd, {
             transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
+            headers: { 'Content-Type': undefined }
         });
     };
 });

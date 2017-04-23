@@ -1,0 +1,113 @@
+<div class="page-header">
+    <h1>{{main.username}}'s Profile</h1>
+</div>
+
+
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            <th colspan='1'>Title</th>
+            <th colspan='3'>Name</th>
+            <th colspan='1'>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat-start="course in faculty.facultyCourses">
+            <td>
+                <button ng-click="assignment($index,course)">
+                        <span ng-bind="dayDataCollapse[$index] ? '-' : '+'"></span>
+                    </button>
+            </td>
+            <td colspan='1'>{{course.title}}</td>
+            <td colspan='3'>{{course.name}}</td>
+            <th colspan='1'>
+                <!--<a ng-click="downloadCourseAssignments($index,course);">Download</a>-->
+                <button type="button" class="btn btn-default" ng-click="downloadCourseAssignments($index,course);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+            </th>
+
+        </tr>
+        <tr ng-repeat-end ng-show="dayDataCollapse[$index]">
+            <td></td>
+            <td colspan="6">
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>Submissions</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="assignment in courseAssignments">
+                            <td><a ng-click="showSubmissions($index,assignment);">{{assignment.name}}</td>
+                            <td>{{assignment.startDate}}</td>
+                            <td>{{assignment.dueDate}}</td>
+                            <td>{{faculty.submissionCount[$index]}}</td>
+                            <th colspan='1'>
+                
+                                <button type="button" class="btn btn-default" ng-click="downloadIndividualAssignments($index,assignment);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                                </th>
+                        </tr>
+                    </tbody>
+                </table>
+                </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment</th>
+            <th>Student</th>
+            <th>File</th>
+            <th>Size</th>
+            <th>Time Submitted</th>
+            <th>Time Due</th>
+            <th>Status</th>
+            <th>Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="submission in faculty.studentSubmissionsForAssignment">
+            <td>{{submission.assignment}}</td>
+            <td>{{submission.student}}</td>
+            <td>{{submission.size}}</td>
+            <td>{{submission.fileName}}</td>
+            <td>{{submission.submissionDate}}</td>
+            <td>{{submission.dueDate}}</td>
+            <td>{{submission.status}}</td>
+            <td>
+                <!--<a ng-click="facultydownload($index,submission);">download</a>-->
+                                <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script data-require="angular.js@1.2.28" data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js"></script>
+                <script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
+                <script src="script.js"></script>
+
+
+                <br>
+                <div class="row show-hide-message " ng-show="faculty.succMsg ">
+                    <div class="alert alert-success ">
+                        {{ faculty.succMsg }}
+                    </div>
+                </div>
+                <br>
+                <div class="row show-hide-message " ng-show="faculty.errorMsg ">
+                    <div class="alert alert-danger ">
+                        {{ faculty.errorMsg }}
+                    </div>
+                </div>
