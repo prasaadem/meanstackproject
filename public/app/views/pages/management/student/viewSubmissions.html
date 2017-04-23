@@ -44,14 +44,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="submission in courseSubmissions">
+                        <tr ng-class="{'color-red': submission.status === 'Late', 'color-green': submission.status === 'ontime'}" ng-repeat="submission in courseSubmissions">
                             <td>{{submission.assignment}}</td>
                             <td>{{submission.fileName}}</td>
                             <td>{{submission.size}}</td>
                             <td>{{submission.submissionDate}}</td>
                             <td>{{submission.dueDate}}</td>
                             <td>{{submission.status}}</td>
-                            <td>{{submission.statusString}}</td>
+                            <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
                             <td>
                                 <button type="button" class="btn btn-default" ng-click="downloadAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
@@ -82,3 +82,16 @@
         {{ faculty.errorMsg }}
     </div>
 </div>
+<style>
+    .color-red {
+        color: red;
+    }
+    
+    .color-green {
+        color: green;
+    }
+    
+    .color-orange {
+        color: orange;
+    }
+</style>
