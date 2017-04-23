@@ -272,7 +272,7 @@ module.exports = function(router) {
     });
 
     router.post('/authenticate', function(req, res) {
-        User.findOne({ username: req.body.username }).select('email username password courses').exec(function(err, user) {
+        User.findOne({ username: req.body.username }).select().exec(function(err, user) {
             if (err) throw err;
 
             if (!user) {

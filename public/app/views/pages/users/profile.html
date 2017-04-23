@@ -1,20 +1,89 @@
-<div class="page-header">
-    <h1>{{main.username}}'s Profile</h1>
-</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-5  toppad  pull-right col-md-offset-3 ">
+            <p class=" text-info">May 05,2014,03:00 pm </p>
+        </div>
+        <div class="col-md-9">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{main.user.name}}</h3>
+                </div>
+                <div class="panel-body">
+                    <!--<div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png" class="img-circle img-responsive"> </div>-->
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Permission</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>{{main.username}}</td>
-      <td>{{main.userEmail}}</td>
-      <td>{{main.permission}}</td>
-    </tr>
-  </tbody>
-</table>
+                    <div class=" col-md-9 col-lg-8 ">
+                        <table class="table table-user-information">
+                            <tbody>
+                                <tr>
+                                    <td>Net Id:</td>
+                                    <td>{{main.username}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Internal Username:</td>
+                                    <td>{{main.username}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email:</td>
+                                    <td><a href="mailto:{{mail.user.email}}">{{main.user.email}}</a></td>
+                                </tr>
+                                <tr>
+                                    <td>UIN:</td>
+                                    <td>{{main.user.uin}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Role:</td>
+                                    <td>{{main.user.major}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Official Name:</td>
+                                    <td>{{main.user.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Major:</td>
+                                    <td>{{main.user.directoryName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Classification:</td>
+                                    <td>{{main.user.classification}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Courses:</td>
+                                    <td>NA</td>
+                                </tr>
+
+                                <tr>
+                                    <tr>
+                                        <td>Gender</td>
+                                        <td>Female
+                                            <b>Hardcoded</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Home Address</td>
+                                        <td>Texas <b>Hardcoded</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+
+                                    </tr>
+                                    <td>Phone Number</td>
+                                    <td>123-4567-890 (Mobile) <b>Hardcoded</b>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <!--<a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
+                    <span class="pull-right">
+                            <a href="edit.html" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
+                            <a data-original-title="Remove this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                        </span>-->
+                    Permission : {{main.user.permission}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
