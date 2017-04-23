@@ -634,6 +634,21 @@ module.exports = function(router) {
                         submission.status = 'ontime';
                     }
                     submission.fileName = file.originalname;
+                    Submission.findOne({ student: req.decoded.username, courseName: a.courseName, assignment: a.name, semesterName: a.semesterName }, function(err, sub) {
+                        if (err) throw err;
+                        if (!sub) {
+
+                        } else {
+                            var newPath = path + 'old/';
+                            fs.rename(sub.path, newPath + sub.fileName, function(err) {
+                                if (err) throw err;
+                                sub.path = newPath + sub.fileName;
+                                sub.save(function(err) {
+                                    if (err) throw err;
+                                });
+                            });
+                        }
+                    });
                     submission.save(function(err, result) {
                         if (err) throw err;
                         if (!result) {
@@ -942,6 +957,9 @@ module.exports = function(router) {
                             } else {
                                 fs.mkdir(path, function(err) {
                                     if (err) throw err;
+                                    fs.mkdir(path + 'old/', function(err) {
+                                        if (err) throw err;
+                                    });
                                 });
                                 assignment.name = req.body.name;
                                 assignment.course = req.body.course._id;
@@ -1145,7 +1163,7 @@ module.exports = function(router) {
         archive.pipe(res);
 
         var path = './app/uploads/' + course.semesterName + '/' + course.title + '/';
-        archive.directory(path);
+        archive.directory(path, false);
 
         archive.bulk([{
             expand: true,
@@ -1181,12 +1199,47 @@ module.exports = function(router) {
         archive.pipe(res);
 
         var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
-        archive.directory(path);
+        archive.directory(path, false);
 
         archive.bulk([{
             expand: true,
             cwd: path,
             src: ['**/*']
+        }]).finalize();
+    });
+
+    router.post('/downloadLatestAssignments', function(req, res) {
+        var assignment = req.body;
+        var archive = archiver('zip');
+        archive.on('error', function(err) {
+            console.error(err);
+            res.status(500).send({ error: err.message });
+        });
+
+        archive.on('finish', function(err) {
+            return res.end();
+        });
+        //on stream closed we can end the request
+        archive.on('end', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+        });
+        var header = {
+            "Content-Type": "application/zip",
+            'Content-disposition': 'attachment; filename=download.zip',
+        };
+
+        res.writeHead(200, header);
+
+        archive.store = true; // don't compress the archive
+        archive.pipe(res);
+
+        var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
+        archive.directory(path, false);
+
+        archive.bulk([{
+            expand: true,
+            cwd: path,
+            src: ['.']
         }]).finalize();
     });
 

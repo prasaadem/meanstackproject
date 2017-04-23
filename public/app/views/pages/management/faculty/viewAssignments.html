@@ -40,6 +40,7 @@
                             <th>Due Date</th>
                             <th>Submissions</th>
                             <th>Action</th>
+                            <!--<th>Latest</th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +55,12 @@
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
                                 </th>
+                            <!--<th colspan='1'>
+                
+                                <button type="button" class="btn btn-default" ng-click="downloadLatestAssignments($index,assignment);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                                </th>-->
                         </tr>
                     </tbody>
                 </table>
@@ -85,7 +92,6 @@
             <td>{{submission.dueDate}}</td>
             <td>{{submission.status}}</td>
             <td>
-                <!--<a ng-click="facultydownload($index,submission);">download</a>-->
                                 <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
