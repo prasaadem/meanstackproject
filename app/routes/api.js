@@ -1048,6 +1048,8 @@ module.exports = function(router) {
                                 assignment.submissions = new Array();
                                 assignment.semesterName = semester.title;
                                 assignment.courseName = course.title;
+                                assignment.marks = req.body.marks;
+                                assignment.comments = req.body.comments;
 
                                 assignment.save(function(err) {
                                     if (err) {

@@ -39,6 +39,8 @@
                             <th>Time Submitted</th>
                             <th>Time Due</th>
                             <th>Status</th>
+                            <th>Comments</th>
+                            <th>Marks</th>
                             <th>Validation</th>
                             <th>Download</th>
                         </tr>
@@ -51,6 +53,8 @@
                             <td>{{submission.submissionDate}}</td>
                             <td>{{submission.dueDate}}</td>
                             <td>{{submission.status}}</td>
+                            <th>{{submission.marks}}</th>
+                            <th>{{submission.comments}}</th>
                             <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
                             <td>
                                 <button type="button" class="btn btn-default" ng-click="downloadAssignment($index,submission);">

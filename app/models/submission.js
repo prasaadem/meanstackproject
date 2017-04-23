@@ -14,7 +14,9 @@ var SubmissionSchema = new Schema({
     courseName: { type: String, required: true },
     semesterName: { type: String, required: true },
     size: { type: String, required: true },
-    statusString: { type: String, required: true, default: "Most Recent" }
+    statusString: { type: String, required: true, default: "Most Recent" },
+    marksSecured: { type: Number },
+    comments: { type: String }
 });
 
 module.exports = mongoose.model('Submission', SubmissionSchema);

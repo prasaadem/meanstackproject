@@ -42,19 +42,24 @@
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Marks</th>
+                            <th>Comments</th>
                             <th>Start Date</th>
                             <th>Due Date</th>
                             <th>Submissions</th>
+                            <th>Evaluation</th>
                             <th>Action</th>
-                            <!--<th>Latest</th>-->
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="assignment in courseAssignments">
                             <td><a ng-click="showSubmissions($index,assignment);">{{assignment.name}}</td>
+                            <th>{{assignment.marks}}</th>
+                            <th>{{assignment.comments}}</th>
                             <td>{{assignment.startDate}}</td>
                             <td>{{assignment.dueDate}}</td>
                             <td>{{faculty.submissionCount[$index]}}</td>
+                            <th>{{assignment.evaluation}}</th>
                             <th colspan='1'>
                 
                                 <button type="button" class="btn btn-default" ng-click="downloadIndividualAssignments($index,assignment);">
@@ -86,6 +91,8 @@
             <th>Time Due</th>
             <th>Status</th>
             <th>Validation</th>
+            <th>Marks</th>
+            <th>Comments</th>
             <th>Download</th>
         </tr>
     </thead>
@@ -99,6 +106,8 @@
             <td>{{submission.dueDate}}</td>
             <td>{{submission.status}}</td>
             <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
+            <th>{{submission.marks}}</th>
+            <th>{{submission.comments}}</th>
             <td>
                                 <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>

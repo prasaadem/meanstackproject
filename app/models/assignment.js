@@ -9,7 +9,11 @@ var AssignmentSchema = new Schema({
     course: { type: String, required: true },
     submissions: { type: Array },
     courseName: { type: String, required: true },
-    semesterName: { type: String, required: true }
+    semesterName: { type: String, required: true },
+
+    marks: { type: Number, default: 0 },
+    evaluation: { type: String, default: 'In progress' },
+    comments: { type: String, default: '' }
 });
 
 module.exports = mongoose.model('Assignment', AssignmentSchema);
