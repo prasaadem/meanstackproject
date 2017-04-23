@@ -721,6 +721,7 @@ module.exports = function(router) {
                             fs.rename(sub.path, newPath + sub.fileName, function(err) {
                                 if (err) throw err;
                                 sub.path = newPath + sub.fileName;
+                                sub.statusString = "Old Submission";
                                 sub.save(function(err) {
                                     if (err) throw err;
                                 });

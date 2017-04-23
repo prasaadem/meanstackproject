@@ -145,6 +145,68 @@
             background: #fff;
             min-height: 460px;
         }
+        /*video*/
+        
+        body {
+            margin: 0;
+            background: #fff;
+        }
+        
+        video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            transform: translateX(-50%) translateY(-50%);
+            background: url('//demosthenes.info/assets/images/polina.jpg') no-repeat;
+            background-size: cover;
+            transition: 1s opacity;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            margin-top: 0;
+            letter-spacing: .3rem;
+        }
+        
+        @media screen and (max-width: 500px) {
+            div {
+                width: 70%;
+            }
+        }
+        
+        @media screen and (max-device-width: 800px) {
+            html {
+                background: #000 no-repeat center center fixed;
+            }
+            #bgvid {
+                display: none;
+            }
+        }
+        
+        #about {
+            font-family: Agenda-Light, Agenda Light, Agenda, Arial Narrow, sans-serif;
+            font-weight: 100;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            padding: 2rem;
+            width: 33%;
+            margin: 2rem;
+            float: right;
+            font-size: 1.2rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            margin-top: 0;
+            letter-spacing: .3rem;
+        }
     </style>
 
 
@@ -182,13 +244,13 @@
         </div>
     </nav>
 
-    <div class="container theme-showcase" role="main" style="width:100%;">
+    <div class="container theme-showcase" role="main" style="width:100%;" ng-show: "main.isLoggedIn">
         <br>
         <br>
         <hr>
         <div class="container" style="width:100%;">
             <div class="row profile">
-                <div class="col-md-3" ng-show="main.isLoggedIn">
+                <div class="col-md-2" ng-show="main.isLoggedIn">
                     <div class="profile-sidebar">
                         <div class="profile-userpic">
                             <img src="https://cdn1.iconfinder.com/data/icons/unique-round-blue/93/user-512.png" class="img-responsive" alt="">
@@ -295,13 +357,18 @@
                         <!-- END MENU -->
                     </div>
                 </div>
-                <div class="col-md-9 ">
+                <div class="col-md-9 " ng-show="main.isLoggedIn">
                     <div class="profile-content ">
                         <div ng-view>
 
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="bgvid" class="container theme-showcase" role="main" style="width:100%;" ng-show="!main.isLoggedIn">
+            <div ng-view>
+
             </div>
         </div>
 

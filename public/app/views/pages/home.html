@@ -1,3 +1,14 @@
-<!--<div class="page-header">
-    <h1>{{main.username}} Home</h1>
-</div>-->
+<div ng-show="!main.isLoggedIn" id="big-video-wrap" style="display: block;"><video autoplay="autoplay" id="fullscreen_video" loop="loop" muted="muted" preload="none" src="https://player.vimeo.com/external/193441951.hd.mp4?s=2698b632f478b6ae0897745ce0aeb0a337505c70&amp;profile_id=174">Time lapse of Texas A&amp;M University</video></div>
+<div ng-show="!main.isLoggedIn" style="width:800px; margin:0 auto;">
+    <div class="title">
+        <h1 class="serif" style="color:#FFF;"><span>Welcome to</span><br> TEXAS A&amp;M UNIVERSITY</h1>
+    </div>
+</div>
+<div ng-show="!main.isLoggedIn" id="about">
+    <h1>About CSNet</h1>
+    <p>CSNet was created to solve the problem of information overload in the department, specifically in two areas: too many different intranet-type sites that all performed similar functions (see the list above), and too much departmental email being sent
+        to the various CS group email lists.</p>
+    <p><a href="https://github.com/prasaadem/meanstackproject">Github</a>
+        <p>This last problem was particularly annoying to students, so the News & Announcements application was envisioned by Dr. Taylor as a mechanism to disseminate departmental information in a less intrusive manner. This is a new venture for us, so any
+            feedback you may have, either reporting a bug you have found, or in terms of improving the user interface, is greatly appreciated.</p>
+</div>

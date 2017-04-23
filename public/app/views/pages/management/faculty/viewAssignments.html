@@ -85,6 +85,7 @@
             <th>Time Submitted</th>
             <th>Time Due</th>
             <th>Status</th>
+            <th>Validation</th>
             <th>Download</th>
         </tr>
     </thead>
@@ -97,6 +98,7 @@
             <td>{{submission.submissionDate}}</td>
             <td>{{submission.dueDate}}</td>
             <td>{{submission.status}}</td>
+            <td>{{submission.statusString}}</td>
             <td>
                                 <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
