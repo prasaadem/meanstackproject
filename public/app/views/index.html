@@ -168,23 +168,6 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/login" ng-show="!main.isLoggedIn">Login</a></li>
                     <li><a href="/register" ng-show="!main.isLoggedIn">Register</a></li>
-
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courses <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/takeStudentCourse">Take Course</a></li>
-                            <li><a href="/studentCourses">My Courses</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.student" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Assignments <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/submission">Submit Assignments</a></li>
-                            <li><a href="/viewSubmissions">View Submissions</a></li>
-                            <li><a href="/viewStudentAssignments">View Assignments</a></li>
-                        </ul>
-                    </li>
-
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="main.isLoggedIn"><a href="/profile"><span class="glyphicon glyphicon-user"> Account</span></a></li>
@@ -271,6 +254,29 @@
                                         <ul class="nav nav-list">
                                             <li><a href="/newAssignment">Add Assignment</a></li>
                                             <li><a href="/viewAssignments">View Assignments</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li ng-show="main.student">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo5" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-ok"></span> Course <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo5" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/takeStudentCourse">Take Course</a></li>
+                                            <li><a href="/studentCourses">My Courses</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li ng-show="main.student">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo6" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-flag"></span> Assignment <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo6" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/submission">Submit Assignments</a></li>
+                                            <li><a href="/viewSubmissions">View Submissions</a></li>
+                                            <li><a href="/viewStudentAssignments">View Assignments</a></li>
                                         </ul>
                                     </div>
                                 </li>
