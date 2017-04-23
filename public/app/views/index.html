@@ -11,7 +11,7 @@
     <meta name="author" content="">
 
     <link rel="stylesheet" href="assets/css/style.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/bootstrap.css" type="text/css">-->
+    <link rel="stylesheet" href="assets/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="assets/css/animate.css">
 
     <script src="assets/js/angular.js"></script>
@@ -37,13 +37,124 @@
 
     <title>CSNet :: Computer Science @ TAMU</title>
 
+    <style>
+        body {
+            background: #F1F3FA;
+        }
+        /* Profile container */
+        
+        .profile {
+            margin: 20px 0;
+        }
+        /* Profile sidebar */
+        
+        .profile-sidebar {
+            padding: 20px 0 10px 0;
+            background: #fff;
+        }
+        
+        .profile-userpic img {
+            float: none;
+            margin: 0 auto;
+            width: 50%;
+            height: 50%;
+            -webkit-border-radius: 50% !important;
+            -moz-border-radius: 50% !important;
+            border-radius: 50% !important;
+        }
+        
+        .profile-usertitle {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .profile-usertitle-name {
+            color: #5a7391;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+        
+        .profile-usertitle-job {
+            text-transform: uppercase;
+            color: #5b9bd1;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .profile-userbuttons {
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .profile-userbuttons .btn {
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 15px;
+            margin-right: 5px;
+        }
+        
+        .profile-userbuttons .btn:last-child {
+            margin-right: 0px;
+        }
+        
+        .profile-usermenu {
+            margin-top: 30px;
+        }
+        
+        .profile-usermenu ul li {
+            border-bottom: 1px solid #f0f4f7;
+        }
+        
+        .profile-usermenu ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-usermenu ul li a {
+            color: #93a3b5;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .profile-usermenu ul li a i {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .profile-usermenu ul li a:hover {
+            background-color: #fafcfd;
+            color: #5b9bd1;
+        }
+        
+        .profile-usermenu ul li.active {
+            border-bottom: none;
+        }
+        
+        .profile-usermenu ul li.active a {
+            color: #5b9bd1;
+            background-color: #f6f9fb;
+            border-left: 2px solid #5b9bd1;
+            margin-left: -2px;
+        }
+        /* Profile Content */
+        
+        .profile-content {
+            padding: 20px;
+            background: #fff;
+            min-height: 460px;
+        }
+    </style>
+
+
+
 </head>
 
 <body ng-app="userApp" ng-controller="mainCtrl as main" ng-show="main.loadMe" ng-cloak>
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #eee;">
-        <div class="container">
+    <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #fff;">
+        <div class="container" style="width:100%;">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -51,34 +162,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-                <a class="navbar-brand" href="/">CSNet</a>
+                <a class="navbar-brand" href="/">CSNet: Texas A&M University System</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/">Home</a></li>
                     <li><a href="/login" ng-show="!main.isLoggedIn">Login</a></li>
                     <li><a href="/register" ng-show="!main.isLoggedIn">Register</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/management">Students</a></li>
-                            <li><a href="/facultyManagement">Faculty</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Semester <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/addSemester">Add Semester</a></li>
-                            <li><a href="/showSemester">Show Semesters</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.admin" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/addCourse">Add Course</a></li>
-                            <li><a href="/showCourse">Show Courses</a></li>
-                        </ul>
-                    </li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" ng-show="main.isLoggedIn && main.faculty" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Courses <span class="caret"></span></a>
@@ -114,51 +203,98 @@
 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li ng-show="main.isLoggedIn"><a href="/profile">Profile</a></li>
-                    <li><a href="#" ng-show="main.isLoggedIn" ng-click="main.logout();">Logout</a></li>
+                    <li ng-show="main.isLoggedIn"><a href="/profile"><span class="glyphicon glyphicon-user"> Account</span></a></li>
+                    <li>
+                        <a href="#" ng-show="main.isLoggedIn" ng-click="main.logout();" style="color:#ff0000">
+                            <span class="glyphicon glyphicon-off"></span>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
         </div>
     </nav>
 
-    <div class="container theme-showcase" role="main">
+    <div class="container theme-showcase" role="main" style="width:100%;">
+        <br>
+        <br>
+        <hr>
+        <div class="container" style="width:100%;">
+            <div class="row profile">
+                <div class="col-md-3" ng-show="main.isLoggedIn">
+                    <div class="profile-sidebar">
+                        <div class="profile-userpic">
+                            <img src="https://cdn1.iconfinder.com/data/icons/unique-round-blue/93/user-512.png" class="img-responsive" alt="">
+                        </div>
+                        <div class="profile-usertitle">
+                            <div class="profile-usertitle-name">
+                                {{main.username}}
+                            </div>
+                            <div class="profile-usertitle-job">
+                                {{main.permission}}
+                            </div>
+                            <hr>
+                        </div>
 
+                        <div class="profile-usermenu ">
+                            <ul class="nav ">
+                                <li>
+                                    <a href="/ ">
+                                        <i class="glyphicon glyphicon-home "></i> Home </a>
+                                </li>
+                                <li>
+                                    <a href="/profile ">
+                                        <i class="glyphicon glyphicon-user "></i> Account Settings </a>
+                                </li>
+                                <li ng-show="main.admin">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-ok"></span> Semester <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/addSemester">Add Semester</a></li>
+                                            <li><a href="/showSemester">View Semesters</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li ng-show="main.admin">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo2" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-flag"></span> Course <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo2" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/addCourse">Add Course</a></li>
+                                            <li><a href="/showCourse">Show Courses</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <hr>
+                        <div class="profile-userbuttons" ng-show="main.admin">
+                            <form action="/management" style="display: inline;">
+                                <input type="submit" class="btn btn-success btn-sm" value="Students" />
+                            </form>
+                            <form action="/facultyManagement" style="display: inline;">
+                                <input type="submit" class="btn btn-danger btn-sm" value="Faculties" />
+                            </form>
+                        </div>
 
-        <div class="jumbotron">
-            <!-- <h1>CSCE 604 Project 1</h1>
-        <p>This application is designed to understand server and find issues with the server.</p>
-        <p ng-show="main.isLoggedIn">Logged in as: {{main.permission}}</li> -->
-        </div>
-        <div ng-view>
-
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" ng-click="main.endSession();" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">{{ main.modalHeader }}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>{{ main.modalBody }}</p>
-                        <div class="dizzy-gillespie" ng-hide="main.hideButton"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" ng-hide="main.hideButton" ng-click="main.renewSession();" class="btn btn-primary" data-dismiss="modal">Yes</button>
-                        <button type="button" ng-hide="main.hideButton" ng-click="main.endSession();" class="btn btn-danger" data-dismiss="modal">No</button>
+                        <!-- END MENU -->
                     </div>
                 </div>
+                <div class="col-md-9 ">
+                    <div class="profile-content ">
+                        <div ng-view>
 
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <script src="assets/js/jquery-3.2.0.min.js"></script>
-        <script src="assets/js/bootstrap.js"></script>
+        <script src="assets/js/jquery-3.2.0.min.js "></script>
+        <script src="assets/js/bootstrap.js "></script>
 </body>
 
 </html>
