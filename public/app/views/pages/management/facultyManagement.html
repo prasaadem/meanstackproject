@@ -1,11 +1,9 @@
 <!-- Heading -->
 <div class="row text-center">
-    <div class="container">
-        <h2 class="section-heading">Faculty Management</h2>
-        <h3 class="section-subheading text-muted">Hello <strong>{{ main.username }}, </strong>This page allows you to edit and delete users.</h3>
-    </div>
+    <div></div>
+    <h3 class="section-subheading text-muted">Edit faculty profile</h3>
 </div>
-<!-- Heading -->
+</div>
 
 <br>
 
@@ -29,13 +27,13 @@
             <th>Name</th>
             <th>Username</th>
             <th>Email</th>
-            <th>Permission</th>
+            <th>UIN</th>
         </tr>
         <tr ng-repeat="person in management.faculties | filter: searchFilter | limitTo: management.limit">
             <td>{{ person.name }}</td>
             <td>{{ person.username }}</td>
             <td>{{ person.email }}</td>
-            <td>{{ person.permission }}</td>
+            <td>{{ person.uin }}</td>
             <td>
                 <!-- Edit Button -->
                 <a href="/edit/{{ person._id }}">

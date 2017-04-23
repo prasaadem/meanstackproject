@@ -1,8 +1,7 @@
 <!-- Heading -->
 <div class="row text-center">
-    <div class="container">
-        <h2 class="section-heading">Edit User</h2>
-        <h3 class="section-subheading text-muted">This page allows you to edit a user's name, e-mail, or permissions.</h3>
+    <div>
+        <h3 class="section-subheading text-muted">profile</h3>
     </div>
 </div>
 <!-- Heading -->
@@ -67,7 +66,8 @@
                     <p class="help-block" ng-show="(!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.required) || (edit.usernameForm.$submitted && edit.usernameForm.username.$error.required)">This field is required</p>
                     <span ng-show="register.checkingUsername && edit.usernameForm.username.$valid" class="glyphicon glyphicon-repeat"></span>
                     <p class="help-block" ng-show="register.usernameMsg && !edit.usernameForm.username.$error.required && edit.usernameForm.username.$valid">{{ register.usernameMsg }}</p>
-                    <ul ng-show="(!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.pattern) || (!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.minlength) || (!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.maxlength)" class="help-block">
+                    <ul ng-show="(!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.pattern) || (!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.minlength) || (!edit.usernameForm.username.$pristine && edit.usernameForm.username.$error.maxlength)"
+                        class="help-block">
                         <li>Must not contain any special characters or spaces</li>
                         <li>Must be at least 3 characters but no more than 25</li>
                     </ul>
