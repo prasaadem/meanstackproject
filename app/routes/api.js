@@ -34,6 +34,84 @@ var upload = multer({ dest: './app/uploads/' });
 
 module.exports = function(router) {
 
+
+
+    //http://localhost:PORT/api/addFaculty
+    //Faculty Registration Route
+
+    router.post('/addFaculty', function(req, res) {
+        var faculty = new User();
+        faculty.username = req.body.username;
+        faculty.email = req.body.email;
+        faculty.uin = req.body.uin;
+        faculty.permission = req.body.permission;
+        faculty.accountExpires = req.body.accountExpires;
+        faculty.name = req.body.name;
+        faculty.directoryName = req.body.directoryName;
+        faculty.major = req.body.major;
+        faculty.classification = req.body.classification;
+        faculty.password = req.body.password;
+        faculty.courses = [];
+
+        console.log(faculty);
+        faculty.save(function(err) {
+            if (err) {
+                res.json({
+                    success: false,
+                    message: err
+                });
+            } else {
+                res.json({
+                    success: true,
+                    message: 'Faculty Created in the database successfully!',
+                    admin: faculty
+                });
+            }
+        });
+    });
+
+    //http://localhost:PORT/api/addStudent
+    //Student Registration Route
+
+    router.post('/addStudent', function(req, res) {
+        var student = new User();
+        student.username = req.body.username;
+        student.email = req.body.email;
+        student.uin = req.body.uin;
+        student.permission = req.body.permission;
+        student.accountExpires = req.body.accountExpires;
+        student.name = req.body.name;
+        student.directoryName = req.body.directoryName;
+        student.major = req.body.major;
+        student.classification = req.body.classification;
+        student.password = req.body.password;
+        student.courses = [];
+
+        console.log(student);
+        student.save(function(err) {
+            if (err) {
+                res.json({
+                    success: false,
+                    message: err
+                });
+            } else {
+                res.json({
+                    success: true,
+                    message: 'Student Created in the database successfully!',
+                    admin: student
+                });
+            }
+        });
+    });
+
+
+
+
+
+
+
+
+
     router.post('/users', function(req, res) {
         var user = new User();
         user.username = req.body.username;
@@ -194,7 +272,7 @@ module.exports = function(router) {
     });
 
     router.post('/authenticate', function(req, res) {
-        User.findOne({ username: req.body.username }).select('email username password courses').exec(function(err, user) {
+        User.findOne({ username: req.body.username }).select().exec(function(err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -634,6 +712,22 @@ module.exports = function(router) {
                         submission.status = 'ontime';
                     }
                     submission.fileName = file.originalname;
+                    Submission.findOne({ student: req.decoded.username, courseName: a.courseName, assignment: a.name, semesterName: a.semesterName }, function(err, sub) {
+                        if (err) throw err;
+                        if (!sub) {
+
+                        } else {
+                            var newPath = path + 'old/';
+                            fs.rename(sub.path, newPath + sub.fileName, function(err) {
+                                if (err) throw err;
+                                sub.path = newPath + sub.fileName;
+                                sub.statusString = "Old Submission";
+                                sub.save(function(err) {
+                                    if (err) throw err;
+                                });
+                            });
+                        }
+                    });
                     submission.save(function(err, result) {
                         if (err) throw err;
                         if (!result) {
@@ -942,6 +1036,9 @@ module.exports = function(router) {
                             } else {
                                 fs.mkdir(path, function(err) {
                                     if (err) throw err;
+                                    fs.mkdir(path + 'old/', function(err) {
+                                        if (err) throw err;
+                                    });
                                 });
                                 assignment.name = req.body.name;
                                 assignment.course = req.body.course._id;
@@ -1145,7 +1242,7 @@ module.exports = function(router) {
         archive.pipe(res);
 
         var path = './app/uploads/' + course.semesterName + '/' + course.title + '/';
-        archive.directory(path);
+        archive.directory(path, false);
 
         archive.bulk([{
             expand: true,
@@ -1181,12 +1278,47 @@ module.exports = function(router) {
         archive.pipe(res);
 
         var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
-        archive.directory(path);
+        archive.directory(path, false);
 
         archive.bulk([{
             expand: true,
             cwd: path,
             src: ['**/*']
+        }]).finalize();
+    });
+
+    router.post('/downloadLatestAssignments', function(req, res) {
+        var assignment = req.body;
+        var archive = archiver('zip');
+        archive.on('error', function(err) {
+            console.error(err);
+            res.status(500).send({ error: err.message });
+        });
+
+        archive.on('finish', function(err) {
+            return res.end();
+        });
+        //on stream closed we can end the request
+        archive.on('end', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+        });
+        var header = {
+            "Content-Type": "application/zip",
+            'Content-disposition': 'attachment; filename=download.zip',
+        };
+
+        res.writeHead(200, header);
+
+        archive.store = true; // don't compress the archive
+        archive.pipe(res);
+
+        var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
+        archive.directory(path, false);
+
+        archive.bulk([{
+            expand: true,
+            cwd: path,
+            src: ['.']
         }]).finalize();
     });
 

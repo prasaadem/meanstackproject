@@ -1,6 +1,12 @@
-<div class="page-header">
-    <h1>{{main.username}}'s Profile</h1>
+<!-- Heading -->
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">View Assignments</h3>
+    </div>
 </div>
+<!-- Heading -->
+
+<br>
 
 
 <table class="table table-condensed table-bordered">
@@ -40,6 +46,7 @@
                             <th>Due Date</th>
                             <th>Submissions</th>
                             <th>Action</th>
+                            <!--<th>Latest</th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +61,12 @@
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
                                 </th>
+                            <!--<th colspan='1'>
+                
+                                <button type="button" class="btn btn-default" ng-click="downloadLatestAssignments($index,assignment);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                                </th>-->
                         </tr>
                     </tbody>
                 </table>
@@ -72,6 +85,7 @@
             <th>Time Submitted</th>
             <th>Time Due</th>
             <th>Status</th>
+            <th>Validation</th>
             <th>Download</th>
         </tr>
     </thead>
@@ -84,8 +98,8 @@
             <td>{{submission.submissionDate}}</td>
             <td>{{submission.dueDate}}</td>
             <td>{{submission.status}}</td>
+            <td>{{submission.statusString}}</td>
             <td>
-                <!--<a ng-click="facultydownload($index,submission);">download</a>-->
                                 <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>

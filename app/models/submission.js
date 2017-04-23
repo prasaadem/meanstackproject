@@ -13,7 +13,8 @@ var SubmissionSchema = new Schema({
     course: { type: String, required: true },
     courseName: { type: String, required: true },
     semesterName: { type: String, required: true },
-    size: { type: String, required: true }
+    size: { type: String, required: true },
+    statusString: { type: String, required: true, default: "Most Recent" }
 });
 
 module.exports = mongoose.model('Submission', SubmissionSchema);

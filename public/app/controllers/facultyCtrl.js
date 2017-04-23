@@ -140,6 +140,16 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         });
     }
 
+    $scope.downloadLatestAssignments = function(index, assignment) {
+        var app = this;
+        app.name = assignment.courseName + '-' + assignment.name;
+        Submission.downloadLatestAssignments(app.assignment).then(function(data, status, headers, config) {
+            var file = new Blob([(data.data)], { type: "application/zip" });
+            console.log(file.size);
+            saveAs(file, app.name + ".zip");
+        });
+    }
+
 
     $scope.downloadOneAssignment = function(index, submission) {
         var app = this;

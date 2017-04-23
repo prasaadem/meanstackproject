@@ -63,6 +63,10 @@ angular.module('adminServices', [])
         return $http.post('/api/downloadOneAssignment/', data, { encoding: null, responseType: 'arraybuffer' });
     }
 
+    submissionFactory.downloadLatestAssignments = function(data) {
+        return $http.post('/api/downloadLatestAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
+    }
+
     submissionFactory.downloadIndividualAssignments = function(data) {
         return $http.post('/api/downloadIndividualAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
     }
