@@ -170,14 +170,6 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         return bytes;
     }
 
-    function str2bytes(str) {
-        var bytes = new Uint8Array(str.length);
-        for (var i = 0; i < str.length; i++) {
-            bytes[i] = str.charCodeAt(i);
-        }
-        return bytes;
-    }
-
     $scope.download = function() {
         window.open('/studentDownload');
     }
@@ -290,4 +282,36 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         });
     }
     getCourseFromId();
+
+    Assignment.getAssignmentForCourseID($routeParams.id).then(function(data) {
+        if (data.data.success) {
+            app.courseAssignments = data.data.assignments;
+        } else {
+            app.errorMsg = data.data.message; // Set error message
+            app.loading = false; // Stop loading icon
+        }
+    });
+
+    Submission.viewAssignmentSubmissions($routeParams.name).then(function(data) {
+        if (data.data.success) {
+            $scope.assignmentSubmissionsId = data.data.submissions;
+        } else {
+            app.errorMsg = data.data.message; // Set error message
+            app.loading = false; // Stop loading icon
+        }
+    });
+
+    this.grade = function(index, gradeData) {
+        app.d = {};
+        app.d.submission = $scope.assignmentSubmissionsId[index];
+        app.d.data = gradeData;
+        Submission.postGradeAndComment(app.d).then(function(data) {
+            if (data.data.success) {
+                $scope.assignmentSubmissionsId = data.data.submissions;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    };
 });

@@ -34,6 +34,9 @@
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Marks</th>
+                            <th>Comments</th>
+                            <th>Evaluation</th>
                             <th>Start Date</th>
                             <th>Due Date</th>
                         </tr>
@@ -41,6 +44,9 @@
                     <tbody>
                         <tr ng-repeat="assignment in courseAssignments">
                             <td>{{assignment.name}}</td>
+                            <th>{{assignment.marks}}</th>
+                            <th>{{assignment.comments}}</th>
+                            <th>{{assignment.evaluation}}</th>
                             <td>{{assignment.startDate}}</td>
                             <td>{{assignment.dueDate}}</td>
                         </tr>
