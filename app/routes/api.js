@@ -693,7 +693,7 @@ module.exports = function(router) {
             console.log(req.files);
             req.files.forEach(function(file) {
                 var path = './app/uploads/' + a.semesterName + '/' + a.courseName + '/' + a.name + '/';
-                var fileName = (new Date).valueOf() + '-' + file.originalname;
+                var fileName = req.decoded.user.uin + '-' + file.originalname;
                 fs.rename(file.path, path + fileName, function(err) {
                     if (err) throw err;
                     submission.student = req.decoded.username;
