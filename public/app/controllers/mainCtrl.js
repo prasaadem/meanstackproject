@@ -100,7 +100,6 @@ angular.module('mainController', ['authServices', 'userServices'])
                 app.isLoggedIn = true;
                 Auth.getUser().then(function(data) {
                     app.user = data.data.user;
-                    console.log(app.user);
                     app.username = data.data.username;
                     app.userEmail = data.data.email;
                     app.courses = data.data.courses;
