@@ -712,7 +712,7 @@ module.exports = function(router) {
                         submission.status = 'ontime';
                     }
                     submission.fileName = file.originalname;
-                    Submission.findOne({ student: req.decoded.username, courseName: a.courseName, assignment: a.name, semesterName: a.semesterName }, function(err, sub) {
+                    Submission.findOne({ student: req.decoded.username, courseName: a.courseName, assignment: a.name, semesterName: a.semesterName, statusString: 'Most Recent' }, function(err, sub) {
                         if (err) throw err;
                         if (!sub) {
 
@@ -1108,6 +1108,77 @@ module.exports = function(router) {
         });
     });
 
+    router.post('/postGradeAndComment', function(req, res) {
+        console.log(req.body);
+        Submission.findOne({ _id: req.body.submission._id }).exec(function(err, s) {
+            if (err) throw err;
+            if (!s) {
+                res.json({ success: false, message: 'No submissions to display' });
+            } else {
+                s.marksSecured = req.body.data.marks;
+                s.comments = req.body.data.comments;
+                s.graded = true;
+                s.save(function(err) {
+                    if (err) throw err;
+                    Submission.find({ assignment: s.assignment, graded: false, statusString: 'Most Recent' }, function(err, submissions) {
+                        if (err) throw err;
+                        if (!submissions) {
+                            Assignment.findOne({ semesterName: s.semesterName, courseName: s.courseName, name: s.assignment }, function(err, a) {
+                                if (err) {
+                                    throw err;
+                                }
+                                if (!a) {
+
+                                } else {
+                                    a.graded = true;
+                                    a.save(function(err) {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            res.json({ success: true, message: 'Graded successfully', submissions: submissions });
+                        }
+                    });
+                });
+            }
+        });
+    });
+
+
+    router.get('/getAssignmentForCourseID/:id', function(req, res) {
+        var courseId = req.params.id; // Assign the _id from parameters to variable
+        Assignment.find({ course: courseId }, function(err, assignments) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                // Check if logged in user was found in database
+                if (!assignments) {
+                    res.json({ success: false, message: 'No assignments found' }); // Return error
+                } else {
+                    res.json({ success: true, assignments: assignments }); // Return access error
+                }
+            }
+        });
+    });
+
+    router.get('/viewAssignmentSubmissions/:name', function(req, res) {
+        var assignmentName = req.params.name; // Assign the _id from parameters to variable
+        Submission.find({ assignment: assignmentName, graded: false, statusString: 'Most Recent' }, function(err, submissions) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                // Check if logged in user was found in database
+                if (!submissions) {
+                    res.json({ success: false, message: 'No assignments found' }); // Return error
+                } else {
+                    res.json({ success: true, submissions: submissions }); // Return access error
+                }
+            }
+        });
+    });
 
 
     //Student API

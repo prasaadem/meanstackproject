@@ -15,6 +15,7 @@ var SubmissionSchema = new Schema({
     semesterName: { type: String, required: true },
     size: { type: String, required: true },
     statusString: { type: String, required: true, default: "Most Recent" },
+    graded: { type: Boolean, default: false },
     marksSecured: { type: Number },
     comments: { type: String }
 });

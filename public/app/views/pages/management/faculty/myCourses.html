@@ -37,12 +37,18 @@
                         <tr>
                             <th>Title</th>
                             <th>Name</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="course in courses">
                             <td>{{course.title}}</td>
                             <td>{{course.name}}</td>
+                            <td>
+                                <a href="/viewCourse/{{ course._id }}">
+                                    <button type="button" class="btn btn-primary">View</button>
+                                </a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -121,6 +121,14 @@ var app = angular.module('appRoutes', ['ngRoute'])
             permission: ['faculty']
         })
 
+        .when('/viewAssignmentSubmissions/:name', {
+            templateUrl: 'app/views/pages/management/faculty/viewAssignmentSubmissions.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
+
         .when('/newAssignment', {
             templateUrl: 'app/views/pages/management/faculty/newAssignment.html',
             controller: 'facultyCtrl',

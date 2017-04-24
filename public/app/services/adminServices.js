@@ -38,11 +38,21 @@ angular.module('adminServices', [])
         return $http.get('/api/getStudentAssignments');
     };
 
+    // Get user to then edit
+    assignmentFactory.getAssignmentForCourseID = function(id) {
+        return $http.get('/api/getAssignmentForCourseID/' + id);
+    };
+
     return assignmentFactory;
 })
 
 .factory('Submission', function($http) {
     submissionFactory = {};
+
+    submissionFactory.viewAssignmentSubmissions = function(name) {
+        return $http.get('/api/viewAssignmentSubmissions/' + name);
+    };
+
     submissionFactory.getSubmissionsForCourse = function(data) {
         return $http.post('/api/getSubmissionsForCourse', data);
     };
@@ -74,6 +84,10 @@ angular.module('adminServices', [])
     submissionFactory.downloadCourseAssignments = function(data) {
         return $http.post('/api/downloadCourseAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
     }
+
+    submissionFactory.postGradeAndComment = function(data) {
+        return $http.post('/api/postGradeAndComment', data);
+    };
 
     // submissionFactory.downloadIndividualAssignments = function(data) {
     //     return $http.post('/api/downloadIndividualAssignments/', data);

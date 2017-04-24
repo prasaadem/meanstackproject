@@ -66,12 +66,6 @@
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
                                 </th>
-                            <!--<th colspan='1'>
-                
-                                <button type="button" class="btn btn-default" ng-click="downloadLatestAssignments($index,assignment);">
-                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-                    </button>
-                                </th>-->
                         </tr>
                     </tbody>
                 </table>
@@ -97,7 +91,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-class="{'color-red': submission.status === 'Late', 'color-green': submission.status === 'ontime'}" ng-repeat="submission in faculty.studentSubmissionsForAssignment">
+        <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in faculty.studentSubmissionsForAssignment">
             <td>{{submission.assignment}}</td>
             <td>{{submission.student}}</td>
             <td>{{submission.size}}</td>
@@ -106,7 +100,7 @@
             <td>{{submission.dueDate}}</td>
             <td>{{submission.status}}</td>
             <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
-            <th>{{submission.marks}}</th>
+            <th>{{submission.marksSecured}}</th>
             <th>{{submission.comments}}</th>
             <td>
                                 <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
