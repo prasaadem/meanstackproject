@@ -284,6 +284,7 @@ angular.module('facultyController', ['adminServices', 'userServices'])
     getCourseFromId();
 
     Assignment.getAssignmentForCourseID($routeParams.id).then(function(data) {
+
         if (data.data.success) {
             app.courseAssignments = data.data.assignments;
         } else {
@@ -301,11 +302,8 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         }
     });
 
-    this.grade = function(index, gradeData) {
-        app.d = {};
-        app.d.submission = $scope.assignmentSubmissionsId[index];
-        app.d.data = gradeData;
-        Submission.postGradeAndComment(app.d).then(function(data) {
+    this.grade = function(gradeData) {
+        Submission.postGradeAndComment(gradeData).then(function(data) {
             if (data.data.success) {
                 $scope.assignmentSubmissionsId = data.data.submissions;
             } else {

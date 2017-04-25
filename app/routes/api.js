@@ -1109,14 +1109,13 @@ module.exports = function(router) {
     });
 
     router.post('/postGradeAndComment', function(req, res) {
-        console.log(req.body);
         Submission.findOne({ _id: req.body.submission._id }).exec(function(err, s) {
             if (err) throw err;
             if (!s) {
                 res.json({ success: false, message: 'No submissions to display' });
             } else {
-                s.marksSecured = req.body.data.marks;
-                s.comments = req.body.data.comments;
+                s.marksSecured = req.body.marks;
+                s.comments = req.body.comments;
                 s.graded = true;
                 s.save(function(err) {
                     if (err) throw err;

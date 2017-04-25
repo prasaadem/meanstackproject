@@ -7,50 +7,67 @@
 <!-- Heading -->
 
 <br>
-
-<table class="table table-condensed table-bordered">
-    <thead>
-        <tr>
-            <th>Assignment</th>
-            <th>Student</th>
-            <th>File</th>
-            <th>Status</th>
-            <th>Validation</th>
-            <th>Marks</th>
-            <th>Comments</th>
-            <th>Download</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in assignmentSubmissionsId">
-            <td>{{submission.assignment}}</td>
-            <td>{{submission.student}}</td>
-            <td>{{submission.fileName}}</td>
-            <td>{{submission.status}}</td>
-            <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
-            <th colspan="2">
-                <form ng-submit="faculty.grade($index,faculty.submitData);">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Marks" required ng-model="faculty.submitData.marks">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Comments" required ng-model="faculty.submitData.comments">
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" type="submit">Grade</button>
-                </form>
-            </th>
-            <td>
-                <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>Assignment</th>
+                    <th>Student</th>
+                    <th>File</th>
+                    <th>Status</th>
+                    <th>Validation</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in assignmentSubmissionsId">
+                    <td>{{submission.assignment}}</td>
+                    <td>{{submission.student}}</td>
+                    <td>{{submission.fileName}}</td>
+                    <td>{{submission.status}}</td>
+                    <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr>
+<div class="col-md-9">
+    <form ng-submit="faculty.grade(faculty.submitData);">
+        <div class="input-group">
+            <label>Student</label>
+            <select class="form-control" ng-model="faculty.submitData.submission" ng-options="submission.student for submission in assignmentSubmissionsId">
+                            <option value=""></option>
+                        </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Marks</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Marks" required ng-model="faculty.submitData.marks">
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Comments</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Comments" required ng-model="faculty.submitData.comments">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Grade</button>
+    </form>
+</div>
+
+
+
+
 
 <script data-require="angular.js@1.2.28" data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js"></script>
 <script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
