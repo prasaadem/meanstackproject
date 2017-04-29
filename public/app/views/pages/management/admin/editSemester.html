@@ -1,0 +1,34 @@
+<div class="container">
+    <h1>Edit Profile</h1>
+    <hr>
+    <div class=" col-md-9 col-lg-8 ">
+        <div class="row">
+            <form ng-submit="admin.updateSemester(semData);">
+                <div class="col-lg-6">
+                    <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                    <div class="form-group">
+                        <label>Semester</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="semester" placeholder="FALL 2017" required ng-model="admin.semData.title">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                        <label>Start Date</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name="startDate" placeholder="MM/DD/YYYY" required ng-model="admin.semData.startDate">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                        <label>End Date</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" name="endDate" placeholder="MM/DD/YYYY" required ng-model="admin.semData.endDate">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Update Semester</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<hr>

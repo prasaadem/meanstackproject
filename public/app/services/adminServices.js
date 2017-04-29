@@ -17,6 +17,32 @@ angular.module('adminServices', [])
     semsFactory.getStudentSemesters = function() {
         return $http.get('/api/getStudentSemesters/');
     }
+
+    semsFactory.deleteSemester = function(id) {
+        return $http.delete('/api/deleteSemester/' + id);
+    };
+
+    semsFactory.deleteCourse = function(id) {
+        return $http.delete('/api/deleteCourse/' + id);
+    };
+
+    semsFactory.getSemester = function(id) {
+        return $http.get('/api/getSemester/' + id);
+    };
+
+    semsFactory.updateSemester = function(semData) {
+        return $http.put('/api/updateSemester', semData);
+    };
+
+    semsFactory.updateCourse = function(courseData) {
+        console.log('came');
+        return $http.put('/api/updateCourse', courseData);
+    };
+
+    semsFactory.getCourse = function(id) {
+        return $http.get('/api/getCourse/' + id);
+    };
+
     return semsFactory;
 })
 

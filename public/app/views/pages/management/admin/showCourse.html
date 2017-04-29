@@ -35,12 +35,21 @@
                         <tr>
                             <th>Title</th>
                             <th>Name</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="course in courses">
                             <td>{{course.title}}</td>
                             <td>{{course.name}}</td>
+                            <td>
+                                <!-- Edit Button -->
+                                <a href="/editCourse/{{ course._id }}">
+                                    <button type="button" class="btn btn-primary">Edit</button>
+                                </a>
+                                <!-- Delete Button -->
+                                <button type="button" ng-click="admin.deleteCourse(course._id);" class="btn btn-danger">Delete</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -33,16 +33,16 @@ var app = angular.module('appRoutes', ['ngRoute'])
 
         .when('/management', {
             templateUrl: 'app/views/pages/management/management.html',
-            controller: 'managementCtrl',
-            controllerAs: 'management',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
             authenticated: true,
             permission: ['admin']
         })
 
         .when('/facultyManagement', {
             templateUrl: 'app/views/pages/management/facultyManagement.html',
-            controller: 'managementCtrl',
-            controllerAs: 'management',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
             authenticated: true,
             permission: ['admin']
         })
@@ -50,19 +50,27 @@ var app = angular.module('appRoutes', ['ngRoute'])
         // Route: Edit a User
         .when('/edit/:id', {
             templateUrl: 'app/views/pages/management/edit.html',
-            controller: 'editCtrl',
-            controllerAs: 'edit',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
             authenticated: true,
-            permission: ['admin', 'faculty']
+            permission: ['admin']
         })
 
-        // Route: Search Database Users
-        .when('/search', {
-            templateUrl: 'app/views/pages/management/search.html',
-            controller: 'managementCtrl',
-            controllerAs: 'management',
+        // Route: Edit a User
+        .when('/editSemester/:id', {
+            templateUrl: 'app/views/pages/management/admin/editSemester.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
             authenticated: true,
-            permission: ['admin', 'faculty']
+            permission: ['admin']
+        })
+
+        .when('/editCourse/:id', {
+            templateUrl: 'app/views/pages/management/admin/editCourse.html',
+            controller: 'adminCtrl',
+            controllerAs: 'admin',
+            authenticated: true,
+            permission: ['admin']
         })
 
         .when('/addSemester', {

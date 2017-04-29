@@ -33,6 +33,14 @@
             <td>{{ sem.title }}</td>
             <td>{{ sem.startDate }}</td>
             <td>{{ sem.endDate }}</td>
+            <td>
+                <!-- Edit Button -->
+                <a href="/editSemester/{{ sem._id }}">
+                    <button type="button" class="btn btn-primary">Edit</button>
+                </a>
+                <!-- Delete Button -->
+                <button type="button" ng-click="admin.deleteSemester(sem._id);" class="btn btn-danger">Delete</button>
+            </td>
         </tr>
         <!-- End: Table -->
     </table>

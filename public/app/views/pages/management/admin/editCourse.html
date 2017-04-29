@@ -1,0 +1,41 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">This page allows you to add Courses.</h3>
+    </div>
+</div>
+<!-- Heading -->
+<hr/>
+
+<div class="panel-body">
+
+    <div class=" col-md-9 col-lg-8 ">
+        <div class="row">
+            <form ng-submit="admin.updateCourse(courseData);">
+                <div class="col-lg-6">
+                    <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                    <div class="form-group">
+                        <label>Course Title</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="title" placeholder="CSCE 604" required ng-model="admin.courseData.title">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                        <label>Course Name</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" placeholder="Programming Language Design" required ng-model="admin.courseData.name">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                        <label>Semester</label>
+                        <div class="input-group">
+                            <select class="form-control" ng-model="admin.courseData.semester" ng-options="sem.title for sem in admin.sems">
+                        <option value=""></option>
+                    </select>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Update Course</button>
+                </div>
+            </form>
+        </div>
+    </div>

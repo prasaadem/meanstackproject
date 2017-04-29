@@ -23,7 +23,6 @@
     <script src="app/directives/fileModel.js"></script>
     <script src="app/controllers/userCtrl.js"></script>
     <script src="app/controllers/mainCtrl.js"></script>
-    <script src="app/controllers/managementCtrl.js"></script>
     <script src="app/controllers/adminCtrl.js"></script>
     <script src="app/controllers/facultyCtrl.js"></script>
     <script src="app/controllers/studentCtrl.js"></script>
@@ -166,18 +165,19 @@
                                         </ul>
                                     </div>
                                 </li>
+                                <li ng-show="main.admin">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo7" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-flag"></span> Users <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo7" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/management">Students</a></li>
+                                            <li><a href="/facultyManagement">Faculty</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
-                        <hr>
-                        <div class="profile-userbuttons" ng-show="main.admin">
-                            <form action="/management" style="display: inline;">
-                                <input type="submit" class="btn btn-success btn-sm" value="Students" />
-                            </form>
-                            <form action="/facultyManagement" style="display: inline;">
-                                <input type="submit" class="btn btn-danger btn-sm" value="Faculties" />
-                            </form>
-                        </div>
-
                         <!-- END MENU -->
                     </div>
                 </div>

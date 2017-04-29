@@ -418,6 +418,28 @@ module.exports = function(router) {
         });
     });
 
+    router.delete('/deleteSemester/:id', function(req, res) {
+        var deletedSemester = req.params.id;
+        Semester.findOneAndRemove({ _id: deletedSemester }, function(err, sem) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                res.json({ success: true });
+            }
+        });
+    });
+
+    router.delete('/deleteCourse/:id', function(req, res) {
+        var deleteCourse = req.params.id;
+        Course.findOneAndRemove({ _id: deleteCourse }, function(err, course) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                res.json({ success: true });
+            }
+        });
+    });
+
     router.get('/edit/:id', function(req, res) {
         var editUser = req.params.id; // Assign the _id from parameters to variable
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
@@ -451,228 +473,113 @@ module.exports = function(router) {
         });
     });
 
-    router.put('/edit', function(req, res) {
-        var editUser = req.body._id; // Assign _id from user to be editted to a variable
-        if (req.body.name) var newName = req.body.name; // Check if a change to name was requested
-        if (req.body.username) var newUsername = req.body.username; // Check if a change to username was requested
-        if (req.body.email) var newEmail = req.body.email; // Check if a change to e-mail was requested
-        if (req.body.permission) var newPermission = req.body.permission; // Check if a change to permission was requested
-        // Look for logged in user in database to check if have appropriate access
-        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+    router.get('/getSemester/:id', function(req, res) {
+        var editSem = req.params.id; // Assign the _id from parameters to variable
+        Semester.findOne({ _id: editSem }, function(err, sem) {
             if (err) {
                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
             } else {
-                // Check if logged in user is found in database
-                if (!mainUser) {
-                    res.json({ success: false, message: "no user found" }); // Return error
+                // Check if user to edit is in database
+                if (!sem) {
+                    res.json({ success: false, message: 'No sem found' }); // Return error
                 } else {
-                    // Check if a change to name was requested
-                    if (newName) {
-                        // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                            // Look for user in database
-                            User.findOne({ _id: editUser }, function(err, user) {
-                                if (err) {
-                                    res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                                } else {
-                                    // Check if user is in database
-                                    if (!user) {
-                                        res.json({ success: false, message: 'No user found' }); // Return error
-                                    } else {
-                                        user.name = newName; // Assign new name to user in database
-                                        // Save changes
-                                        user.save(function(err) {
-                                            if (err) {
-                                                console.log(err); // Log any errors to the console
-                                            } else {
-                                                res.json({ success: true, message: 'Name has been updated!' }); // Return success message
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else {
-                            res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                        }
-                    }
-
-                    // Check if a change to username was requested
-                    if (newUsername) {
-                        // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                            // Look for user in database
-                            User.findOne({ _id: editUser }, function(err, user) {
-                                if (err) {
-
-                                    res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                                } else {
-                                    // Check if user is in database
-                                    if (!user) {
-                                        res.json({ success: false, message: 'No user found' }); // Return error
-                                    } else {
-                                        user.username = newUsername; // Save new username to user in database
-                                        // Save changes
-                                        user.save(function(err) {
-                                            if (err) {
-                                                console.log(err); // Log error to console
-                                            } else {
-                                                res.json({ success: true, message: 'Username has been updated' }); // Return success
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else {
-                            res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                        }
-                    }
-
-                    // Check if change to e-mail was requested
-                    if (newEmail) {
-                        // Check if person making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                            // Look for user that needs to be editted
-                            User.findOne({ _id: editUser }, function(err, user) {
-                                if (err) {
-
-                                    res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                                } else {
-                                    // Check if logged in user is in database
-                                    if (!user) {
-                                        res.json({ success: false, message: 'No user found' }); // Return error
-                                    } else {
-                                        user.email = newEmail; // Assign new e-mail to user in databse
-                                        // Save changes
-                                        user.save(function(err) {
-                                            if (err) {
-                                                console.log(err); // Log error to console
-                                            } else {
-                                                res.json({ success: true, message: 'E-mail has been updated' }); // Return success
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else {
-                            res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                        }
-                    }
-
-                    // Check if a change to permission was requested
-                    if (newPermission) {
-                        // Check if user making changes has appropriate access
-                        if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                            // Look for user to edit in database
-                            User.findOne({ _id: editUser }, function(err, user) {
-                                if (err) {
-
-                                    res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                                } else {
-                                    // Check if user is found in database
-                                    if (!user) {
-                                        res.json({ success: false, message: 'No user found' }); // Return error
-                                    } else {
-                                        // Check if attempting to set the 'user' permission
-                                        if (newPermission === 'user') {
-                                            // Check the current permission is an admin
-                                            if (user.permission === 'admin') {
-                                                // Check if user making changes has access
-                                                if (mainUser.permission !== 'admin') {
-                                                    res.json({ success: false, message: 'Insufficient Permissions. You must be an admin to downgrade an admin.' }); // Return error
-                                                } else {
-                                                    user.permission = newPermission; // Assign new permission to user
-                                                    // Save changes
-                                                    user.save(function(err) {
-                                                        if (err) {
-                                                            console.log(err); // Long error to console
-                                                        } else {
-                                                            res.json({ success: true, message: 'Permissions have been updated!' }); // Return success
-                                                        }
-                                                    });
-                                                }
-                                            } else {
-                                                user.permission = newPermission; // Assign new permission to user
-                                                // Save changes
-                                                user.save(function(err) {
-                                                    if (err) {
-                                                        console.log(err); // Log error to console
-                                                    } else {
-                                                        res.json({ success: true, message: 'Permissions have been updated!' }); // Return success
-                                                    }
-                                                });
-                                            }
-                                        }
-                                        // Check if attempting to set the 'faculty' permission
-                                        if (newPermission === 'faculty') {
-                                            // Check if the current permission is 'admin'
-                                            if (user.permission === 'admin') {
-                                                // Check if user making changes has access
-                                                if (mainUser.permission !== 'admin') {
-                                                    res.json({ success: false, message: 'Insufficient Permissions. You must be an admin to downgrade another admin' }); // Return error
-                                                } else {
-                                                    user.permission = newPermission; // Assign new permission
-                                                    // Save changes
-                                                    user.save(function(err) {
-                                                        if (err) {
-                                                            console.log(err); // Log error to console
-                                                        } else {
-                                                            res.json({ success: true, message: 'Permissions have been updated!' }); // Return success
-                                                        }
-                                                    });
-                                                }
-                                            } else {
-                                                user.permission = newPermission; // Assign new permssion
-                                                // Save changes
-                                                user.save(function(err) {
-                                                    if (err) {
-                                                        console.log(err); // Log error to console
-                                                    } else {
-                                                        res.json({ success: true, message: 'Permissions have been updated!' }); // Return success
-                                                    }
-                                                });
-                                            }
-                                        }
-
-                                        // Check if assigning the 'admin' permission
-                                        if (newPermission === 'admin') {
-                                            // Check if logged in user has access
-                                            if (mainUser.permission === 'admin') {
-                                                user.permission = newPermission; // Assign new permission
-                                                // Save changes
-                                                user.save(function(err) {
-                                                    if (err) {
-                                                        console.log(err); // Log error to console
-                                                    } else {
-                                                        res.json({ success: true, message: 'Permissions have been updated!' }); // Return success
-                                                    }
-                                                });
-                                            } else {
-                                                res.json({ success: false, message: 'Insufficient Permissions. You must be an admin to upgrade someone to the admin level' }); // Return error
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        } else {
-                            res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                        }
-                    }
+                    res.json({ success: true, sem: sem }); // Return the user to be editted
                 }
             }
         });
     });
 
-    router.get('/getCourseFromId/:id', function(req, res) {
-        console.log(req.params.id);
+    router.get('/getCourse/:id', function(req, res) {
+        var editCourse = req.params.id; // Assign the _id from parameters to variable
+        Course.findOne({ _id: editCourse }, function(err, course) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                // Check if user to edit is in database
+                if (!course) {
+                    res.json({ success: false, message: 'No course found' }); // Return error
+                } else {
+                    res.json({ success: true, course: course }); // Return the user to be editted
+                }
+            }
+        });
+    });
 
-        Course.findOne({ _id: req.params.id }, function(err, course) {
-            console.log(course);
+    router.put('/updateUser', function(req, res) {
+        var user = req.body;
+        console.log(user);
+        User.findOne({ _id: user.id }, function(err, u) {
             if (err) {
                 res.json({ success: false, message: err });
             } else {
-                if (!course) {
+                if (!u) {
+                    res.json({ success: false, message: 'No user found' });
+                } else {
+                    u.username = user.username;
+                    u.email = user.email;
+                    u.uin = user.uin;
+                    u.permission = user.permission;
+                    u.name = user.name;
+                    u.major = user.major;
+                    u.classification = user.classification;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json({ success: true, message: 'Updated user' });
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    router.put('/updateSemester', function(req, res) {
+        var sem = req.body;
+        Semester.findOne({ _id: sem.id }, function(err, u) {
+            if (err) {
+                res.json({ success: false, message: err });
+            } else {
+                if (!u) {
+                    res.json({ success: false, message: 'No semester found' });
+                } else {
+                    u.title = sem.title;
+                    u.startDate = sem.startDate;
+                    u.endDate = sem.endDate;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json({ success: true, message: 'Updated sem' });
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    router.put('/updateCourse', function(req, res) {
+        var course = req.body;
+        Course.findOne({ _id: course.id }, function(err, u) {
+            if (err) {
+                res.json({ success: false, message: err });
+            } else {
+                if (!u) {
                     res.json({ success: false, message: 'No course found' });
-                } else {}
+                } else {
+                    u.title = course.title;
+                    u.name = course.name;
+                    u.semester = course.semester._id;
+                    u.semesterName = course.semester.title;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            console.log(u);
+                            res.json({ success: true, message: 'Updated Course' });
+                        }
+                    });
+                }
             }
         });
     });

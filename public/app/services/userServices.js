@@ -36,9 +36,8 @@ angular.module('userServices', [])
             return $http.delete('/api/management/' + username);
         };
 
-        // Edit a user
-        userFactory.editUser = function(id) {
-            return $http.put('/api/edit', id);
+        userFactory.updateUser = function(userData) {
+            return $http.put('/api/updateUser', userData);
         };
 
         return userFactory;

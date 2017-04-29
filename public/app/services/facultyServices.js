@@ -1,25 +1,25 @@
-angular.module('facultyServices',[])
-.factory('Semester',function($http){
-    semFactory= {};
+angular.module('facultyServices', [])
+    .factory('Semester', function($http) {
+        semFactory = {};
 
-    semFactory.getSemesters = function(){
-        return $http.get('/api/getSems/');
-    }
+        semFactory.getSemesters = function() {
+            return $http.get('/api/getSems/');
+        }
 
-   return semFactory;
-})
+        return semFactory;
+    })
 
 
-.factory('Course',function($http){
-    courseFactory= {};
+.factory('Course', function($http) {
+    courseFactory = {};
 
-    courseFactory.getAdminCourses = function(){
+    courseFactory.getAdminCourses = function() {
         return $http.get('/api/getAdminCourses/');
     };
 
-    courseFactory.takeCourse = function(courseData){
-        return $http.post('/api/takeCourse',courseData);
+    courseFactory.takeCourse = function(courseData) {
+        return $http.post('/api/takeCourse', courseData);
     };
-    
-   return courseFactory;
+
+    return courseFactory;
 });
