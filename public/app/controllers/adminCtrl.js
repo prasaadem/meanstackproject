@@ -220,7 +220,8 @@ angular.module('adminController', ['adminServices'])
 
     app.updateUser = function(userData) {
         var app = this;
-        User.updateUser(app.userData).then(function(data) {
+        console.log(userData);
+        User.updateUser(userData).then(function(data) {
             if (data.data.success) {
                 getUsers(); // Reset users on page
                 app.succMsg = data.data.message;

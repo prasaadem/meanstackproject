@@ -73,11 +73,53 @@ module.exports = function(router) {
             });
         } else {
             user.save(function(err) {
-                if (err) throw err;
-                res.json({
-                    success: true,
-                    message: 'User Created!'
-                });
+                if (err) {
+                    if (err.errors != null) {
+                        if (err.errors.name) {
+                            res.json({
+                                success: false,
+                                message: err.errors.name.message
+                            });
+                        } else if (err.errors.email) {
+                            res.json({
+                                success: false,
+                                message: err.errors.email.message
+                            });
+                        } else if (err.errors.username) {
+                            res.json({
+                                success: false,
+                                message: err.errors.username.message
+                            });
+                        } else if (err.errors.password) {
+                            res.json({
+                                success: false,
+                                message: err.errors.password.message
+                            });
+                        } else {
+                            res.json({
+                                success: false,
+                                message: err
+                            });
+                        }
+                    } else if (err) {
+                        if (err.code == 11000) {
+                            res.json({
+                                success: false,
+                                message: 'username or email is already taken!'
+                            });
+                        } else {
+                            res.json({
+                                success: false,
+                                message: err
+                            });
+                        }
+                    }
+                } else {
+                    res.json({
+                        success: true,
+                        message: 'User Created!'
+                    });
+                }
             });
         }
     });
@@ -107,7 +149,7 @@ module.exports = function(router) {
     });
 
     router.post('/authenticate', function(req, res) {
-        User.findOne({ username: req.body.username }).select().exec(function(err, user) {
+        User.findOne({ username: req.body.username }).exec(function(err, user) {
             if (err) throw err;
 
             if (!user) {
