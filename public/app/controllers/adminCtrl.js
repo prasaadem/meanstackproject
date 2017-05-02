@@ -1,5 +1,4 @@
 var sems = [];
-
 angular.module('adminController', ['adminServices'])
 
 .controller('adminCtrl', function($http, $location, $timeout, Semester, Course, User, $scope, $routeParams) {
@@ -21,6 +20,96 @@ angular.module('adminController', ['adminServices'])
     $scope.dayDataCollapse = [false, false, false, false, false, false];
     $scope.previousIndex = 0;
 
+    //Semester
+    this.addSemester = function(semData) {
+        var app = this;
+
+        Semester.createSemester(app.semData).then(function(data) {
+            if (data.data.success) {
+                app.loading = false;
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/showSemester');
+                }, 1000);
+            } else {
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+        });
+    };
+
+    function getSemesters() {
+        Semester.getSemesters().then(function(data) {
+            if (data.data.success) {
+                app.sems = data.data.sems;
+                sems = data.data.sems;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+    getSemesters();
+
+    function editSemester() {
+        sems.forEach(function(sem) {
+            if (sem._id === $routeParams.id) {
+                app.semData.title = sem.title; // Display user's name in scope
+                var d = new Date(sem.startDate);
+                app.semData.startDate = d;
+                var d = new Date(sem.endDate);
+                app.semData.endDate = d;
+                app.semData.id = sem._id;
+            }
+        });
+    }
+    editSemester();
+
+    app.updateSemester = function(semData) {
+        var app = this;
+        Semester.updateSemester(app.semData).then(function(data) {
+            if (data.data.success) {
+                getSemesters();
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/showSemester');
+                }, 1000);
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+            }
+        });
+    };
+
+    app.deleteSemester = function(id) {
+        Semester.deleteSemester(id).then(function(data) {
+            if (data.data.success) {
+                getSemesters();
+            } else {
+                app.showMoreError = data.data.message; // Set error message
+            }
+        });
+    };
+
+    //Course
+    this.addCourse = function(courseData) {
+        var app = this;
+        app.errorMsg = false;
+        app.loading = true;
+
+        Course.createCourse(app.courseData).then(function(data) {
+            if (data.data.success) {
+                app.loading = false;
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/showCourse');
+                }, 2000);
+            } else {
+                app.loading = false;
+                app.errorMsg = data.data.message;
+            }
+        });
+    };
+
     $scope.dayDataCollapseFn = function(index, sem) {
         for (var i = 0; storeDataModel.storedata.length - 1; i += 1) {
             $scope.dayDataCollapse.append('false');
@@ -34,108 +123,19 @@ angular.module('adminController', ['adminServices'])
             $scope.dayDataCollapse[$scope.previousIndex] = false;
             $scope.previousIndex = index;
             $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
-            Course.getAllCoursesForSem(sem).then(function(data) {
-                if (data.data.success) {
-                    app.loading = false;
-                    app.succMsg = data.data.message;
-                    $scope.courses = data.data.courses;
-                    app.semester = data.data.semester;
-                } else {
-                    app.loading = false;
-                    app.errorMsg = data.data.message;
-                }
-            });
+            app.courses = sem.courses;
         }
     };
 
-    //Semester
-    this.addSemester = function(semData) {
+    app.updateCourse = function(courseData) {
         var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-
-        Semester.createAdminSemester(app.semData).then(function(data) {
-            console.log(data.data.success);
-            console.log(data.data.message);
+        Course.updateCourse(app.courseData).then(function(data) {
             if (data.data.success) {
-                app.loading = false;
-                app.succMsg = data.data.message;
-            } else {
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
-    };
-
-    //Courses
-    this.addCourse = function(courseData) {
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-
-        Course.createAdminCourse(app.courseData).then(function(data) {
-            if (data.data.success) {
-                app.loading = false;
+                getSemesters();
                 app.succMsg = data.data.message;
                 $timeout(function() {
                     $location.path('/');
-                }, 2000);
-            } else {
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
-    };
-
-    this.getCoursesForSem = function(data) {
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-        Course.getAdminCoursesForSem(app.data).then(function(data) {
-            if (data.data.success) {
-                app.loading = false;
-                app.succMsg = data.data.message;
-                app.courses = data.data.courses;
-                app.semester = data.data.semester;
-            } else {
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
-    };
-
-    function getSemesters() {
-        Semester.getAdminSemesters().then(function(data) {
-            if (data.data.success) {
-                app.sems = data.data.sems;
-                sems = data.data.sems;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-    getSemesters();
-
-    // Function: Delete a user
-    app.deleteUser = function(username) {
-        // Run function to delete a user
-        User.deleteUser(username).then(function(data) {
-            // Check if able to delete user
-            if (data.data.success) {
-                getUsers(); // Reset users on page
-            } else {
-                app.showMoreError = data.data.message; // Set error message
-            }
-        });
-    };
-
-    app.deleteSemester = function(id) {
-        // Run function to delete a user
-        Semester.deleteSemester(id).then(function(data) {
-            // Check if able to delete user
-            if (data.data.success) {
-                getSemesters(); // Reset users on page
+                }, 1000);
             } else {
                 app.showMoreError = data.data.message; // Set error message
             }
@@ -143,50 +143,21 @@ angular.module('adminController', ['adminServices'])
     };
 
     app.deleteCourse = function(id) {
-        // Run function to delete a user
-        Semester.deleteCourse(id).then(function(data) {
+        Course.deleteCourse(id).then(function(data) {
             // Check if able to delete user
             if (data.data.success) {
                 getSemesters(); // Reset users on page
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/showCourse');
+                }, 1000);
             } else {
                 app.showMoreError = data.data.message; // Set error message
             }
         });
     };
 
-    // Function: Delete a user
-    app.updateUser = function(userData) {
-        var app = this;
-        User.updateUser(app.userData).then(function(data) {
-            if (data.data.success) {
-                getUsers(); // Reset users on page
-            } else {
-                app.showMoreError = data.data.message; // Set error message
-            }
-        });
-    };
-
-    app.updateSemester = function(semData) {
-        var app = this;
-        Semester.updateSemester(app.semData).then(function(data) {
-            if (data.data.success) {
-                getSemesters();
-            } else {
-                app.showMoreError = data.data.message; // Set error message
-            }
-        });
-    };
-
-    app.updateCourse = function(courseData) {
-        var app = this;
-        Semester.updateCourse(app.courseData).then(function(data) {
-            if (data.data.success) {
-                //getSemesters();
-            } else {
-                app.showMoreError = data.data.message; // Set error message
-            }
-        });
-    };
+    //Student
 
     // Function: get all the users from database
     function getUsers() {
@@ -228,8 +199,8 @@ angular.module('adminController', ['adminServices'])
             }
         });
     }
-
     getUsers(); // Invoke function to get users from databases
+
     User.getUser($routeParams.id).then(function(data) {
         if (data.data.success) {
             app.userData.netId = data.data.user.username; // Display user's name in scope
@@ -247,29 +218,32 @@ angular.module('adminController', ['adminServices'])
         }
     });
 
-    Semester.getSemester($routeParams.id).then(function(data) {
-        if (data.data.success) {
-            app.semData.title = data.data.sem.title; // Display user's name in scope
-            var d = new Date(data.data.sem.startDate);
-            app.semData.startDate = d;
-            var d = new Date(data.data.sem.endDate);
-            app.semData.endDate = d;
-            app.semData.id = data.data.sem._id;
-        } else {
-            // app.errorMsg = data.data.message; // Set error message
-            $scope.alert = 'alert alert-danger'; // Set class for message
-        }
-    });
+    app.updateUser = function(userData) {
+        var app = this;
+        User.updateUser(app.userData).then(function(data) {
+            if (data.data.success) {
+                getUsers(); // Reset users on page
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/');
+                }, 1000);
+            } else {
+                app.showMoreError = data.data.message; // Set error message
+            }
+        });
+    };
 
-    Semester.getCourse($routeParams.id).then(function(data) {
-        if (data.data.success) {
-            app.courseData.title = data.data.course.title; // Display user's name in scope
-            app.courseData.name = data.data.course.name;
-            app.courseData.id = data.data.course._id;
-        } else {
-            // app.errorMsg = data.data.message; // Set error message
-            $scope.alert = 'alert alert-danger'; // Set class for message
-        }
-    });
+    // Function: Delete a user
+    app.deleteUser = function(username) {
+        // Run function to delete a user
+        User.deleteUser(username).then(function(data) {
+            // Check if able to delete user
+            if (data.data.success) {
+                getUsers(); // Reset users on page
+            } else {
+                app.showMoreError = data.data.message; // Set error message
+            }
+        });
+    };
 
 })

@@ -1,3 +1,7 @@
+var sems = [];
+var courses = [];
+var assignments = [];
+
 angular.module('facultyController', ['adminServices', 'userServices'])
 
 .controller('facultyCtrl', function($http, $location, $timeout, Semester, Course, Submission, User, $scope, $routeParams, Assignment) {
@@ -17,178 +21,28 @@ angular.module('facultyController', ['adminServices', 'userServices'])
     app.submissionCount = [];
     app.studentSubmissionsForAssignment = [];
 
-    $scope.tableRowExpanded = false;
-    $scope.tableRowIndexCurrExpanded = "";
-    $scope.tableRowIndexPrevExpanded = "";
-    $scope.storeIdExpanded = "";
+    app.grading = false;
+    app.submission = false;
+
     $scope.dayDataCollapse = [false, false, false, false, false, false];
     $scope.previousIndex = 0;
 
-    $scope.dayDataCollapseFn = function(index, sem) {
-        for (var i = 0; storeDataModel.storedata.length - 1; i += 1) {
-            $scope.dayDataCollapse.append('false');
-        }
-    };
-
-    $scope.selectTableRow = function(index, sem) {
-        if ($scope.dayDataCollapse === 'undefined') {
-            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
-        } else {
-            $scope.dayDataCollapse[$scope.previousIndex] = false;
-            $scope.previousIndex = index;
-            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
-            Course.getFcfS(sem).then(function(data) {
-                if (data.data.success) {
-                    app.loading = false;
-                    app.succMsg = data.data.message;
-                    $scope.courses = data.data.courses;
-                } else {
-                    app.loading = false;
-                    app.errorMsg = data.data.message;
-                }
-            });
-        }
-    };
-
-    $scope.assignment = function(index, course) {
-        if ($scope.dayDataCollapse === 'undefined') {
-            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
-        } else {
-            $scope.dayDataCollapse[$scope.previousIndex] = false;
-            $scope.previousIndex = index;
-            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
-            Assignment.getAFC(course).then(function(data) {
-                if (data.data.success) {
-                    app.submissionCount = [];
-                    $scope.courseAssignments = data.data.assignments;
-                    $scope.courseAssignments.forEach(function(assignment) {
-                        if (assignment.submissions.length === 0) {
-                            app.submissionCount.push(0);
-                        } else {
-                            app.submissionCount.push(assignment.submissions.length);
-                        }
-                    }, this);
-                } else {
-                    app.errorMsg = data.data.message; // Set error message
-                    app.loading = false; // Stop loading icon
-                }
-            });
-        }
-    };
-
-    $scope.submission = function(index, course) {
-        if ($scope.dayDataCollapse === 'undefined') {
-            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
-        } else {
-            $scope.dayDataCollapse[$scope.previousIndex] = false;
-            $scope.previousIndex = index;
-            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
-            Submission.getStudentsSubmissionsForCourse(course).then(function(data) {
-                if (data.data.success) {
-                    console.log(data.data.submissions);
-                    $scope.courseSubmissions = data.data.submissions;
-                } else {
-                    app.errorMsg = data.data.message; // Set error message
-                    app.loading = false; // Stop loading icon
-                }
-            });
-        }
-    };;
-
-    $scope.showSubmissions = function(index, assignment) {
-        console.log(index);
-        Submission.getStudentsSubmissionsForAssignment(assignment).then(function(data) {
+    //Semester
+    function getSemesters() {
+        Semester.getSemesters().then(function(data) {
             if (data.data.success) {
-                console.log(data.data.submissions);
-                app.studentSubmissionsForAssignment = data.data.submissions;
+                app.sems = data.data.sems;
+                sems = data.data.sems;
             } else {
                 app.errorMsg = data.data.message; // Set error message
                 app.loading = false; // Stop loading icon
             }
         });
-    };
-
-    $scope.facultydownload = function(index, submission) {
-        var app = this;
-        console.log(submission);
-        app.name = submission.courseName + '-' + submission.assignment;
-        Submission.downloadAssignment(app.submission).then(function(data, status, headers, config) {
-            var file = new Blob([(data.data)], { type: "application/zip" });
-            console.log(file.size);
-            saveAs(file, app.name + ".zip");
-        });
     }
-
-    $scope.downloadCourseAssignments = function(index, course) {
-        var app = this;
-        console.log(course);
-        app.name = course.semesterName + '-' + course.title;
-        Submission.downloadCourseAssignments(app.course).then(function(data, status, headers, config) {
-            var file = new Blob([(data.data)], { type: "application/zip" });
-            console.log(file.size);
-            saveAs(file, app.name + ".zip");
-        });
-    }
-
-    $scope.downloadIndividualAssignments = function(index, assignment) {
-        var app = this;
-        app.name = assignment.courseName + '-' + assignment.name;
-        Submission.downloadIndividualAssignments(app.assignment).then(function(data, status, headers, config) {
-            var file = new Blob([(data.data)], { type: "application/zip" });
-            console.log(file.size);
-            saveAs(file, app.name + ".zip");
-        });
-    }
-
-    $scope.downloadLatestAssignments = function(index, assignment) {
-        var app = this;
-        app.name = assignment.courseName + '-' + assignment.name;
-        Submission.downloadLatestAssignments(app.assignment).then(function(data, status, headers, config) {
-            var file = new Blob([(data.data)], { type: "application/zip" });
-            console.log(file.size);
-            saveAs(file, app.name + ".zip");
-        });
-    }
-
-
-    $scope.downloadOneAssignment = function(index, submission) {
-        var app = this;
-        console.log(submission);
-        app.name = submission.fileName;
-        Submission.downloadOneAssignment(app.submission).then(function(data) {
-            var file = new Blob([(data.data)]);
-            console.log(file.size);
-            saveAs(file, app.name);
-        });
-    }
-
-    function str2bytes(str) {
-        var bytes = new Uint8Array(str.length);
-        for (var i = 0; i < str.length; i++) {
-            bytes[i] = str.charCodeAt(i);
-        }
-        return bytes;
-    }
-
-    $scope.download = function() {
-        window.open('/studentDownload');
-    }
+    getSemesters();
 
     this.getCoursesForSem = function(data) {
-        var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-        Course.getFacultyCoursesForSem(app.data).then(function(data) {
-            if (data.data.success) {
-                app.loading = false;
-                app.succMsg = data.data.message;
-                app.courses = data.data.courses;
-                app.semester = data.data.semester;
-            } else {
-                app.loading = false;
-                app.errorMsg = data.data.message;
-            }
-        });
+        app.courses = data.semester.courses;
     };
 
     //Faculty taking a course
@@ -211,13 +65,49 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         });
     };
 
+    Course.getFacultyCourses().then(function(data) {
+        app.facultyCourses = data.data.courses;
+        courses = data.data.courses;
+    });
+
+    $scope.dayDataCollapseFn = function(index, sem) {
+        for (var i = 0; storeDataModel.storedata.length - 1; i += 1) {
+            $scope.dayDataCollapse.append('false');
+        }
+    };
+
+    $scope.selectTableRow = function(index, sem) {
+        $scope.courses = [];
+        if ($scope.dayDataCollapse === 'undefined') {
+            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
+        } else {
+            $scope.dayDataCollapse[$scope.previousIndex] = false;
+            $scope.previousIndex = index;
+            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
+            courses.forEach(function(course) {
+                if (course.semester._id === sem._id) {
+                    $scope.courses.push(course);
+                }
+            });
+        }
+    };
+
+    //get CourseFromId
+    function getCourseFromId() {
+        courses.forEach(function(course) {
+            if (course._id === $routeParams.id) {
+                app.currentCourse = course;
+            }
+        });
+    }
+    getCourseFromId();
+
+    //Assignment
     this.createAssignment = function(assignmentData) {
         var app = this;
         app.errorMsg = false;
         app.loading = true;
         Assignment.createAssignment(app.assignmentData).then(function(data) {
-            console.log(data.data.success);
-            console.log(data.data.message);
             if (data.data.success) {
                 app.loading = false;
                 app.succMsg = data.data.message;
@@ -228,52 +118,172 @@ angular.module('facultyController', ['adminServices', 'userServices'])
         });
     };
 
-    this.getAssignmentsForCourse = function(aData) {
+    function getAssignments() {
+        Assignment.getAssignments().then(function(data) {
+            if (data.data.success) {
+                app.assignments = data.data.assignments;
+                assignments = data.data.assignments;
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    }
+    getAssignments();
+
+    this.getAssignmentsForCourse = function(data) {
+        app.courseAssignments = data.course.assignments;
+    }
+
+    this.getAssignmentDetails = function(data) {
+        app.data.comments = data.assignment.comments;
+        app.data.marks = data.assignment.marks;
+        var d = new Date(data.assignment.startDate);
+        app.data.startDate = d;
+        var d = new Date(data.assignment.dueDate);
+        app.data.dueDate = d;
+        app.data.id = data.assignment._id;
+    }
+
+    app.updateAssignment = function(data) {
         var app = this;
-        app.errorMsg = false;
-        app.loading = true;
-        Assignment.getAssignmentsForCourse(app.aData).then(function(data) {
+        Assignment.updateAssignment(app.data).then(function(data) {
             if (data.data.success) {
-                app.courseAssignments = data.data.assignments;
+                app.succMsg = data.data.message;
+                $timeout(function() {
+                    $location.path('/viewAssignments');
+                }, 1000);
             } else {
                 app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
             }
         });
-    }
+    };
 
-    function getSemesters() {
-        Semester.getFacultySemesters().then(function(data) {
-            if (data.data.success) {
-                app.sems = data.data.sems;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-    getSemesters();
+    $scope.assignment = function(index, course) {
+        if ($scope.dayDataCollapse === 'undefined') {
+            $scope.dayDataCollapse = $scope.dayDataCollapseFn();
+        } else {
+            $scope.dayDataCollapse[$scope.previousIndex] = false;
+            $scope.previousIndex = index;
+            $scope.dayDataCollapse[index] = !$scope.dayDataCollapse[index];
+            app.submissionCount = [];
+            courses.forEach(function(c) {
+                if (c._id === course._id) {
+                    $scope.courseAssignments = c.assignments;
+                    $scope.courseAssignments.forEach(function(assignment) {
+                        if (assignment.submissions.length === 0) {
+                            app.submissionCount.push(0);
+                        } else {
+                            app.submissionCount.push(assignment.submissions.length);
+                        }
+                    });
+                }
 
-    function getFacultyCourses() {
-        Course.getFacultyCourses().then(function(data) {
-            if (data.data.success) {
-                app.facultyCourses = data.data.courses;
-            } else {
-                app.errorMsg = data.data.message; // Set error message
-                app.loading = false; // Stop loading icon
-            }
-        });
-    }
-    getFacultyCourses();
+            });
+        }
+    };
 
-    //get CourseFromId
-    function getCourseFromId() {
-        Course.getFacultyCourses().then(function(data) {
+    $scope.showSubmissions = function(index, assignment) {
+        app.tobeGraded = [];
+        Submission.getStudentsSubmissionsForAssignment(assignment).then(function(data) {
             if (data.data.success) {
-                for (var i = data.data.courses.length - 1; i >= 0; i--) {
-                    if (data.data.courses[i]._id === $routeParams.id) {
-                        app.currentCourse = data.data.courses[i];
+                app.studentSubmissionsForAssignment = data.data.submissions;
+                if (app.studentSubmissionsForAssignment.length == 0) {
+                    app.submission = false;
+                } else {
+                    app.submission = true;
+                }
+                app.studentSubmissionsForAssignment.forEach(function(submission) {
+                    if (submission.statusString === 'Most Recent' && submission.graded === false) {
+                        app.tobeGraded.push(submission);
                     }
+                });
+                if (app.tobeGraded.length == 0) {
+                    app.grading = false;
+                } else {
+                    app.grading = true;
+                }
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    };
+
+    //Download
+    $scope.downloadCourseAssignments = function(index, course) {
+        var app = this;
+        app.name = course.semester.title + '-' + course.title;
+        Submission.downloadCourseAssignments(app.course).then(function(data, status, headers, config) {
+            var file = new Blob([(data.data)], { type: "application/zip" });
+            console.log(file.size);
+            saveAs(file, app.name + ".zip");
+        });
+    }
+
+    $scope.downloadIndividualAssignments = function(index, assignment) {
+        var app = this;
+        app.name = assignment.name;
+        Submission.downloadIndividualAssignments(app.assignment).then(function(data, status, headers, config) {
+            var file = new Blob([(data.data)], { type: "application/zip" });
+            console.log(file.size);
+            saveAs(file, app.name + ".zip");
+        });
+    }
+
+    $scope.downloadOneAssignment = function(index, submission) {
+        var app = this;
+        app.name = submission.fileName;
+        Submission.downloadOneAssignment(app.submission).then(function(data) {
+            var file = new Blob([(data.data)]);
+            console.log(file.size);
+            saveAs(file, app.name);
+        });
+    }
+
+    //Grading
+    this.grade = function(gradeData) {
+        Submission.postGradeAndComment(gradeData).then(function(data) {
+            if (data.data.success) {
+                app.studentSubmissionsForAssignment = data.data.submissions;
+                if (app.studentSubmissionsForAssignment.length == 0) {
+                    app.submission = false;
+                } else {
+                    app.submission = true;
+                }
+                app.studentSubmissionsForAssignment.forEach(function(submission) {
+                    if (submission.statusString === 'Most Recent' && submission.graded === false) {
+                        app.tobeGraded.push(submission);
+                    }
+                });
+                if (app.tobeGraded.length == 0) {
+                    app.grading = false;
+                } else {
+                    app.grading = true;
+                }
+            } else {
+                app.errorMsg = data.data.message; // Set error message
+                app.loading = false; // Stop loading icon
+            }
+        });
+    };
+
+    //Grader
+    // Function: get all the users from database
+    function getUsers() {
+        // Runs function to get all the users from database
+        app.students = [];
+
+        User.getUsers().then(function(data) {
+            // Check if able to get data from database
+            if (data.data.success) {
+                // Check which permissions the logged in user has
+                if (data.data.permission === 'faculty') {
+                    data.data.users.forEach(function(user) {
+                        if (user.permission === "student") {
+                            app.students.push(user);
+                        }
+                    });
                 }
             } else {
                 app.errorMsg = data.data.message; // Set error message
@@ -281,31 +291,20 @@ angular.module('facultyController', ['adminServices', 'userServices'])
             }
         });
     }
-    getCourseFromId();
+    getUsers();
 
-    Assignment.getAssignmentForCourseID($routeParams.id).then(function(data) {
-
-        if (data.data.success) {
-            app.courseAssignments = data.data.assignments;
-        } else {
-            app.errorMsg = data.data.message; // Set error message
-            app.loading = false; // Stop loading icon
-        }
-    });
-
-    Submission.viewAssignmentSubmissions($routeParams.name).then(function(data) {
-        if (data.data.success) {
-            $scope.assignmentSubmissionsId = data.data.submissions;
-        } else {
-            app.errorMsg = data.data.message; // Set error message
-            app.loading = false; // Stop loading icon
-        }
-    });
-
-    this.grade = function(gradeData) {
-        Submission.postGradeAndComment(gradeData).then(function(data) {
+    this.assignGrader = function(graderData) {
+        console.log(app.graderData);
+        Course.assignGrader(app.graderData).then(function(data) {
             if (data.data.success) {
-                $scope.assignmentSubmissionsId = data.data.submissions;
+                Course.getFacultyCourses().then(function(data) {
+                    app.facultyCourses = data.data.courses;
+                    courses = data.data.courses;
+                    $timeout(function() {
+                        $location.path('/setGrader');
+                    }, 2000);
+                    app.succMsg = data.data.message;
+                });
             } else {
                 app.errorMsg = data.data.message; // Set error message
                 app.loading = false; // Stop loading icon

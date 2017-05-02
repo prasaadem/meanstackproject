@@ -1,0 +1,171 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">View Assignments</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<br>
+
+
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th>Semester</th>
+            <th colspan='1'>Title</th>
+            <th colspan='3'>Name</th>
+            <th colspan='1'>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>{{student.gradingCourse.semester.title}}</th>
+            <td colspan='1'>{{student.gradingCourse.title}}</td>
+            <td colspan='3'>{{student.gradingCourse.name}}</td>
+            <th colspan='1'>
+                <button type="button" class="btn btn-default" ng-click="downloadCourseAssignments($index,student.gradingCourse);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+            </th>
+
+        </tr>
+        <tr ng-repeat-end>
+            <td></td>
+            <td colspan="6">
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Comments</th>
+                            <th>Start Date</th>
+                            <th>Due Date</th>
+                            <th>Submissions</th>
+                            <th>Evaluation</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="assignment in student.gradingCourse.assignments">
+                            <td><a ng-click="showSubmissions($index,assignment);">{{assignment.name}}</td>
+                            <th>{{assignment.marks}}</th>
+                            <th>{{assignment.comments}}</th>
+                            <td>{{assignment.startDate}}</td>
+                            <td>{{assignment.dueDate}}</td>
+                            <td>{{student.submissionCount[$index]}}</td>
+                            <th>{{assignment.evaluation}}</th>
+                            <th colspan='1'>
+                
+                                <button type="button" class="btn btn-default" ng-click="downloadIndividualAssignments($index,assignment);">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                                </th>
+                        </tr>
+                    </tbody>
+                </table>
+                </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<table class="table table-condensed table-bordered" ng-show="student.submission">
+    <thead>
+        <tr>
+            <th>Assignment</th>
+            <th>UIN</th>
+            <th>Name</th>
+            <th>File</th>
+            <th>Size</th>
+            <th>Time Submitted</th>
+            <th>Time Due</th>
+            <th>Status</th>
+            <th>Validation</th>
+            <th>Marks</th>
+            <th>Comments</th>
+            <th>Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="submission in student.studentSubmissionsForAssignment">
+            <td>{{submission.assignment.name}}</td>
+            <td>{{submission.student.uin}}</td>
+            <td>{{submission.student.name}}</td>
+            <td>{{submission.fileName}}</td>
+            <td>{{submission.size}}</td>
+            <td>{{submission.submissionDate}}</td>
+            <td>{{submission.dueDate}}</td>
+            <td ng-class="{'color-red': submission.status === 'Late'}">{{submission.status}}</td>
+            <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
+            <th>{{submission.marksSecured}}</th>
+            <th>{{submission.comments}}</th>
+            <td>
+                <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                    </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script data-require="angular.js@1.2.28" data-semver="1.2.28" src="https://code.angularjs.org/1.2.28/angular.js"></script>
+                <script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
+                <script src="script.js"></script>
+
+<hr>
+<div class= 'row' ng-show="student.grading">
+    
+<h3>Grade Assignments</h3>
+
+<div class="col-md-9">
+    <form ng-submit="student.grade(student.submitData);">
+        <div class="input-group">
+            <label>Student</label>
+            <select class="form-control" ng-model="student.submitData.submission" ng-options="submission.student.name for submission in student.tobeGraded">
+                            <option value=""></option>
+                        </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Marks</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Marks" required ng-model="student.submitData.marks">
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Comments</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Comments" required ng-model="student.submitData.comments">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Grade</button>
+    </form>
+</div>
+
+</div>
+
+                <br>
+                <div class="row show-hide-message " ng-show="student.succMsg ">
+                    <div class="alert alert-success ">
+                        {{ student.succMsg }}
+                    </div>
+                </div>
+                <br>
+                <div class="row show-hide-message " ng-show="student.errorMsg ">
+                    <div class="alert alert-danger ">
+                        {{ student.errorMsg }}
+                    </div>
+                </div>
+
+                <style>
+                    .color-red{
+                        color:red;
+                    }
+                    .color-green{
+                        color:green;
+                    }
+                    .color-orange{
+                        color:orange;
+                    }
+                </style>

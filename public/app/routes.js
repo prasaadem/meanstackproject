@@ -2,7 +2,7 @@ var app = angular.module('appRoutes', ['ngRoute'])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'app/views/pages/home.html'
+                templateUrl: './app/views/pages/home.html'
             })
 
         .when('/about', {
@@ -121,6 +121,14 @@ var app = angular.module('appRoutes', ['ngRoute'])
             permission: ['faculty']
         })
 
+        .when('/setGrader', {
+            templateUrl: 'app/views/pages/management/faculty/setGrader.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
+
         .when('/viewCourse/:id', {
             templateUrl: 'app/views/pages/management/faculty/viewCourse.html',
             controller: 'facultyCtrl',
@@ -129,7 +137,7 @@ var app = angular.module('appRoutes', ['ngRoute'])
             permission: ['faculty']
         })
 
-        .when('/viewAssignmentSubmissions/:name', {
+        .when('/viewAssignmentSubmissions/:assId', {
             templateUrl: 'app/views/pages/management/faculty/viewAssignmentSubmissions.html',
             controller: 'facultyCtrl',
             controllerAs: 'faculty',
@@ -139,6 +147,14 @@ var app = angular.module('appRoutes', ['ngRoute'])
 
         .when('/newAssignment', {
             templateUrl: 'app/views/pages/management/faculty/newAssignment.html',
+            controller: 'facultyCtrl',
+            controllerAs: 'faculty',
+            authenticated: true,
+            permission: ['faculty']
+        })
+
+        .when('/editAssignment', {
+            templateUrl: 'app/views/pages/management/faculty/editAssignment.html',
             controller: 'facultyCtrl',
             controllerAs: 'faculty',
             authenticated: true,
@@ -200,6 +216,16 @@ var app = angular.module('appRoutes', ['ngRoute'])
             authenticated: true,
             permission: ['student']
         })
+
+        .when('/grader', {
+            templateUrl: 'app/views/pages/management/student/grader.html',
+            controller: 'studentCtrl',
+            controllerAs: 'student',
+            authenticated: true,
+            permission: ['student']
+        })
+
+
 
         .otherwise({ redirectTo: '/' });
 

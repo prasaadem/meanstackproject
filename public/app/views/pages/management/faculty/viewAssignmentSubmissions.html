@@ -12,8 +12,9 @@
         <table class="table table-condensed table-bordered">
             <thead>
                 <tr>
-                    <th>Assignment</th>
-                    <th>Student</th>
+                    <th>Assignment Name</th>
+                    <th>UIN</th>
+                    <th>Name</th>
                     <th>File</th>
                     <th>Status</th>
                     <th>Validation</th>
@@ -21,9 +22,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in assignmentSubmissionsId">
-                    <td>{{submission.assignment}}</td>
-                    <td>{{submission.student}}</td>
+                <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in faculty.studentSubmissionsForAssignment">
+                    <td>{{submission.assignment.name}}</td>
+                    <td>{{submission.student.uin}}</td>
+                    <td>{{submission.student.name}}</td>
                     <td>{{submission.fileName}}</td>
                     <td>{{submission.status}}</td>
                     <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
@@ -38,32 +40,7 @@
     </div>
 </div>
 
-<hr>
-<div class="col-md-9">
-    <form ng-submit="faculty.grade(faculty.submitData);">
-        <div class="input-group">
-            <label>Student</label>
-            <select class="form-control" ng-model="faculty.submitData.submission" ng-options="submission.student for submission in assignmentSubmissionsId">
-                            <option value=""></option>
-                        </select>
-        </div>
-        <br>
-        <div class="form-group">
-            <label>Marks</label>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Marks" required ng-model="faculty.submitData.marks">
-            </div>
-        </div>
-        <br>
-        <div class="form-group">
-            <label>Comments</label>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Comments" required ng-model="faculty.submitData.comments">
-            </div>
-        </div>
-        <button class="btn btn-primary" type="submit">Grade</button>
-    </form>
-</div>
+
 
 
 

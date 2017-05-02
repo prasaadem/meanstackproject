@@ -5,30 +5,30 @@ var titlize = require('mongoose-title-case');
 var validate = require('mongoose-validator');
 
 var User = require('../models/user'); //User Model
-    var Course = require('../models/course'); //Course Model
-    var Assignment = require('../models/assignment'); //Course Model
-    var Semester = require('../models/semester'); //Semester Model
-    var Submission = require('../models/submission');
+var Course = require('../models/course'); //Course Model
 
 var UserSchema = new Schema({
-  username: {type: String, lowercase:true, required:true, unique: true},
-  email: {type: String, lowercase:true, required:true, unique: true},
-  uin: {type: String, required:false, unique: true},
-  permission: {type: String, required:true, default: 'student'},
-  accountExpires:{type:Date},
-  name: {type: String, required:true},
-  directoryName:{type: String, require:true},
-  major:{type:String, require:true, default:'Computer Science'},
-  classification:{type:String, require:true, default:'G7'},
-  password: {type: String, required:true},
-  courses: [{type: Schema.Types.ObjectId, ref: 'Course'}]
+    username: { type: String, lowercase: true, required: true, unique: true },
+    email: { type: String, lowercase: true, required: true, unique: true },
+    uin: { type: String, required: false, unique: true },
+    permission: { type: String, required: true, default: 'student' },
+    accountExpires: { type: Date },
+    name: { type: String, required: true },
+    directoryName: { type: String, require: true },
+    major: { type: String, require: true, default: 'Computer Science' },
+    classification: { type: String, require: true, default: 'G7' },
+    password: { type: String, required: true },
+    courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
+
+    grader: { type: Boolean, default: false },
+    gradingCourse: { type: Schema.Types.ObjectId, ref: 'Course' }
 });
 
 UserSchema.plugin(titlize, {
-  paths: [ 'name']
+    paths: ['name']
 });
 
-module.exports = mongoose.model('User',UserSchema);
+module.exports = mongoose.model('User', UserSchema);
 
 // var nameValidator = [
 //   validate({

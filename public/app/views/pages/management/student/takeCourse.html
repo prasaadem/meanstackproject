@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <label>Semester</label>
                     <div class="input-group">
-                        <select ng-change="student.getCoursesForSem(data);" class="form-control" ng-model="student.data.semester" ng-options="sem.title for sem in student.sems">
+                        <select ng-change="student.getCoursesForSem(student.data);" class="form-control" ng-model="student.data.semester" ng-options="sem.title for sem in student.sems">
                             <option value=""></option>
                         </select>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>

@@ -1,60 +1,46 @@
 var express = require('express');
+
 var User = require('../models/user'); //User Model
 var Course = require('../models/course'); //Course Model
 var Assignment = require('../models/assignment'); //Course Model
 var Semester = require('../models/semester'); //Semester Model
 var Submission = require('../models/submission');
+
 var jwt = require('jsonwebtoken');
-var path = require('path'); //used for file path
 var secret = 'pld';
+
+var path = require('path'); //used for file path
 var fs = require('fs');
+
 var archiver = require('archiver');
 var async = require('async');
+
 var multer = require('multer');
-var finalSemesters = new Array();
 
-// var storage = multer.diskStorage({
-//     destination: function(req, file, cb) {
-//         cb(null, './app/uploads/');
-//     },
-//     filename: function(req, file, cb) {
-//         if (!file.originalname.match(/\.(pdf|doc|docx)$/)) {
-//             var err = new Error();
-//             err.code = 'filetype';
-//             return cb(err);
-//         } else {
-//             cb(null, Date.now() + '_' + file.originalname);
-//         }
-//     }
-// });
-
-// var upload = multer({ storage: storage }).single('myfile');
 
 var upload = multer({ dest: './app/uploads/' });
 
 module.exports = function(router) {
 
+    // User
 
+    //http://localhost:PORT/api/addAdmin
+    //Admin Registration Route
+    router.post('/addAdmin', function(req, res) {
+        var admin = new User();
+        admin.username = req.body.username;
+        admin.email = req.body.email;
+        admin.uin = req.body.uin;
+        admin.permission = req.body.permission;
+        admin.accountExpires = req.body.accountExpires;
+        admin.name = req.body.name;
+        admin.directoryName = req.body.directoryName;
+        admin.major = req.body.major;
+        admin.classification = req.body.classification;
+        admin.password = req.body.password;
+        admin.courses = [];
 
-    //http://localhost:PORT/api/addFaculty
-    //Faculty Registration Route
-
-    router.post('/addFaculty', function(req, res) {
-        var faculty = new User();
-        faculty.username = req.body.username;
-        faculty.email = req.body.email;
-        faculty.uin = req.body.uin;
-        faculty.permission = req.body.permission;
-        faculty.accountExpires = req.body.accountExpires;
-        faculty.name = req.body.name;
-        faculty.directoryName = req.body.directoryName;
-        faculty.major = req.body.major;
-        faculty.classification = req.body.classification;
-        faculty.password = req.body.password;
-        faculty.courses = [];
-
-        console.log(faculty);
-        faculty.save(function(err) {
+        admin.save(function(err) {
             if (err) {
                 res.json({
                     success: false,
@@ -63,55 +49,15 @@ module.exports = function(router) {
             } else {
                 res.json({
                     success: true,
-                    message: 'Faculty Created in the database successfully!',
-                    admin: faculty
+                    message: 'Admin Created in the database successfully!',
+                    admin: admin
                 });
             }
         });
     });
 
-    //http://localhost:PORT/api/addStudent
-    //Student Registration Route
-
-    router.post('/addStudent', function(req, res) {
-        var student = new User();
-        student.username = req.body.username;
-        student.email = req.body.email;
-        student.uin = req.body.uin;
-        student.permission = req.body.permission;
-        student.accountExpires = req.body.accountExpires;
-        student.name = req.body.name;
-        student.directoryName = req.body.directoryName;
-        student.major = req.body.major;
-        student.classification = req.body.classification;
-        student.password = req.body.password;
-        student.courses = [];
-
-        console.log(student);
-        student.save(function(err) {
-            if (err) {
-                res.json({
-                    success: false,
-                    message: err
-                });
-            } else {
-                res.json({
-                    success: true,
-                    message: 'Student Created in the database successfully!',
-                    admin: student
-                });
-            }
-        });
-    });
-
-
-
-
-
-
-
-
-
+    //http://localhost:PORT/api/addUser
+    //User Registration Route
     router.post('/users', function(req, res) {
         var user = new User();
         user.username = req.body.username;
@@ -174,76 +120,6 @@ module.exports = function(router) {
                     });
                 }
             });
-        }
-    });
-
-    router.post('/createAdminSemester', function(req, res) {
-        var sem = new Semester();
-        sem.title = req.body.semTitle;
-        sem.startDate = req.body.startDate;
-        sem.endDate = req.body.endDate;
-        var directoryPath = path.join(__dirname + '/../uploads/' + sem.title);
-
-        if (fs.existsSync(directoryPath)) {
-            res.json({
-                success: false,
-                message: 'Semester Folder already exists'
-            });
-        } else {
-            if (req.body.semTitle == null || req.body.semTitle == "" || req.body.startDate == null || req.body.startDate == "" || req.body.endDate == null || req.body.endDate == "") {
-                res.json({
-                    success: false,
-                    message: 'Enter all required information'
-                });
-            } else {
-                sem.save(function(err) {
-                    if (err) {
-                        if (err.errors != null) {
-                            if (err.errors.semTitle) {
-                                res.json({
-                                    success: false,
-                                    message: err.errors.semTitle.message
-                                });
-                            } else if (err.errors.startDate) {
-                                res.json({
-                                    success: false,
-                                    message: err.errors.startDate.message
-                                });
-                            } else if (err.errors.endDate) {
-                                res.json({
-                                    success: false,
-                                    message: err.errors.endDate.message
-                                });
-                            } else {
-                                res.json({
-                                    success: false,
-                                    message: err
-                                });
-                            }
-                        } else if (err) {
-                            if (err.code == 11000) {
-                                res.json({
-                                    success: false,
-                                    message: 'Semester is already there!'
-                                });
-                            } else {
-                                res.json({
-                                    success: false,
-                                    message: err
-                                });
-                            }
-                        }
-                    } else {
-                        fs.mkdir(directoryPath, function(err) {
-                            if (err) throw err;
-                        });
-                        res.json({
-                            success: true,
-                            message: 'Semester Created!'
-                        });
-                    }
-                });
-            }
         }
     });
 
@@ -367,304 +243,14 @@ module.exports = function(router) {
         });
     });
 
-    router.get('/management', function(req, res) {
-        User.find({}, function(err, users) {
-            if (err) throw err;
-            User.findOne({ username: req.decoded.username }, function(err, mainUser) {
-                if (err) throw err;
-                if (!mainUser) {
-                    res.json({ success: false, message: 'No user found' });
-                } else {
-                    if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                        if (!users) {
-                            res.json({ success: false, message: 'No users found' });
-                        } else {
-                            res.json({ success: true, users: users, permission: mainUser.permission });
-                        }
-                    } else {
-                        res.json({ success: false, message: 'Insufficient Permissions' });
-                    }
-                }
-            });
-        });
-    });
-
-    router.delete('/management/:username', function(req, res) {
-        var deletedUser = req.params.username; // Assign the username from request parameters to a variable
-        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if current user was found in database
-                if (!mainUser) {
-                    res.json({ success: false, message: 'No user found' }); // Return error
-                } else {
-                    // Check if curent user has admin access
-                    if (mainUser.permission !== 'admin') {
-                        res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
-                    } else {
-                        // Fine the user that needs to be deleted
-                        User.findOneAndRemove({ username: deletedUser }, function(err, user) {
-                            if (err) {
-
-                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                            } else {
-                                res.json({ success: true }); // Return success status
-                            }
-                        });
-                    }
-                }
-            }
-        });
-    });
-
-    router.delete('/deleteSemester/:id', function(req, res) {
-        var deletedSemester = req.params.id;
-        Semester.findOneAndRemove({ _id: deletedSemester }, function(err, sem) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                res.json({ success: true });
-            }
-        });
-    });
-
-    router.delete('/deleteCourse/:id', function(req, res) {
-        var deleteCourse = req.params.id;
-        Course.findOneAndRemove({ _id: deleteCourse }, function(err, course) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                res.json({ success: true });
-            }
-        });
-    });
-
-    router.get('/edit/:id', function(req, res) {
-        var editUser = req.params.id; // Assign the _id from parameters to variable
-        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if logged in user was found in database
-                if (!mainUser) {
-                    res.json({ success: false, message: 'No user found' }); // Return error
-                } else {
-                    // Check if logged in user has editing privileges
-                    if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
-                        // Find the user to be editted
-                        User.findOne({ _id: editUser }, function(err, user) {
-                            if (err) {
-                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-                            } else {
-                                // Check if user to edit is in database
-                                if (!user) {
-                                    res.json({ success: false, message: 'No user found' }); // Return error
-                                } else {
-                                    res.json({ success: true, user: user }); // Return the user to be editted
-                                }
-                            }
-                        });
-                    } else {
-                        res.json({ success: false, message: 'Insufficient Permission' }); // Return access error
-                    }
-                }
-            }
-        });
-    });
-
-    router.get('/getSemester/:id', function(req, res) {
-        var editSem = req.params.id; // Assign the _id from parameters to variable
-        Semester.findOne({ _id: editSem }, function(err, sem) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if user to edit is in database
-                if (!sem) {
-                    res.json({ success: false, message: 'No sem found' }); // Return error
-                } else {
-                    res.json({ success: true, sem: sem }); // Return the user to be editted
-                }
-            }
-        });
-    });
-
-    router.get('/getCourse/:id', function(req, res) {
-        var editCourse = req.params.id; // Assign the _id from parameters to variable
-        Course.findOne({ _id: editCourse }, function(err, course) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if user to edit is in database
-                if (!course) {
-                    res.json({ success: false, message: 'No course found' }); // Return error
-                } else {
-                    res.json({ success: true, course: course }); // Return the user to be editted
-                }
-            }
-        });
-    });
-
-    router.put('/updateUser', function(req, res) {
-        var user = req.body;
-        console.log(user);
-        User.findOne({ _id: user.id }, function(err, u) {
-            if (err) {
-                res.json({ success: false, message: err });
-            } else {
-                if (!u) {
-                    res.json({ success: false, message: 'No user found' });
-                } else {
-                    u.username = user.username;
-                    u.email = user.email;
-                    u.uin = user.uin;
-                    u.permission = user.permission;
-                    u.name = user.name;
-                    u.major = user.major;
-                    u.classification = user.classification;
-                    u.save(function(err) {
-                        if (err) {
-                            throw err;
-                        } else {
-                            res.json({ success: true, message: 'Updated user' });
-                        }
-                    });
-                }
-            }
-        });
-    });
-
-    router.put('/updateSemester', function(req, res) {
-        var sem = req.body;
-        Semester.findOne({ _id: sem.id }, function(err, u) {
-            if (err) {
-                res.json({ success: false, message: err });
-            } else {
-                if (!u) {
-                    res.json({ success: false, message: 'No semester found' });
-                } else {
-                    u.title = sem.title;
-                    u.startDate = sem.startDate;
-                    u.endDate = sem.endDate;
-                    u.save(function(err) {
-                        if (err) {
-                            throw err;
-                        } else {
-                            res.json({ success: true, message: 'Updated sem' });
-                        }
-                    });
-                }
-            }
-        });
-    });
-
-    router.put('/updateCourse', function(req, res) {
-        var course = req.body;
-        Course.findOne({ _id: course.id }, function(err, u) {
-            if (err) {
-                res.json({ success: false, message: err });
-            } else {
-                if (!u) {
-                    res.json({ success: false, message: 'No course found' });
-                } else {
-                    u.title = course.title;
-                    u.name = course.name;
-                    u.semester = course.semester._id;
-                    u.semesterName = course.semester.title;
-                    u.save(function(err) {
-                        if (err) {
-                            throw err;
-                        } else {
-                            console.log(u);
-                            res.json({ success: true, message: 'Updated Course' });
-                        }
-                    });
-                }
-            }
-        });
-    });
-
-    function formatBytes(a, b) {
-        if (0 == a) return "0 Bytes";
-        var c = 1e3,
-            d = b || 2,
-            e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-            f = Math.floor(Math.log(a) / Math.log(c));
-        return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f]
-    }
-
-    router.post('/upload', upload.any(), function(req, res, next) {
-        var submission = new Submission();
-        var a = JSON.parse(req.body.assignment);
-        if (req.files) {
-            console.log(req.files);
-            req.files.forEach(function(file) {
-                var path = './app/uploads/' + a.semesterName + '/' + a.courseName + '/' + a.name + '/';
-                var fileName = req.decoded.user.uin + '-' + file.originalname;
-                fs.rename(file.path, path + fileName, function(err) {
-                    if (err) throw err;
-                    submission.student = req.decoded.username;
-                    submission.assignment = a.name;
-                    submission.dueDate = a.dueDate;
-                    submission.submissionDate = Date.now();
-                    submission.version = 1;
-                    submission.path = path + fileName;
-                    submission.course = a.course;
-                    submission.courseName = a.courseName;
-                    submission.semesterName = a.semesterName;
-                    submission.size = formatBytes(file.size, 2);
-                    if (submission.dueDate < submission.submissionDate) {
-                        submission.status = 'Late';
-                    } else {
-                        submission.status = 'ontime';
-                    }
-                    submission.fileName = file.originalname;
-                    Submission.findOne({ student: req.decoded.username, courseName: a.courseName, assignment: a.name, semesterName: a.semesterName, statusString: 'Most Recent' }, function(err, sub) {
-                        if (err) throw err;
-                        if (!sub) {
-
-                        } else {
-                            var newPath = path + 'old/';
-                            fs.rename(sub.path, newPath + sub.fileName, function(err) {
-                                if (err) throw err;
-                                sub.path = newPath + sub.fileName;
-                                sub.statusString = "Old Submission";
-                                sub.save(function(err) {
-                                    if (err) throw err;
-                                });
-                            });
-                        }
-                    });
-                    submission.save(function(err, result) {
-                        if (err) throw err;
-                        if (!result) {
-                            res.json({ success: false, message: 'Could not upload Assignment' });
-                        } else {
-                            Assignment.findOne({ _id: a._id }, function(err, assignment) {
-                                if (err) throw err;
-                                if (!assignment) {
-                                    res.json({ success: false, message: 'No assignment found' });
-                                } else {
-                                    assignment.submissions.push(submission);
-                                    assignment.save(function(err) {
-                                        if (err) throw err;
-                                    });
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-            res.json({ success: true, message: 'File uploaded successfully' });
-        }
-    });
-
     //Admin API
-    router.post('/createAdminSemester', function(req, res) {
+
+    router.post('/createSemester', function(req, res) {
         var sem = new Semester();
         sem.title = req.body.semTitle;
         sem.startDate = req.body.startDate;
         sem.endDate = req.body.endDate;
+        sem.courses = [];
         var directoryPath = path.join(__dirname + '/../uploads/' + sem.title);
 
         if (fs.existsSync(directoryPath)) {
@@ -730,18 +316,55 @@ module.exports = function(router) {
         }
     });
 
-    router.get('/getAdminSemesters/', function(req, res) {
-        console.log('came here');
-        Semester.find({}, function(err, sems) {
+    router.get('/getSemesters/', function(req, res) {
+        Semester
+            .find()
+            .populate('courses')
+            .exec(function(err, sems) {
+                if (err) {
+                    res.json({ success: false, message: err });
+                } else {
+                    res.json({ success: true, sems: sems });
+                }
+            });
+    });
+
+    router.put('/updateSemester', function(req, res) {
+        var sem = req.body;
+        Semester.findOne({ _id: sem.id }, function(err, u) {
             if (err) {
                 res.json({ success: false, message: err });
             } else {
-                res.json({ success: true, sems: sems });
+                if (!u) {
+                    res.json({ success: false, message: 'No semester found' });
+                } else {
+                    u.title = sem.title;
+                    u.startDate = sem.startDate;
+                    u.endDate = sem.endDate;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json({ success: true, message: 'Updated semester' });
+                        }
+                    });
+                }
             }
         });
     });
 
-    router.post('/course', function(req, res) {
+    router.delete('/deleteSemester/:id', function(req, res) {
+        var deletedSemester = req.params.id;
+        Semester.findOneAndRemove({ _id: deletedSemester }, function(err, sem) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                res.json({ success: true });
+            }
+        });
+    });
+
+    router.post('/createCourse', function(req, res) {
         var course = new Course();
         course.title = req.body.title;
         course.name = req.body.name;
@@ -749,10 +372,10 @@ module.exports = function(router) {
         course.available = false;
         course.assignments = new Array();
         course.students = new Array();
-        course.faculty = '';
-        course.semesterName = req.body.semester.title;
 
-        Semester.findOne({ _id: req.body.semester._id }).select('title').exec(function(err, semester) {
+        // course.faculty = new User();
+
+        Semester.findOne({ _id: req.body.semester._id }).exec(function(err, semester) {
             var directoryPath = path.join(__dirname + '/../uploads/' + semester.title + '/' + course.title);
             if (fs.existsSync(directoryPath)) {
                 res.json({
@@ -776,9 +399,19 @@ module.exports = function(router) {
                             fs.mkdir(directoryPath, function(err) {
                                 if (err) throw err;
                             });
-                            res.json({
-                                success: true,
-                                message: 'Course Created!'
+                            semester.courses.push(course._id);
+                            semester.save(function(err) {
+                                if (err) {
+                                    res.json({
+                                        success: false,
+                                        message: err
+                                    });
+                                } else {
+                                    res.json({
+                                        success: true,
+                                        message: 'Course Created!'
+                                    });
+                                }
                             });
                         }
                     });
@@ -787,59 +420,155 @@ module.exports = function(router) {
         });
     });
 
-    router.post('/getAllCourses', function(req, res) {
-        Course.find({ semester: req.body.semester._id }, function(err, courses) {
+    router.put('/updateCourse', function(req, res) {
+        var course = req.body;
+        Course.findOne({ _id: course.id }, function(err, u) {
             if (err) {
                 res.json({ success: false, message: err });
             } else {
-                res.json({ success: true, courses: courses, semester: req.body.semester });
+                if (!u) {
+                    res.json({ success: false, message: 'No course found' });
+                } else {
+                    u.title = course.title;
+                    u.name = course.name;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            console.log(u);
+                            res.json({ success: true, message: 'Updated Course' });
+                        }
+                    });
+                }
             }
         });
     });
 
-    router.post('/getAllCoursesForSem', function(req, res) {
-        Course.find({ semester: req.body._id }, function(err, courses) {
+    router.delete('/deleteCourse/:id', function(req, res) {
+        var deleteCourse = req.params.id;
+        Course.findOneAndRemove({ _id: deleteCourse }, function(err, course) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                res.json({ success: true, message: 'Course Deleted successfully' });
+            }
+        });
+    });
+
+    router.get('/management', function(req, res) {
+        User.find({}, function(err, users) {
+            if (err) throw err;
+            User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+                if (err) throw err;
+                if (!mainUser) {
+                    res.json({ success: false, message: 'No user found' });
+                } else {
+                    if (mainUser.permission === 'admin' || mainUser.permission === 'faculty') {
+                        if (!users) {
+                            res.json({ success: false, message: 'No users found' });
+                        } else {
+                            res.json({ success: true, users: users, permission: mainUser.permission });
+                        }
+                    } else {
+                        res.json({ success: false, message: 'Insufficient Permissions' });
+                    }
+                }
+            });
+        });
+    });
+
+    router.get('/edit/:id', function(req, res) {
+        var editUser = req.params.id; // Assign the _id from parameters to variable
+        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+            } else {
+                // Check if logged in user was found in database
+                if (!mainUser) {
+                    res.json({ success: false, message: 'No user found' }); // Return error
+                } else {
+                    if (mainUser.permission === 'admin') {
+                        // Find the user to be editted
+                        User.findOne({ _id: editUser }, function(err, user) {
+                            if (err) {
+                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+                            } else {
+                                // Check if user to edit is in database
+                                if (!user) {
+                                    res.json({ success: false, message: 'No user found' }); // Return error
+                                } else {
+                                    res.json({ success: true, user: user }); // Return the user to be editted
+                                }
+                            }
+                        });
+                    } else {
+                        res.json({ success: false, message: 'Insufficient Permission' }); // Return access error
+                    }
+                }
+            }
+        });
+    });
+
+    router.put('/updateUser', function(req, res) {
+        var user = req.body;
+        console.log(user);
+        User.findOne({ _id: user.id }, function(err, u) {
             if (err) {
                 res.json({ success: false, message: err });
             } else {
-                res.json({ success: true, courses: courses, semester: req.body.semester });
+                if (!u) {
+                    res.json({ success: false, message: 'No user found' });
+                } else {
+                    u.username = user.username;
+                    u.email = user.email;
+                    u.uin = user.uin;
+                    u.permission = user.permission;
+                    u.name = user.name;
+                    u.major = user.major;
+                    u.classification = user.classification;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json({ success: true, message: 'Updated user' });
+                        }
+                    });
+                }
             }
         });
     });
 
-    router.post('/getStudentsSubmissionsForCourse', function(req, res) {
-        Submission.find({ course: req.body._id }).exec(function(err, submissions) {
-            if (err) throw err;
-            if (!submissions) {
-                res.json({ success: false, message: 'No assignments to display' });
+    router.delete('/management/:username', function(req, res) {
+        var deletedUser = req.params.username; // Assign the username from request parameters to a variable
+        User.findOne({ username: req.decoded.username }, function(err, mainUser) {
+            if (err) {
+                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
             } else {
-                res.json({ success: true, submissions: submissions });
+                // Check if current user was found in database
+                if (!mainUser) {
+                    res.json({ success: false, message: 'No user found' }); // Return error
+                } else {
+                    // Check if curent user has admin access
+                    if (mainUser.permission !== 'admin') {
+                        res.json({ success: false, message: 'Insufficient Permissions' }); // Return error
+                    } else {
+                        // Fine the user that needs to be deleted
+                        User.findOneAndRemove({ username: deletedUser }, function(err, user) {
+                            if (err) {
+
+                                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+                            } else {
+                                res.json({ success: true }); // Return success status
+                            }
+                        });
+                    }
+                }
             }
         });
     });
 
-    router.post('/getStudentsSubmissionsForAssignment', function(req, res) {
-        Submission.find({ assignment: req.body.name, courseName: req.body.courseName }).exec(function(err, submissions) {
-            if (err) throw err;
-            if (!submissions) {
-                res.json({ success: false, message: 'No assignments to display' });
-            } else {
-                res.json({ success: true, submissions: submissions });
-            }
-        });
-    });
 
     //Faculty API
-    router.get('/getFacultySemesters', function(req, res) {
-        Semester.find({}, function(err, sems) {
-            if (err) {
-                res.json({ success: false, message: err });
-            } else {
-                res.json({ success: true, sems: sems });
-            }
-        });
-    });
-
     router.post('/takeFacultyCourse', function(req, res) {
 
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
@@ -851,14 +580,13 @@ module.exports = function(router) {
                 } else {
                     if (mainUser.permission === 'faculty') {
                         Course.findOne({ _id: req.body.course._id }, function(err, course) {
-                            console.log(course);
                             if (err) {
                                 res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
                             } else {
                                 if (!course) {
                                     res.json({ success: false, message: 'Course not found' });
                                 } else {
-                                    if (course.faculty === '') {
+                                    if (course.available === false) {
                                         course.faculty = mainUser._id;
                                         course.available = true;
                                         course.save(function(err) {
@@ -888,25 +616,23 @@ module.exports = function(router) {
     });
 
     router.get('/getFacultyCourses', function(req, res) {
-        Course.find({ faculty: req.decoded.user._id }).exec(function(err, courses) {
-            if (err) throw err;
-            if (!courses) {
-                res.json({ success: false, message: 'No courses to display' });
-            } else {
-                res.json({ success: true, courses: courses });
-            }
-        });
-    });
-
-    router.post('/getFacultyCoursesForSem', function(req, res) {
-        Course.find({ faculty: req.decoded.user._id, semester: req.body._id }).exec(function(err, courses) {
-            if (err) throw err;
-            if (!courses) {
-                res.json({ success: false, message: 'No courses to display' });
-            } else {
-                res.json({ success: true, courses: courses });
-            }
-        });
+        Course
+            .find({ faculty: req.decoded.user._id })
+            .populate('students')
+            .populate('assignments')
+            .populate('semester')
+            .populate('grader')
+            .exec(function(err, courses) {
+                if (err) {
+                    res.json({ success: false, message: err });
+                } else {
+                    if (!courses) {
+                        res.json({ success: false, message: 'No courses to display' });
+                    } else {
+                        res.json({ success: true, courses: courses });
+                    }
+                }
+            });
     });
 
     router.post('/createAssignment', function(req, res) {
@@ -917,105 +643,196 @@ module.exports = function(router) {
                 message: 'Enter all required information'
             });
         } else {
-
-            Course.findOne({ _id: req.body.course._id }, function(err, course) {
-                if (err) throw err;
-                if (!course) {
-                    res.json({
-                        success: false,
-                        message: "No course found!"
-                    });
-                } else {
-                    Semester.findOne({ _id: course.semester }, function(err, semester) {
-                        if (err) throw err;
-                        if (!semester) {
+            Course
+                .findOne({ _id: req.body.course._id })
+                .populate('semester')
+                .exec(function(err, course) {
+                    if (err) throw err;
+                    if (!course) {
+                        res.json({
+                            success: false,
+                            message: "No course found!"
+                        });
+                    } else {
+                        var path = './app/uploads/' + course.semester.title + '/' + course.title + '/' + req.body.name + '/';
+                        if (fs.existsSync(path)) {
                             res.json({
                                 success: false,
-                                message: "No Semester found!"
+                                message: 'Assignment Folder already exists'
                             });
                         } else {
-                            var path = './app/uploads/' + semester.title + '/' + course.title + '/' + req.body.name + '/';
-                            if (fs.existsSync(path)) {
-                                res.json({
-                                    success: false,
-                                    message: 'Assignment Folder already exists'
-                                });
-                            } else {
-                                fs.mkdir(path, function(err) {
+                            fs.mkdir(path, function(err) {
+                                if (err) throw err;
+                                fs.mkdir(path + 'old/', function(err) {
                                     if (err) throw err;
-                                    fs.mkdir(path + 'old/', function(err) {
-                                        if (err) throw err;
-                                    });
                                 });
-                                assignment.name = req.body.name;
-                                assignment.course = req.body.course._id;
-                                assignment.faculty = req.body.course.faculty;
-                                assignment.startDate = req.body.startDate;
-                                assignment.dueDate = req.body.dueDate;
-                                assignment.submissions = new Array();
-                                assignment.semesterName = semester.title;
-                                assignment.courseName = course.title;
-                                assignment.marks = req.body.marks;
-                                assignment.comments = req.body.comments;
+                            });
+                            assignment.name = req.body.name;
+                            assignment.course = req.body.course._id;
+                            assignment.faculty = req.body.course.faculty;
+                            assignment.startDate = req.body.startDate;
+                            assignment.dueDate = req.body.dueDate;
+                            assignment.submissions = new Array();
+                            assignment.path = path;
+                            assignment.marks = req.body.marks;
+                            assignment.comments = req.body.comments;
 
-                                assignment.save(function(err) {
-                                    if (err) {
-                                        res.json({
-                                            success: false,
-                                            message: err
-                                        });
-                                    } else {
-                                        Course.findOne({ _id: assignment.course }, function(err, c) {
-                                            if (err) throw err;
-                                            if (!c) {
+                            assignment.save(function(err) {
+                                if (err) {
+                                    res.json({
+                                        success: false,
+                                        message: err
+                                    });
+                                } else {
+                                    Course.findOne({ _id: assignment.course }, function(err, c) {
+                                        if (err) throw err;
+                                        if (!c) {
+                                            res.json({
+                                                success: false,
+                                                message: "No course found!"
+                                            });
+                                        } else {
+                                            c.assignments.push(assignment);
+                                            c.save(function(err) {
                                                 res.json({
-                                                    success: false,
-                                                    message: "No course found!"
+                                                    success: true,
+                                                    message: 'Assignment Created!',
+                                                    assignment: assignment
                                                 });
-                                            } else {
-                                                c.assignments.push(assignment);
-                                                c.save(function(err) {
-                                                    res.json({
-                                                        success: true,
-                                                        message: 'Assignment Created!',
-                                                        assignment: assignment
-                                                    });
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
                         }
-                    });
-                }
-            });
+                    }
+                });
         }
     });
 
-    router.post('/getAssignmentsForCourse', function(req, res) {
-        Assignment.find({ course: req.body.course._id }).exec(function(err, assignments) {
-            if (err) throw err;
-            if (!assignments) {
-                res.json({ success: false, message: 'No assignments to display' });
+    router.get('/getAssignments/', function(req, res) {
+        Assignment
+            .find({ faculty: req.decoded.user._id })
+            .populate('course')
+            .exec(function(err, assignments) {
+                if (err) {
+                    res.json({ success: false, message: err });
+                } else {
+                    res.json({ success: true, assignments: assignments });
+                }
+            });
+    });
+
+    router.put('/updateAssignment', function(req, res) {
+        Assignment.findOne({ _id: req.body.id }, function(err, u) {
+            if (err) {
+                res.json({ success: false, message: err });
             } else {
-                res.json({ success: true, assignments: assignments });
+                if (!u) {
+                    res.json({ success: false, message: 'No semester found' });
+                } else {
+                    u.comments = req.body.comments;
+                    u.marks = req.body.marks;
+                    u.startDate = req.body.startDate;
+                    u.dueDate = req.body.dueDate;
+                    u.save(function(err) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json({ success: true, message: 'Updated Assignment' });
+                        }
+                    });
+                }
             }
         });
     });
 
-    router.post('/getAFC', function(req, res) {
-        Assignment.find({ course: req.body._id }).exec(function(err, assignments) {
-            if (err) throw err;
-            if (!assignments) {
-                res.json({ success: false, message: 'No assignments to display' });
-            } else {
-                res.json({ success: true, assignments: assignments });
-            }
+    router.post('/getStudentsSubmissionsForAssignment', function(req, res) {
+        Submission
+            .find({ assignment: req.body._id, course: req.body.course })
+            .populate('student')
+            .populate('assignment')
+            .exec(function(err, submissions) {
+                if (err) throw err;
+                if (!submissions) {
+                    res.json({ success: false, message: 'No assignments to display' });
+                } else {
+                    res.json({ success: true, submissions: submissions });
+                }
+            });
+    });
+
+    router.post('/downloadCourseAssignments', function(req, res) {
+        var course = req.body;
+        var archive = archiver('zip');
+        archive.on('error', function(err) {
+            console.error(err);
+            res.status(500).send({ error: err.message });
         });
+
+        archive.on('finish', function(err) {
+            return res.end();
+        });
+        //on stream closed we can end the request
+        archive.on('end', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+        });
+        var header = {
+            "Content-Type": "application/zip",
+            'Content-disposition': 'attachment; filename=download.zip',
+        };
+
+        res.writeHead(200, header);
+
+        archive.store = true; // don't compress the archive
+        archive.pipe(res);
+
+        var path = './app/uploads/' + course.semester.title + '/' + course.title + '/';
+        archive.directory(path, false);
+
+        archive.bulk([{
+            expand: true,
+            cwd: path,
+            src: ['**/*']
+        }]).finalize();
+    });
+
+    router.post('/downloadIndividualAssignments', function(req, res) {
+        var archive = archiver('zip');
+        archive.on('error', function(err) {
+            console.error(err);
+            res.status(500).send({ error: err.message });
+        });
+
+        archive.on('finish', function(err) {
+            return res.end();
+        });
+        //on stream closed we can end the request
+        archive.on('end', function() {
+            console.log('Archive wrote %d bytes', archive.pointer());
+        });
+        var header = {
+            "Content-Type": "application/zip",
+            'Content-disposition': 'attachment; filename=download.zip',
+        };
+
+        res.writeHead(200, header);
+
+        archive.store = true; // don't compress the archive
+        archive.pipe(res);
+
+        var path = req.body.path;
+        archive.directory(path, false);
+
+        archive.bulk([{
+            expand: true,
+            cwd: path,
+            src: ['**/*']
+        }]).finalize();
     });
 
     router.post('/postGradeAndComment', function(req, res) {
+        console.log(req.body.submission);
         Submission.findOne({ _id: req.body.submission._id }).exec(function(err, s) {
             if (err) throw err;
             if (!s) {
@@ -1026,17 +843,17 @@ module.exports = function(router) {
                 s.graded = true;
                 s.save(function(err) {
                     if (err) throw err;
-                    Submission.find({ assignment: s.assignment, graded: false, statusString: 'Most Recent' }, function(err, submissions) {
+                    Submission.find({ assignment: s.assignment._id, graded: false, statusString: 'Most Recent' }, function(err, submissions) {
                         if (err) throw err;
                         if (!submissions) {
-                            Assignment.findOne({ semesterName: s.semesterName, courseName: s.courseName, name: s.assignment }, function(err, a) {
+                            Assignment.findOne({ _id: s.assignment._id }, function(err, a) {
                                 if (err) {
                                     throw err;
                                 }
                                 if (!a) {
 
                                 } else {
-                                    a.graded = true;
+                                    a.evaluation = "Completed";
                                     a.save(function(err) {
                                         if (err) {
                                             throw err;
@@ -1053,34 +870,47 @@ module.exports = function(router) {
         });
     });
 
-
-    router.get('/getAssignmentForCourseID/:id', function(req, res) {
-        var courseId = req.params.id; // Assign the _id from parameters to variable
-        Assignment.find({ course: courseId }, function(err, assignments) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
+    router.post('/assignGrader', function(req, res) {
+        User.findOne({ _id: req.body.grader }, function(err, grader) {
+            if (err) throw err;
+            if (!grader) {
+                res.json({ success: false, message: 'No grader found' });
             } else {
-                // Check if logged in user was found in database
-                if (!assignments) {
-                    res.json({ success: false, message: 'No assignments found' }); // Return error
+                if (grader.grader === true) {
+                    res.json({ success: false, message: 'Is already grading another course' });
                 } else {
-                    res.json({ success: true, assignments: assignments }); // Return access error
-                }
-            }
-        });
-    });
-
-    router.get('/viewAssignmentSubmissions/:name', function(req, res) {
-        var assignmentName = req.params.name; // Assign the _id from parameters to variable
-        Submission.find({ assignment: assignmentName, graded: false, statusString: 'Most Recent' }, function(err, submissions) {
-            if (err) {
-                res.json({ success: false, message: 'Something went wrong. This error has been logged and will be addressed by our staff. We apologize for this inconvenience!' });
-            } else {
-                // Check if logged in user was found in database
-                if (!submissions) {
-                    res.json({ success: false, message: 'No assignments found' }); // Return error
-                } else {
-                    res.json({ success: true, submissions: submissions }); // Return access error
+                    grader.gradingCourse = req.body.course._id;
+                    grader.grader = true;
+                    grader.save(function(err) {
+                        if (err) throw err;
+                        Course.findOne({ _id: req.body.course._id }, function(err, course) {
+                            if (err) throw err;
+                            if (!course) {
+                                res.json({ success: false, message: 'No course found' });
+                            } else {
+                                if (course.haveGrader) {
+                                    User.findOne({ _id: course.grader }, function(err, grader) {
+                                        if (err) throw err;
+                                        if (!grader) {
+                                            res.json({ success: false, message: 'No grader found' });
+                                        } else {
+                                            grader.grader = false;
+                                            // grader.gradingCourse = course._id;
+                                            grader.save(function(err) {
+                                                if (err) throw err;
+                                            });
+                                        }
+                                    });
+                                }
+                                course.grader = req.body.grader;
+                                course.haveGrader = true;
+                                course.save(function(err) {
+                                    if (err) throw err;
+                                    res.json({ success: true, message: 'Grader updated' });
+                                });
+                            }
+                        });
+                    });
                 }
             }
         });
@@ -1088,16 +918,6 @@ module.exports = function(router) {
 
 
     //Student API
-
-    router.get('/getStudentSemesters', function(req, res) {
-        Semester.find({}, function(err, sems) {
-            if (err) {
-                res.json({ success: false, message: err });
-            } else {
-                res.json({ success: true, sems: sems });
-            }
-        });
-    });
 
     router.post('/takeStudentCourse', function(req, res) {
         User.findOne({ username: req.decoded.username }, function(err, mainUser) {
@@ -1143,45 +963,139 @@ module.exports = function(router) {
             if (!user) {
                 res.json({ success: false, message: 'User not found' });
             } else {
-                Course.find({ '_id': { '$in': user.courses } }, function(err, courses) {
-                    if (err) throw err;
-                    if (!courses) {
-                        res.json({ success: false, message: 'course not found' });
-                    } else {
-                        res.json({ success: true, courses: courses });
-                    }
-                });
+                Course
+                    .find({ '_id': { '$in': user.courses } })
+                    .populate('assignments')
+                    .populate('semester')
+                    .populate('faculty')
+                    .exec(function(err, courses) {
+                        if (err) {
+                            res.json({ success: false, message: err });
+                        } else {
+                            if (!courses) {
+                                res.json({ success: false, message: 'No courses to display' });
+                            } else {
+                                res.json({ success: true, courses: courses });
+                            }
+                        }
+                    });
             }
         });
     });
 
-    router.get('/getStudentAssignments', function(req, res) {
+    router.get('/getGraderCourse', function(req, res) {
         User.findOne({ _id: req.decoded.user._id }, function(err, user) {
             if (err) throw err;
             if (!user) {
                 res.json({ success: false, message: 'User not found' });
             } else {
-                Assignment.find({ 'course': { '$in': user.courses } }, function(err, assignments) {
-                    if (err) throw err;
-                    if (!assignments) {
-                        res.json({ success: false, message: 'course not found' });
-                    } else {
-                        res.json({ success: true, assignments: assignments });
-                    }
-                });
+                Course
+                    .findOne({ _id: user.gradingCourse })
+                    .populate('assignments')
+                    .populate('semester')
+                    .populate('faculty')
+                    .exec(function(err, course) {
+                        if (err) {
+                            res.json({ success: false, message: err });
+                        } else {
+                            if (!course) {
+                                res.json({ success: false, message: 'No courses to display' });
+                            } else {
+                                res.json({ success: true, course: course });
+                            }
+                        }
+                    });
             }
         });
     });
 
+    function formatBytes(a, b) {
+        if (0 == a) return "0 Bytes";
+        var c = 1e3,
+            d = b || 2,
+            e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+            f = Math.floor(Math.log(a) / Math.log(c));
+        return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f]
+    }
+
+    router.post('/upload', upload.any(), function(req, res, next) {
+        var submission = new Submission();
+        var a = JSON.parse(req.body.assignment);
+        console.log(a);
+        if (req.files) {
+            console.log(req.files);
+            req.files.forEach(function(file) {
+                var size = formatBytes(file.size, 2);
+                var path = a.path;
+                var fileName = req.decoded.user.uin + '-' + file.originalname;
+                fs.rename(file.path, path + fileName, function(err) {
+                    if (err) throw err;
+                    submission.student = req.decoded.user._id;
+                    submission.assignment = a._id;
+                    submission.dueDate = a.dueDate;
+                    submission.submissionDate = Date.now();
+                    submission.version = 1;
+                    submission.path = path + fileName;
+                    submission.course = a.course;
+                    submission.size = formatBytes(file.size, 2);
+                    if (submission.dueDate < submission.submissionDate) {
+                        submission.status = 'Late';
+                    } else {
+                        submission.status = 'ontime';
+                    }
+                    submission.fileName = file.originalname;
+                    Submission.findOne({ student: req.decoded.user._id, courseName: a.courseName, assignment: a._id, semesterName: a.semesterName, statusString: 'Most Recent' }, function(err, sub) {
+                        if (err) throw err;
+                        if (!sub) {
+
+                        } else {
+                            var newPath = path + 'old/';
+                            fs.rename(sub.path, newPath + sub.fileName, function(err) {
+                                if (err) throw err;
+                                sub.path = newPath + sub.fileName;
+                                sub.statusString = "Old Submission";
+                                sub.save(function(err) {
+                                    if (err) throw err;
+                                });
+                            });
+                        }
+                    });
+                    submission.save(function(err, result) {
+                        if (err) throw err;
+                        if (!result) {
+                            res.json({ success: false, message: 'Could not upload Assignment' });
+                        } else {
+                            Assignment.findOne({ _id: a._id }, function(err, assignment) {
+                                if (err) throw err;
+                                if (!assignment) {
+                                    res.json({ success: false, message: 'No assignment found' });
+                                } else {
+                                    assignment.submissions.push(submission);
+                                    assignment.save(function(err) {
+                                        if (err) throw err;
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+            res.json({ success: true, message: 'File uploaded successfully' });
+        }
+    });
+
     router.post('/getSubmissionsForCourse', function(req, res) {
-        Submission.find({ course: req.body._id, student: req.decoded.username }).exec(function(err, submissions) {
-            if (err) throw err;
-            if (!submissions) {
-                res.json({ success: false, message: 'No assignments to display' });
-            } else {
-                res.json({ success: true, submissions: submissions });
-            }
-        });
+        Submission
+            .find({ course: req.body._id, student: req.decoded.user._id })
+            .populate('assignment')
+            .exec(function(err, submissions) {
+                if (err) throw err;
+                if (!submissions) {
+                    res.json({ success: false, message: 'No assignments to display' });
+                } else {
+                    res.json({ success: true, submissions: submissions });
+                }
+            });
     });
 
     router.post('/downloadAssignment', function(req, res) {
@@ -1193,113 +1107,5 @@ module.exports = function(router) {
         var submission = req.body.path;
         res.download(submission);
     });
-
-    router.post('/downloadCourseAssignments', function(req, res) {
-        var course = req.body;
-        console.log(req.body);
-        var archive = archiver('zip');
-        archive.on('error', function(err) {
-            console.error(err);
-            res.status(500).send({ error: err.message });
-        });
-
-        archive.on('finish', function(err) {
-            return res.end();
-        });
-        //on stream closed we can end the request
-        archive.on('end', function() {
-            console.log('Archive wrote %d bytes', archive.pointer());
-        });
-        var header = {
-            "Content-Type": "application/zip",
-            'Content-disposition': 'attachment; filename=download.zip',
-        };
-
-        res.writeHead(200, header);
-
-        archive.store = true; // don't compress the archive
-        archive.pipe(res);
-
-        var path = './app/uploads/' + course.semesterName + '/' + course.title + '/';
-        archive.directory(path, false);
-
-        archive.bulk([{
-            expand: true,
-            cwd: path,
-            src: ['**/*']
-        }]).finalize();
-    });
-
-    router.post('/downloadIndividualAssignments', function(req, res) {
-        var assignment = req.body;
-        console.log(req.body);
-        var archive = archiver('zip');
-        archive.on('error', function(err) {
-            console.error(err);
-            res.status(500).send({ error: err.message });
-        });
-
-        archive.on('finish', function(err) {
-            return res.end();
-        });
-        //on stream closed we can end the request
-        archive.on('end', function() {
-            console.log('Archive wrote %d bytes', archive.pointer());
-        });
-        var header = {
-            "Content-Type": "application/zip",
-            'Content-disposition': 'attachment; filename=download.zip',
-        };
-
-        res.writeHead(200, header);
-
-        archive.store = true; // don't compress the archive
-        archive.pipe(res);
-
-        var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
-        archive.directory(path, false);
-
-        archive.bulk([{
-            expand: true,
-            cwd: path,
-            src: ['**/*']
-        }]).finalize();
-    });
-
-    router.post('/downloadLatestAssignments', function(req, res) {
-        var assignment = req.body;
-        var archive = archiver('zip');
-        archive.on('error', function(err) {
-            console.error(err);
-            res.status(500).send({ error: err.message });
-        });
-
-        archive.on('finish', function(err) {
-            return res.end();
-        });
-        //on stream closed we can end the request
-        archive.on('end', function() {
-            console.log('Archive wrote %d bytes', archive.pointer());
-        });
-        var header = {
-            "Content-Type": "application/zip",
-            'Content-disposition': 'attachment; filename=download.zip',
-        };
-
-        res.writeHead(200, header);
-
-        archive.store = true; // don't compress the archive
-        archive.pipe(res);
-
-        var path = './app/uploads/' + assignment.semesterName + '/' + assignment.courseName + '/' + assignment.name + '/';
-        archive.directory(path, false);
-
-        archive.bulk([{
-            expand: true,
-            cwd: path,
-            src: ['.']
-        }]).finalize();
-    });
-
     return router;
 }

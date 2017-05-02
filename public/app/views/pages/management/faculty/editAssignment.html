@@ -1,0 +1,89 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">Edit Assignment</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<br>
+
+<div class="container">
+    <div class="row">
+        <form ng-submit="faculty.updateAssignment(faculty.data);">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Course</label>
+                    <div class="input-group">
+                        <select ng-change="faculty.getAssignmentsForCourse(faculty.data);" class="form-control" ng-model="faculty.data.course" ng-options="course.title for course in faculty.facultyCourses">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Assignment</label>
+                    <div class="input-group">
+                        <select ng-change="faculty.getAssignmentDetails(faculty.data);" class="form-control" ng-model="faculty.data.assignment" ng-options="assignment.name for assignment in faculty.courseAssignments">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group ">
+                    <label class="control-label " for="comments">
+                          Comments
+                        </label>
+                    <input class="form-control" id="comments" name="comments" ng-model="faculty.data.comments" type="text" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group ">
+                    <label class="control-label " for="marks">
+                          Marks
+                        </label>
+                    <input class="form-control" id="marks" name="marks" ng-model="faculty.data.marks" type="text" />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group ">
+                    <label>Start Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" ng-model="faculty.data.startDate" name="startDate" placeholder="MM/DD/YYYY" required>
+                        <span class="input-group-addon "><span class="glyphicon glyphicon-asterisk "></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group ">
+                    <label> Due Date </label>
+                    <div class="input-group">
+                        <input type="date" class="form-control " ng-model="faculty.data.dueDate" name="dueDate" placeholder="MM/DD/YYYY " required>
+                        <span class="input-group-addon "><span class="glyphicon glyphicon-asterisk "></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <button class="btn btn-primary" type="submit">Update Assignment</button>
+            </div>
+        </form>
+    </div>
+
+    <br/>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.succMsg">
+    <div class="alert alert-success">
+        {{ faculty.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.errorMsg">
+    <div class="alert alert-danger">
+        {{ faculty.errorMsg }}
+    </div>
+</div>

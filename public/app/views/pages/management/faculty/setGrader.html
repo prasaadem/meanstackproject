@@ -1,0 +1,93 @@
+<!-- Heading -->
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">My Courses</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<br>
+
+
+<table class="table table-condensed table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Name</th>
+            <th>Grader</th>
+            <th>Grader UIN</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="course in faculty.facultyCourses">
+            <td>{{course.title}}</td>
+            <td>{{course.name}}</td>
+            <td>
+                {{course.grader.name}}
+            </td>
+            <td>
+                {{course.grader.uin}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div class="row text-center">
+    <div>
+        <h3 class="section-subheading text-muted">Set Grader</h3>
+    </div>
+</div>
+<!-- Heading -->
+
+<div class="row text-center">
+    <div class="row">
+        <form ng-submit="faculty.assignGrader(faculty.graderData);">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Course</label>
+                    <div class="input-group">
+                        <select class="form-control" ng-model="faculty.graderData.course" ng-options="course.title for course in faculty.facultyCourses">
+                            <option value=""></option>
+                        </select>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Grader</label>
+                    <div class="input-group">
+                        <select class="form-control" ng-model="faculty.graderData.grader">
+                            <option ng-repeat="grader in faculty.students" value={{grader._id}}>{{grader.uin}}- {{grader.name}}</option>
+                        </select>
+                        <span class="input-group-addon "><span class="glyphicon glyphicon-asterisk "></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="input-group">
+                        <button class="btn btn-primary" type="submit">Set Grader</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<div class="row show-hide-message" ng-show="faculty.succMsg">
+    <div class="alert alert-success">
+        {{ faculty.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="faculty.errorMsg">
+    <div class="alert alert-danger">
+        {{ faculty.errorMsg }}
+    </div>
+</div>
+<script data-require="angular.js@1.2.28 " data-semver="1.2.28 " src="https://code.angularjs.org/1.2.28/angular.js "></script>
+<script data-require="angular-resource@1.2.28 " data-semver="1.2.28 " src="http://code.angularjs.org/1.2.28/angular-resource.js "></script>
+<script src="script.js "></script>

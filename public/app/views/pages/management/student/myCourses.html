@@ -11,16 +11,18 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
+            <th>Semester</th>
             <th>Course Name</th>
             <th>Course Title</th>
+            <th>Faculty</th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="course in student.studentCourses" ng-show="main.student">
-            <td>{{main.username}}</td>
+            <td>{{course.semester.title}}</td>
             <td>{{ course.name }}</td>
             <td>{{ course.title }}</td>
+            <td>{{course.faculty.name}}</td>
             <!--<td>
                 <a href="/viewCourse/{{ course._id }}">
                     <button type="button" class="btn btn-primary">View</button>

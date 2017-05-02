@@ -2,45 +2,22 @@ angular.module('adminServices', [])
 
 .factory('Semester', function($http) {
     semsFactory = {};
-    semsFactory.createAdminSemester = function(semData) {
-        return $http.post('/api/createAdminSemester', semData);
+
+    //Admin Services
+    semsFactory.createSemester = function(semData) {
+        return $http.post('/api/createSemester', semData);
     };
 
-    semsFactory.getAdminSemesters = function() {
-        return $http.get('/api/getAdminSemesters/');
+    semsFactory.getSemesters = function() {
+        return $http.get('/api/getSemesters/');
     }
-
-    semsFactory.getFacultySemesters = function() {
-        return $http.get('/api/getFacultySemesters/');
-    }
-
-    semsFactory.getStudentSemesters = function() {
-        return $http.get('/api/getStudentSemesters/');
-    }
-
-    semsFactory.deleteSemester = function(id) {
-        return $http.delete('/api/deleteSemester/' + id);
-    };
-
-    semsFactory.deleteCourse = function(id) {
-        return $http.delete('/api/deleteCourse/' + id);
-    };
-
-    semsFactory.getSemester = function(id) {
-        return $http.get('/api/getSemester/' + id);
-    };
 
     semsFactory.updateSemester = function(semData) {
         return $http.put('/api/updateSemester', semData);
     };
 
-    semsFactory.updateCourse = function(courseData) {
-        console.log('came');
-        return $http.put('/api/updateCourse', courseData);
-    };
-
-    semsFactory.getCourse = function(id) {
-        return $http.get('/api/getCourse/' + id);
+    semsFactory.deleteSemester = function(id) {
+        return $http.delete('/api/deleteSemester/' + id);
     };
 
     return semsFactory;
@@ -48,25 +25,17 @@ angular.module('adminServices', [])
 
 .factory('Assignment', function($http) {
     assignmentFactory = {};
+
     assignmentFactory.createAssignment = function(assignmentData) {
         return $http.post('/api/createAssignment', assignmentData);
     };
 
-    assignmentFactory.getAssignmentsForCourse = function(aData) {
-        return $http.post('/api/getAssignmentsForCourse/', aData);
+    assignmentFactory.getAssignments = function() {
+        return $http.get('/api/getAssignments/');
     }
 
-    assignmentFactory.getAFC = function(aData) {
-        return $http.post('/api/getAFC/', aData);
-    }
-
-    assignmentFactory.getStudentAssignments = function(data) {
-        return $http.get('/api/getStudentAssignments');
-    };
-
-    // Get user to then edit
-    assignmentFactory.getAssignmentForCourseID = function(id) {
-        return $http.get('/api/getAssignmentForCourseID/' + id);
+    assignmentFactory.updateAssignment = function(data) {
+        return $http.put('/api/updateAssignment', data);
     };
 
     return assignmentFactory;
@@ -75,96 +44,79 @@ angular.module('adminServices', [])
 .factory('Submission', function($http) {
     submissionFactory = {};
 
-    submissionFactory.viewAssignmentSubmissions = function(name) {
-        return $http.get('/api/viewAssignmentSubmissions/' + name);
-    };
-
-    submissionFactory.getSubmissionsForCourse = function(data) {
-        return $http.post('/api/getSubmissionsForCourse', data);
-    };
-
-    submissionFactory.getStudentsSubmissionsForCourse = function(data) {
-        return $http.post('/api/getStudentsSubmissionsForCourse', data);
-    };
-
+    //Faculty Services
     submissionFactory.getStudentsSubmissionsForAssignment = function(data) {
         return $http.post('/api/getStudentsSubmissionsForAssignment', data);
     };
 
-    submissionFactory.downloadAssignment = function(data) {
-        return $http.post('/api/downloadAssignment/', data, { encoding: null, responseType: 'arraybuffer' });
-    }
-
-    submissionFactory.downloadOneAssignment = function(data) {
-        return $http.post('/api/downloadOneAssignment/', data, { encoding: null, responseType: 'arraybuffer' });
-    }
-
-    submissionFactory.downloadLatestAssignments = function(data) {
-        return $http.post('/api/downloadLatestAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
+    submissionFactory.downloadCourseAssignments = function(data) {
+        return $http.post('/api/downloadCourseAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
     }
 
     submissionFactory.downloadIndividualAssignments = function(data) {
         return $http.post('/api/downloadIndividualAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
     }
 
-    submissionFactory.downloadCourseAssignments = function(data) {
-        return $http.post('/api/downloadCourseAssignments/', data, { encoding: null, responseType: 'arraybuffer' });
+    submissionFactory.downloadOneAssignment = function(data) {
+        return $http.post('/api/downloadOneAssignment/', data, { encoding: null, responseType: 'arraybuffer' });
     }
 
     submissionFactory.postGradeAndComment = function(data) {
         return $http.post('/api/postGradeAndComment', data);
     };
 
-    // submissionFactory.downloadIndividualAssignments = function(data) {
-    //     return $http.post('/api/downloadIndividualAssignments/', data);
-    // }
+    //Student Services
+    submissionFactory.getSubmissionsForCourse = function(data) {
+        return $http.post('/api/getSubmissionsForCourse', data);
+    };
+
+    submissionFactory.downloadAssignment = function(data) {
+        return $http.post('/api/downloadAssignment/', data, { encoding: null, responseType: 'arraybuffer' });
+    }
 
     return submissionFactory;
 })
 
 .factory('Course', function($http) {
     courseFactory = {};
-    courseFactory.createAdminCourse = function(courseData) {
-        return $http.post('/api/course', courseData);
+
+    //Admin Service
+    courseFactory.createCourse = function(courseData) {
+        return $http.post('/api/createCourse', courseData);
     };
 
-    courseFactory.getAdminCoursesForSem = function(data) {
-        return $http.post('/api/getAllCourses/', data);
+    courseFactory.updateCourse = function(courseData) {
+        return $http.put('/api/updateCourse', courseData);
     };
 
-    courseFactory.getAllCoursesForSem = function(data) {
-        return $http.post('/api/getAllCoursesForSem/', data);
+    courseFactory.deleteCourse = function(id) {
+        return $http.delete('/api/deleteCourse/' + id);
     };
 
-    courseFactory.getFacultyCoursesForSem = function(data) {
-        return $http.post('/api/getAllCourses/', data);
-    };
-
-    courseFactory.getFcfS = function(data) {
-        return $http.post('/api/getFacultyCoursesForSem/', data);
-    };
-
-
-    courseFactory.getFacultyCourses = function() {
-        return $http.get('/api/getFacultyCourses/');
-    }
-
-
+    //Faculty Service
     courseFactory.takeFacultyCourse = function(courseData) {
         return $http.post('/api/takeFacultyCourse', courseData);
     };
 
-    courseFactory.getStudentCoursesForSem = function(data) {
-        return $http.post('/api/getAllCourses/', data);
+    courseFactory.getFacultyCourses = function() {
+        return $http.get('/api/getFacultyCourses/');
     };
 
+    courseFactory.assignGrader = function(graderData) {
+        return $http.post('/api/assignGrader', graderData);
+    };
+
+    //Student Service
     courseFactory.takeStudentCourse = function(courseData) {
-        console.log('came here');
         return $http.post('/api/takeStudentCourse', courseData);
     };
 
     courseFactory.getStudentCourses = function(data) {
         return $http.get('/api/getStudentCourses');
+    };
+
+    courseFactory.getGraderCourse = function(data) {
+        return $http.get('/api/getGraderCourse');
     };
 
     return courseFactory;

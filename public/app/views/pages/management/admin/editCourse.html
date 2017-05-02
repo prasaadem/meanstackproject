@@ -25,13 +25,6 @@
                             <input type="text" class="form-control" name="name" placeholder="Programming Language Design" required ng-model="admin.courseData.name">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
                         </div>
-                        <label>Semester</label>
-                        <div class="input-group">
-                            <select class="form-control" ng-model="admin.courseData.semester" ng-options="sem.title for sem in admin.sems">
-                        <option value=""></option>
-                    </select>
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
-                        </div>
                     </div>
 
                     <button class="btn btn-primary" type="submit">Update Course</button>
@@ -39,3 +32,17 @@
             </form>
         </div>
     </div>
+</div>
+<hr>
+<br>
+<div class="row show-hide-message" ng-show="admin.succMsg">
+    <div class="alert alert-success">
+        {{ admin.succMsg }}
+    </div>
+</div>
+<br>
+<div class="row show-hide-message" ng-show="admin.errorMsg">
+    <div class="alert alert-danger">
+        {{ admin.errorMsg }}
+    </div>
+</div>

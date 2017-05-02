@@ -28,7 +28,6 @@
             <td colspan='1'>{{course.title}}</td>
             <td colspan='3'>{{course.name}}</td>
             <th colspan='1'>
-                <!--<a ng-click="downloadCourseAssignments($index,course);">Download</a>-->
                 <button type="button" class="btn btn-default" ng-click="downloadCourseAssignments($index,course);">
                     <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
@@ -74,11 +73,12 @@
     </tbody>
 </table>
 </div>
-<table class="table table-condensed table-bordered">
+<table class="table table-condensed table-bordered" ng-show="faculty.submission">
     <thead>
         <tr>
             <th>Assignment</th>
-            <th>Student</th>
+            <th>UIN</th>
+            <th>Name</th>
             <th>File</th>
             <th>Size</th>
             <th>Time Submitted</th>
@@ -91,20 +91,21 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-class="{'color-red': submission.status === 'Late'}" ng-repeat="submission in faculty.studentSubmissionsForAssignment">
-            <td>{{submission.assignment}}</td>
-            <td>{{submission.student}}</td>
+        <tr ng-repeat="submission in faculty.studentSubmissionsForAssignment">
+            <td>{{submission.assignment.name}}</td>
+            <td>{{submission.student.uin}}</td>
+            <td>{{submission.student.name}}</td>
             <td>{{submission.fileName}}</td>
             <td>{{submission.size}}</td>
             <td>{{submission.submissionDate}}</td>
             <td>{{submission.dueDate}}</td>
-            <td>{{submission.status}}</td>
+            <td ng-class="{'color-red': submission.status === 'Late'}">{{submission.status}}</td>
             <td ng-class="{'color-orange':submission.statusString === 'Old Submission'}">{{submission.statusString}}</td>
             <th>{{submission.marksSecured}}</th>
             <th>{{submission.comments}}</th>
             <td>
-                                <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
-                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                <button type="button" class="btn btn-default" ng-click="downloadOneAssignment($index,submission);">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
                     </button>
                             </td>
                         </tr>
@@ -115,6 +116,38 @@
                 <script data-require="angular-resource@1.2.28" data-semver="1.2.28" src="http://code.angularjs.org/1.2.28/angular-resource.js"></script>
                 <script src="script.js"></script>
 
+<hr>
+<div class= 'row' ng-show="faculty.grading">
+    
+<h3>Grade Assignments</h3>
+
+<div class="col-md-9">
+    <form ng-submit="faculty.grade(faculty.submitData);">
+        <div class="input-group">
+            <label>Student</label>
+            <select class="form-control" ng-model="faculty.submitData.submission" ng-options="submission.student.name for submission in faculty.tobeGraded">
+                            <option value=""></option>
+                        </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Marks</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Marks" required ng-model="faculty.submitData.marks">
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label>Comments</label>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Comments" required ng-model="faculty.submitData.comments">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Grade</button>
+    </form>
+</div>
+
+</div>
 
                 <br>
                 <div class="row show-hide-message " ng-show="faculty.succMsg ">

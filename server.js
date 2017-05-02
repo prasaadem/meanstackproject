@@ -21,14 +21,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use('/api', appRoutes);
 
-//Connect to Database and Check for any error conditions
-mongoose.connect('mongodb://localhost:27017/meanstackproject', function(err) {
+var remoteConnectionURL = "mongodb://root:root@ds127391.mlab.com:27391/csnet"
+var localConnectionURL = "mongodb://localhost:27017/meanstackproject"
+    //Connect to Database and Check for any error conditions
+mongoose.connect(remoteConnectionURL, function(err) {
     if (err) {
         console.log('Not connected to the database: ' + err);
     } else {
         console.log('Connected to the MongoDB successfully!');
     }
 });
+
+
 
 app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname + '/public/app/views/index.html'));

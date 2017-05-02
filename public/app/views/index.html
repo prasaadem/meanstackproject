@@ -128,6 +128,7 @@
                                         <ul class="nav nav-list">
                                             <li><a href="/takeCourse">Take Course</a></li>
                                             <li><a href="/myCourses">My Courses</a></li>
+                                            <li><a href="/setGrader">Graders</a></li>
                                         </ul>
                                     </div>
                                 </li>
@@ -138,6 +139,7 @@
                                     <div class="collapse" id="toggleDemo4" style="height: 0px;">
                                         <ul class="nav nav-list">
                                             <li><a href="/newAssignment">Add Assignment</a></li>
+                                            <li><a href="/editAssignment">Edit Assignments</a></li>
                                             <li><a href="/viewAssignments">View Assignments</a></li>
                                         </ul>
                                     </div>
@@ -162,6 +164,16 @@
                                             <li><a href="/submission">Submit Assignments</a></li>
                                             <li><a href="/viewSubmissions">View Submissions</a></li>
                                             <li><a href="/viewStudentAssignments">View Assignments</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li ng-show="main.user.grader">
+                                    <a href="#" data-toggle="collapse" data-target="#toggleDemo8" data-parent="#sidenav01" class="collapsed">
+                                        <span class="glyphicon glyphicon-flag"></span> Grading <span class="caret pull-right"></span>
+                                    </a>
+                                    <div class="collapse" id="toggleDemo8" style="height: 0px;">
+                                        <ul class="nav nav-list">
+                                            <li><a href="/grader">Course</a></li>
                                         </ul>
                                     </div>
                                 </li>

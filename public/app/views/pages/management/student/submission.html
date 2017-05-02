@@ -8,7 +8,7 @@
                     <label>Assignment</label>
                     <div class="input-group">
                         <select class="form-control" ng-model="assignmentData.assignment">
-                            <option ng-repeat="assignment in student.studentAssignments" value={{assignment}}>{{assignment.name}}- {{assignment.courseName}}</option>
+                            <option ng-repeat="assignmentDict in student.studentAssignments" value={{assignmentDict.assignment}}>{{assignmentDict.assignment.name}}- {{assignmentDict.courseName}}</option>
                 </select>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
                     </div>
@@ -16,9 +16,10 @@
                 <div class="form-group">
                     <div class="input-group">
                         <input type='file' file-model="file.upload" id='file' name='myfile' ng-disabled="uploading" onchange="angular.element(this).scope().fileChanged(this.files)">
-                        <!--<input type='file' file-model="student.assignmentData.upload" name='myfile' ng-disabled="uploading">-->
                     </div>
                 </div>
+                <p>should be less than 10MB</p>
+                <p>File Size: {{student.filesize}} bytes</p>
                 <div class="form-group">
                     <div class="input-group">
                         <button class="btn btn-primary" type="submit">Upload</button>
@@ -34,7 +35,6 @@
 <div class="col-md-12">
     <b>Preview:</b><br /><br>
     <i ng-hide="thumbnail">No file choosed</i>
-    <!--<img ng-src="{{ thumbnail.dataUrl ||'' }}" frameborder='0'  />-->
     <iframe ng-src={{thumbnail.dataUrl}} style="width:100%; height:1000px;" frameborder="0"></iframe>
 </div>
 <div class="row show-hide-message" ng-show="student.succMsg">
