@@ -21,9 +21,30 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use('/api', appRoutes);
 
+// // Ensure you have run 'npm install mongodb'
+// var MongoClient = require('mongodb').MongoClient;
+
+// var username = 'root';
+// var password = 'password';
+// var hosts = 'iad2-c6-1.mongo.objectrocket.com:52141,iad2-c6-2.mongo.objectrocket.com:52141,iad2-c6-0.mongo.objectrocket.com:52141';
+// var database = 'csnet';
+// var options = '?replicaSet=73e7f52bac974ec796112bcef2c27049';
+// var connectionString = 'mongodb://' + username + ':' + password + '@' + hosts + '/' + database + options;
+
+// mongoose.connect(connectionString, function(err, db) {
+//     if (db) {
+//         db.close();
+//     }
+//     if (err) {
+//         console.log('Error: ', err);
+//     } else {
+//         console.log('Connected!');
+//     }
+// });
+
 var remoteConnectionURL = "mongodb://root:root@ds127391.mlab.com:27391/csnet"
 var localConnectionURL = "mongodb://localhost:27017/meanstackproject"
-    //Connect to Database and Check for any error conditions
+    // Connect to Database and Check for any error conditions
 mongoose.connect(remoteConnectionURL, function(err) {
     if (err) {
         console.log('Not connected to the database: ' + err);
